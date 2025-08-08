@@ -64,39 +64,35 @@ Your app will be running at [http://localhost:3000](http://localhost:3000) 🚀
 ## 📂 Project Structure
 
 ```
+
 themeethub/
-├── .nuxt/                 
-├── .output/               
 ├── app/
 │   ├── app.vue
 │   ├── error.vue
-│   └── app.config.ts
-├── assets/
-├── components/
-├── composables/
-├── content/               
-├── layouts/
-├── middleware/
-├── pages/
-├── plugins/
-├── public/
-├── server/
-│   ├── api/               
-│   ├── middleware/
-│   ├── model/             
-│   └── providers/         
-│       ├── supabase/
-│       │   └── event.ts
-│       ├── memory/
-│       │   └── event.ts
-│       └── index.ts       
-├── types/                 
-├── utils/                 
+│   ├── app.config.ts
+│   ├── assets/          # Styles, images
+│   ├── components/      # UI components
+│   ├── composables/     # Composables
+│   ├── layouts/         # Layouts
+│   ├── middleware/      # Route middlewares
+│   ├── pages/           # Routing 
+│   ├── plugins/         # Nuxt Plugins
+│   └── utils/           # Helpers
+├── public/              # Static files
+├── server/              # Nitro (backend)
+│   ├── api/             # API routes
+│   ├── middleware/      # Middlewares serveur
+│   ├── model/           # MCP
+│   └── providers/       # Backends
+├── shared/              # Shared code
+│   ├── types/           # Typescript types/interfaces
+│   └── utils/           # Common Helpers
 ├── nuxt.config.ts
 ├── package.json
 ├── tsconfig.json
 ├── .env.example
-└── .gitignore
+└── README.md
+
 
 ```
 
