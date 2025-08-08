@@ -65,17 +65,39 @@ Your app will be running at [http://localhost:3000](http://localhost:3000) 🚀
 
 ```
 themeethub/
+├── .nuxt/                 
+├── .output/               
+├── app/
+│   ├── app.vue
+│   ├── error.vue
+│   └── app.config.ts
+├── assets/
+├── components/
+├── composables/
+├── content/               
+├── layouts/
+├── middleware/
+├── pages/
+├── plugins/
+├── public/
 ├── server/
-│   ├── model/           # MCPs: business logic per model (event, speaker, user)
-│   ├── providers/       # Backend providers (supabase, firebase, mock, etc.)
-│   ├── api/             # API routes using MCPs
-├── composables/         # Client-side composables
-├── components/          # UI components
-├── pages/               # Nuxt pages
-├── plugins/             # Plugin injections
-├── public/              # Static assets
-├── types/               # TypeScript definitions
-└── README.md
+│   ├── api/               
+│   ├── middleware/
+│   ├── model/             
+│   └── providers/         
+│       ├── supabase/
+│       │   └── event.ts
+│       ├── memory/
+│       │   └── event.ts
+│       └── index.ts       
+├── types/                 
+├── utils/                 
+├── nuxt.config.ts
+├── package.json
+├── tsconfig.json
+├── .env.example
+└── .gitignore
+
 ```
 
 ---
