@@ -33,7 +33,7 @@
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/<your-username>/themeethub.git
+git clone https://github.com/mass22/themeethub.git
 cd themeethub
 ```
 
