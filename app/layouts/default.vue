@@ -5,7 +5,7 @@ const { t } = useI18n()
 <template>
   <UContainer class="py-6">
     <header class="flex items-center justify-between mb-6">
-      <h1 class="text-xl font-semibold">{{ t('app.title') }}</h1>
+      <p class="text-xl font-semibold">{{ t('app.title') }}</p>
 
       <ClientOnly>
         <LangSwitcher />

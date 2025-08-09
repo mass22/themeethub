@@ -15,7 +15,8 @@ export default defineConfig({
     include: [
       'app/**/*.{spec,test}.ts',
       'server/**/*.{spec,test}.ts',
-      'tests/unit/**/*.{spec,test}.ts'
+      'tests/unit/**/*.{spec,test}.ts',
+      'tests/nuxt/**/*.{spec,test}.ts'
     ],
     // Exclure node_modules, tests E2E et autres répertoires non pertinents
     exclude: [

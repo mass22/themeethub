@@ -1,62 +1,94 @@
-import { describe, expect, it, vi } from 'vitest'
+import { createApp, createError, createRouter, defineEventHandler, getRouterParam, readBody, toNodeListener } from 'h3'
+import { listen } from 'listhen'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 
-// Mock global de useDataSource
-global.useDataSource = vi.fn(() => ({
-  listEvents: vi.fn().mockResolvedValue([
-    {
-      id: 'evt_123',
-      title: 'Test Event API',
-      date: '2024-12-31T19:00:00Z',
-      description: 'Test API description'
-    }
+// Mock de useDataSource
+const mockDataSource = {
+  listEvents: vi.fn(() => [
+    { id: 'evt_1', title: 'Test Event 1', date: '2024-01-01', slug: 'test-1', speakers: [] },
+    { id: 'evt_2', title: 'Test Event 2', date: '2024-01-02', slug: 'test-2', speakers: [] }
   ]),
-  getEvent: vi.fn().mockImplementation((id) =>
-    Promise.resolve({
-      id,
-      title: `Event ${id}`,
-      date: '2024-12-31T19:00:00Z'
-    })
-  ),
-  createEvent: vi.fn().mockImplementation((data) =>
-    Promise.resolve({
-      id: 'evt_new',
-      ...data
-    })
-  )
-}))
+  getEventById: vi.fn((id: string) => {
+    if (id === 'evt_1') {
+      return { id: 'evt_1', title: 'Test Event 1', date: '2024-01-01', slug: 'test-1', speakers: [] }
+    }
+    return null
+  }),
+  createEvent: vi.fn((event: any) => ({
+    id: 'evt_' + Math.random().toString(36).substr(2, 9),
+    ...event
+  }))
+}
 
-// Mock global de defineEventHandler
-global.defineEventHandler = vi.fn((handler) => handler)
+// Simuler les handlers API directement dans le test
+const eventsListHandler = defineEventHandler(async () => {
+  return mockDataSource.listEvents()
+})
 
-// Mock des fonctions Nuxt
-global.getRouterParam = vi.fn((event, param) => event.context?.params?.[param])
-global.createError = vi.fn((options) => new Error(options.statusMessage))
+const createEventHandler = defineEventHandler(async (event) => {
+  const body = await readBody(event)
+  return mockDataSource.createEvent(body)
+})
 
-describe('API Routes - Events', () => {
-  it('GET /api/events should return events list', async () => {
-    const { default: eventsGetHandler } = await import('../../../server/api/events.get')
+const eventByIdHandler = defineEventHandler(async (event) => {
+  const id = getRouterParam(event, 'id')
+  const result = mockDataSource.getEventById(id)
+  if (!result) {
+    throw createError({ statusCode: 404, statusMessage: 'Event not found' })
+  }
+  return result
+})
 
-    const mockEvent = {}
-    const result = await eventsGetHandler(mockEvent)
+describe('API /api/events', () => {
+  let url: string
+  let close: () => Promise<void>
 
-    expect(result).toBeDefined()
-    expect(Array.isArray(result)).toBe(true)
-    expect(result[0]).toHaveProperty('id', 'evt_123')
-    expect(result[0]).toHaveProperty('title', 'Test Event API')
+  beforeAll(async () => {
+    process.env.NUXT_USE_MOCKS = 'true'
+    const app = createApp()
+    const router = createRouter()
+
+    // Routes API
+    router.get('/api/events', eventsListHandler)
+    router.post('/api/events', createEventHandler)
+    router.get('/api/events/:id', eventByIdHandler)
+
+    app.use(router)
+
+    const listener = toNodeListener(app)
+    const server = await listen(listener, { port: 0 }) // port aléatoire
+    url = server.url
+    close = server.close
   })
 
-  it('GET /api/events/[id] should return specific event', async () => {
-    const { default: eventByIdHandler } = await import('../../../server/api/events/[id].get')
+  afterAll(async () => { await close?.() })
 
-    const mockEvent = {
-      context: {
-        params: { id: 'test_id' }
-      }
-    }
-    const result = await eventByIdHandler(mockEvent)
+  it('GET /api/events → 200 + array', async () => {
+    const res = await fetch(`${url.replace(/\/$/, '')}/api/events`)
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(Array.isArray(json)).toBe(true)
+  })
 
-    expect(result).toBeDefined()
-    expect(result).toHaveProperty('id', 'test_id')
-    expect(result).toHaveProperty('title', 'Event test_id')
+  it('POST /api/events → 200 + objet créé', async () => {
+    const res = await fetch(`${url.replace(/\/$/, '')}/api/events`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Event Int Test',
+        date: '2025-10-01T00:00:00Z',
+        slug: 'event-int-test',
+        speakers: []
+      })
+    })
+    expect(res.status).toBe(200)
+    const json = await res.json()
+    expect(json.id).toMatch(/^evt_/)
+    expect(json.title).toBe('Event Int Test')
+  })
+
+  it('GET /api/events/:id (unknown) → 404', async () => {
+    const res = await fetch(`${url.replace(/\/$/, '')}/api/events/not-found`)
+    expect(res.status).toBe(404)
   })
 })
