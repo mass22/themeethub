@@ -2,6 +2,12 @@
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  alias: {
+    '@': '.',
+    '~': '.',
+    '@@': '.',
+    '~~': '.'
+  },
   modules: ['@nuxt/ui', '@nuxt/content', '@nuxt/image', '@nuxtjs/i18n'],
   i18n: {
     strategy: 'prefix_except_default',
