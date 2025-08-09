@@ -17,7 +17,14 @@ describe('EventCard', () => {
         // Mock des composants Nuxt UI
         components: {
           UCard: {
-            template: '<div class="mock-card"><slot /></div>'
+            template: `
+              <div class="mock-card">
+                <div class="header"><slot name="header" /></div>
+                <div class="body"><slot /></div>
+                <div class="footer"><slot name="footer" /></div>
+              </div>
+            `,
+            props: ['variant', 'class']
           },
           UButton: {
             template: '<button class="mock-button"><slot /></button>',

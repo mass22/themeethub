@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 // Import avec chemin relatif pour contourner le problème d'alias dans vitest
-import { useEventsStore } from '../../app/store/events'
+import { useEventsStore } from '../../../app/store/events'
 
 describe('events store', () => {
   beforeEach(() => { setActivePinia(createPinia()) })

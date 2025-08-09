@@ -4,18 +4,13 @@ import { resolve } from 'pathe'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [vue({
-    // Désactiver la génération de hash pour éviter l'erreur crypto.hash
-    template: {
-      compilerOptions: {
-        // 'tag' n'est pas utilisé, donc on le préfixe avec un underscore pour éviter l'avertissement lint
-        isCustomElement: (_tag) => false
-      }
-    }
-  })],
+  plugins: [vue()],
   test: {
     globals: true,
     environment: 'happy-dom',
+    setupFiles: ['./vitest.setup.ts'],
+    // Forcer le rechargement des modules à chaque test
+    pool: 'forks',
     // Inclure seulement nos fichiers de test unitaires
     include: [
       'app/**/*.{spec,test}.ts',

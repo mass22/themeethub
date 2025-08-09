@@ -1,7 +1,25 @@
+// Configuration Nuxt spéciale pour les tests E2E
+import { createHash } from 'node:crypto'
+
+// Polyfill pour crypto.hash avant d'importer Nuxt
+if (!globalThis.crypto) {
+  Object.defineProperty(globalThis, 'crypto', {
+    value: {},
+    writable: true
+  })
+}
+
+if (!globalThis.crypto.hash) {
+  Object.defineProperty(globalThis.crypto, 'hash', {
+    value: (algorithm: string) => createHash(algorithm),
+    writable: true
+  })
+}
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  compatibilityDate: '2025-07-15',
+  devtools: { enabled: false }, // Désactivé pour les tests
   css: ['~/app/assets/css/main.css'],
   alias: {
     '@': '.',
@@ -10,7 +28,6 @@ export default defineNuxtConfig({
     '~~': '.'
   },
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
-  // '@nuxt/content' temporairement désactivé - incompatible avec Nuxt 4
   components: [
     {
       path: '~/components',
@@ -36,5 +53,12 @@ export default defineNuxtConfig({
     luma: { apiKey: '' },
     youtube: { apiKey: '' },
     public: { appName: 'TheMeetHub' }
+  },
+
+  // Configuration Vite pour résoudre crypto.hash
+  vite: {
+    define: {
+      'crypto.hash': 'globalThis.crypto.hash'
+    }
   }
 })
