@@ -1,0 +1,17 @@
+{
+    "app": {
+        "title": "TheMeetHub EN"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "events": "Events",
+        "speakers": "Speakers"
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "upcoming": "Upcoming"
+    },
+    "events": {
+        "open": "Open"
+    }
+}
