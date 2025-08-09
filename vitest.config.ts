@@ -16,19 +16,19 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-    // Inclure seulement nos fichiers de test
+    // Inclure seulement nos fichiers de test unitaires
     include: [
       'app/**/*.{spec,test}.ts',
       'server/**/*.{spec,test}.ts',
-      'tests/**/*.{spec,test}.ts',
-      '**/*.{spec,test}.ts'
+      'tests/unit/**/*.{spec,test}.ts'
     ],
-    // Exclure node_modules et autres répertoires non pertinents
+    // Exclure node_modules, tests E2E et autres répertoires non pertinents
     exclude: [
       'node_modules/**',
       'dist/**',
       '.output/**',
-      '.nuxt/**'
+      '.nuxt/**',
+      'tests/e2e/**'
     ]
   },
   resolve: {
