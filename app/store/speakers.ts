@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import type { Speaker } from '~/types/speaker'
 
 export const useSpeakersStore = defineStore('Speakers', () => {
@@ -20,8 +20,8 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     return created
   }
 
-  // Getters (computed)
-  const byId = computed(() => (id: string) => items.value.find((e: Speaker) => e.id === id))
+  // Getter simple sans fonction
+  const byId = (id: string) => items.value.find((e: Speaker) => e.id === id)
 
   return {
     // État

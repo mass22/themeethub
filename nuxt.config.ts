@@ -8,7 +8,18 @@ export default defineNuxtConfig({
     '@@': '.',
     '~~': '.'
   },
-  modules: ['@nuxt/ui', '@nuxt/content', '@nuxt/image', '@nuxtjs/i18n'],
+  modules: ['@nuxt/ui', '@nuxt/content', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    }
+  ],
+  imports: {
+    dirs: ['store']
+  },
+  ssr: false,
+
   i18n: {
     strategy: 'prefix_except_default',
     defaultLocale: 'fr',
