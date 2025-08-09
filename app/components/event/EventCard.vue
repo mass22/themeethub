@@ -4,13 +4,19 @@ defineProps<{ event: Event }>()
 </script>
 
 <template>
-  <UCard>
-    <div class="flex items-center justify-between">
-      <div>
+  <UCard variant="subtle" class="overflow-hidden">
+  <template #header>
+      <div class="p-4 pb-0">
         <h3 class="text-lg font-semibold">{{ event.title }}</h3>
-        <p class="text-sm opacity-70">{{ new Date(event.date).toLocaleString() }}</p>
       </div>
-      <UButton :to="`/events/${event.id}`" variant="soft">{{ $t('events.open') }}</UButton>
+    </template>
+    <div class="px-4">
+      <p class="text-sm opacity-70">{{ new Date(event.date).toLocaleString() }}</p>
     </div>
+    <template #footer>
+      <div class="p-4 pt-2">
+        <UButton :to="`/events/${event.id}`" variant="soft">{{ $t('events.open') }}</UButton>
+      </div>
+    </template>
   </UCard>
 </template>
