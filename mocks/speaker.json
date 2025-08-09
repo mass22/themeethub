@@ -1,0 +1,17 @@
+[
+    {
+        "id": "spk_001",
+        "name": "Alex Lichter",
+        "bio": "Nuxt expert, speaker",
+        "socials": {
+            "linkedin": "https://www.linkedin.com/in/alexlichter"
+        },
+        "topics": [
+            "Nuxt",
+            "Performance"
+        ],
+        "history": [
+            "evt_001"
+        ]
+    }
+]
