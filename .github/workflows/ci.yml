@@ -3,31 +3,70 @@ on:
   push:
     branches: [ main ]
   pull_request:
+  workflow_dispatch: # Permet le déclenchement manuel
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm test:unit
-      - run: pnpm test:api
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run frontend tests
+        run: pnpm test:frontend
+
+      - name: Run backend tests
+        run: pnpm test:backend
+
+      - name: Run integration tests
+        run: pnpm test:integration
 
   e2e:
     runs-on: ubuntu-latest
     needs: tests
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with: { version: 9 }
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm dlx playwright install --with-deps
-      - run: pnpm dev &
-      - run: npx wait-on http://localhost:3000
-      - run: pnpm test:e2e
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright
+        run: pnpm dlx playwright install --with-deps
+
+      - name: Build application
+        run: pnpm build
+
+      - name: Start preview server
+        run: pnpm preview &
+
+      - name: Wait for server
+        run: pnpm dlx wait-on http://localhost:3000
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
