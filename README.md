@@ -1,3 +1,5 @@
+![CI](https://github.com/mass22/themeethub/workflows/CI/badge.svg)
+
 # TheMeetHub
 
 > **The open-source platform to organize, manage, and grow your community meetups from one central hub.**  
