@@ -16,6 +16,7 @@
     "test:api": "vitest run tests/unit/api/",
     "test:nitro": "vitest run tests/unit/nitro/",
     "test:nuxt": "vitest run tests/nuxt/",
+    "test:integration": "vitest run tests/integration/",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "postinstall": "nuxt prepare && node patch-vue-plugin.js"

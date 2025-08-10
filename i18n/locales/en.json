@@ -24,5 +24,8 @@
         "noDescription": "No description available",
         "noLocation": "Location not specified",
         "noSpeakers": "No speakers"
+    },
+    "speakers": {
+        "create": "Create speaker"
     }
 }

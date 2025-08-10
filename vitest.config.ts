@@ -16,7 +16,8 @@ export default defineConfig({
       'app/**/*.{spec,test}.ts',
       'server/**/*.{spec,test}.ts',
       'tests/unit/**/*.{spec,test}.ts',
-      'tests/nuxt/**/*.{spec,test}.ts'
+      'tests/nuxt/**/*.{spec,test}.ts',
+      'tests/integration/**/*.{spec,test}.ts'
     ],
     // Exclure node_modules, tests E2E et autres répertoires non pertinents
     exclude: [
@@ -28,6 +29,11 @@ export default defineConfig({
     ]
   },
   resolve: {
-    alias: { '~': resolve(__dirname, '.'), '@': resolve(__dirname, '.') }
+    alias: {
+      '~': resolve(__dirname, '.'),
+      '@': resolve(__dirname, '.'),
+      '#app': resolve(__dirname, 'node_modules/nuxt/dist/app'),
+      '#ui': resolve(__dirname, 'node_modules/@nuxt/ui/dist/runtime/components')
+    }
   }
 })

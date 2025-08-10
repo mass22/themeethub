@@ -24,5 +24,8 @@
         "noDescription": "Aucune description disponible",
         "noLocation": "Lieu non spécifié",
         "noSpeakers": "Aucun intervenant"
+    },
+    "speakers": {
+        "create": "Créer un intervenant"
     }
 }
