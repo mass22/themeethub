@@ -18,11 +18,10 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install
+        env:
+          NODE_ENV: development
 
       - name: Run frontend tests
         run: npm run test:frontend
@@ -46,11 +45,10 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install
+        env:
+          NODE_ENV: development
 
       - name: Install Playwright
         run: npx playwright install --with-deps
