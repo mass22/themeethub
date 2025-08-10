@@ -64,7 +64,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'nuxt dev --config-file nuxt.config.e2e.ts',
+    command: process.env.CI ? 'npm run preview' : 'nuxt dev --config-file nuxt.config.e2e.ts',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000, // 2 minutes pour démarrer
