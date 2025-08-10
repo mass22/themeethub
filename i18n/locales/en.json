@@ -12,6 +12,17 @@
         "upcoming": "Upcoming"
     },
     "events": {
-        "open": "Open"
+        "open": "Open",
+        "back": "Back to events",
+        "location": "Location",
+        "date": "Date",
+        "description": "Description",
+        "speakers": "Speakers",
+        "stats": "Statistics",
+        "registered": "Registered",
+        "attended": "Attended",
+        "noDescription": "No description available",
+        "noLocation": "Location not specified",
+        "noSpeakers": "No speakers"
     }
 }

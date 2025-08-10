@@ -17,6 +17,7 @@ const { t } = useI18n()
         </template>
       </ClientOnly>
     </header>
+      <NavBar />
 
     <main>
       <slot />

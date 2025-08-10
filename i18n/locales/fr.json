@@ -12,6 +12,17 @@
         "upcoming": "À venir"
     },
     "events": {
-        "open": "Ouvrir"
+        "open": "Ouvrir",
+        "back": "Retour aux événements",
+        "location": "Lieu",
+        "date": "Date",
+        "description": "Description",
+        "speakers": "Intervenants",
+        "stats": "Statistiques",
+        "registered": "Inscrits",
+        "attended": "Présents",
+        "noDescription": "Aucune description disponible",
+        "noLocation": "Lieu non spécifié",
+        "noSpeakers": "Aucun intervenant"
     }
 }
