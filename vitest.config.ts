@@ -17,7 +17,8 @@ export default defineConfig({
       'server/**/*.{spec,test}.ts',
       'tests/unit/**/*.{spec,test}.ts',
       'tests/nuxt/**/*.{spec,test}.ts',
-      'tests/integration/**/*.{spec,test}.ts'
+      'tests/integration/**/*.{spec,test}.ts',
+      'tests/integration-db/**/*.{spec,test}.ts'
     ],
     // Exclure node_modules, tests E2E et autres répertoires non pertinents
     exclude: [

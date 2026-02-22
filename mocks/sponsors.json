@@ -1,0 +1,4 @@
+[
+  {"id":"spo_001","companyName":"Tech Corp","contactName":"Jane Doe","contactEmail":"jane@example.com","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
+  {"id":"spo_002","companyName":"Startup.io","contactName":"Marie Dupont","contactEmail":"marie@startup.io","createdAt":"2025-02-18T09:15:00.000Z","updatedAt":"2025-02-18T09:15:00.000Z"}
+]

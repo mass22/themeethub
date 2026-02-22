@@ -1,11 +1,140 @@
 {
     "app": {
-        "title": "TheMeetHub EN"
+        "title": "TheMeetHub"
+    },
+    "home": {
+        "tagline": "The open-source platform to organize, manage, and grow your community meetups from one central hub.",
+        "ctaDashboard": "Dashboard",
+        "ctaRequests": "Requests",
+        "commandCenter": "Command center",
+        "createEvent": "Create event",
+        "inbox": "Inbox",
+        "calendar": "Calendar",
+        "upcomingEvents": "Upcoming events",
+        "noUpcomingEvents": "No upcoming events",
+        "inboxSummary": "Inbox summary",
+        "todosPromo": "Promo todos",
+        "todosLogistics": "Logistics todos",
+        "noPromoTodos": "No promo items due",
+        "noLogisticsTodos": "No logistics items pending",
+        "modules": "Modules"
     },
     "nav": {
         "dashboard": "Dashboard",
         "events": "Events",
-        "speakers": "Speakers"
+        "contacts": "Contacts",
+        "venues": "Venues",
+        "speakers": "Speakers",
+        "sponsors": "Sponsors",
+        "promo": "Promo",
+        "logistics": "Logistics",
+        "contractors": "Contractors",
+        "tools": "Tools",
+        "social": "Social",
+        "requests": "Requests"
+    },
+    "common": {
+        "create": "Create",
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "updatedAt": "Updated at"
+    },
+    "contacts": {
+        "create": "Create contact",
+        "back": "Back to contacts",
+        "form": {
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "notes": "Notes"
+        }
+    },
+    "venues": {
+        "create": "Create venue",
+        "back": "Back to venues",
+        "capacity": "Capacity",
+        "form": {
+            "name": "Name",
+            "address": "Address",
+            "capacity": "Capacity",
+            "notes": "Notes"
+        }
+    },
+    "contractors": {
+        "create": "Create contractor",
+        "back": "Back to contractors",
+        "rate": "Rate",
+        "form": {
+            "name": "Name",
+            "role": "Role",
+            "contact": "Contact",
+            "contactPlaceholder": "Contact ID (e.g. ctc_xxx)",
+            "rate": "Rate",
+            "notes": "Notes"
+        }
+    },
+    "tools": {
+        "create": "Create tool",
+        "back": "Back to tools",
+        "form": {
+            "name": "Name",
+            "type": "Type",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "promo": {
+        "create": "Create promo item",
+        "back": "Back to promo",
+        "form": {
+            "event": "Event",
+            "eventPlaceholder": "Select event",
+            "title": "Title",
+            "channel": "Channel",
+            "dueAt": "Due date",
+            "status": "Status",
+            "notes": "Notes"
+        }
+    },
+    "logistics": {
+        "create": "Create logistics item",
+        "back": "Back to logistics",
+        "form": {
+            "event": "Event",
+            "eventPlaceholder": "Select event",
+            "name": "Name",
+            "category": "Category",
+            "status": "Status",
+            "notes": "Notes"
+        }
+    },
+    "social": {
+        "create": "Create social post",
+        "back": "Back to social",
+        "form": {
+            "event": "Event",
+            "eventPlaceholder": "Select event",
+            "platform": "Platform",
+            "copy": "Copy",
+            "scheduledAt": "Scheduled at"
+        }
+    },
+    "status": {
+        "promo": {
+            "todo": "Todo",
+            "in_progress": "In progress",
+            "done": "Done"
+        },
+        "logistics": {
+            "todo": "Todo",
+            "ready": "Ready",
+            "done": "Done"
+        },
+        "social": {
+            "draft": "Draft",
+            "scheduled": "Scheduled",
+            "posted": "Posted"
+        }
     },
     "dashboard": {
         "title": "Dashboard",
@@ -23,9 +152,91 @@
         "attended": "Attended",
         "noDescription": "No description available",
         "noLocation": "Location not specified",
-        "noSpeakers": "No speakers"
+        "noSpeakers": "No speakers",
+        "hub": {
+            "venue": "Venue",
+            "sponsors": "Sponsors",
+            "promo": "Promo",
+            "logistics": "Logistics",
+            "contractors": "Contractors",
+            "tools": "Tools",
+            "social": "Social",
+            "add": "Add",
+            "empty": "None"
+        }
     },
     "speakers": {
-        "create": "Create speaker"
+        "create": "Create speaker",
+        "detail": "Speaker detail",
+        "back": "Back to speakers",
+        "form": {
+            "name": "Name",
+            "namePlaceholder": "Speaker name",
+            "role": "Role",
+            "rolePlaceholder": "Job title or role",
+            "bio": "Bio",
+            "bioPlaceholder": "Short biography",
+            "avatar": "Avatar URL",
+            "avatarPlaceholder": "https://...",
+            "submit": "Create speaker",
+            "cancel": "Cancel"
+        },
+        "topics": "Topics",
+        "socials": "Social links",
+        "noBio": "No biography"
+    },
+    "sponsors": {
+        "create": "Create sponsor",
+        "open": "Open",
+        "back": "Back to sponsors",
+        "updatedAt": "Updated at",
+        "form": {
+            "companyName": "Company name",
+            "companyNamePlaceholder": "Company name",
+            "contactName": "Contact name",
+            "contactNamePlaceholder": "Contact person name",
+            "contactEmail": "Contact email",
+            "contactEmailPlaceholder": "email{'@'}company.com",
+            "submit": "Create sponsor",
+            "cancel": "Cancel",
+            "notes": "Notes"
+        }
+    },
+    "requests": {
+        "title": "Requests",
+        "back": "Back to requests",
+        "open": "Open",
+        "empty": "No requests for this status",
+        "createdAt": "Created at",
+        "email": "Email",
+        "companyName": "Company",
+        "companyLabel": "Company",
+        "role": "Role",
+        "roleLabel": "Role",
+        "tabs": {
+            "all": "All",
+            "sponsors": "Sponsors",
+            "speakers": "Speakers"
+        },
+        "badge": {
+            "sponsor": "Sponsor",
+            "speaker": "Speaker"
+        },
+        "statusLabel": "Status",
+        "nextStatus": "Move to {status}",
+        "reject": "Reject",
+        "convertToSponsor": "Convert to Sponsor",
+        "convertToSpeaker": "Convert to Speaker",
+        "notFound": "Request not found",
+        "error": "Error",
+        "errorLoad": "Error loading request",
+        "status": {
+            "new": "New",
+            "exploring_call": "Exploring call",
+            "validated": "Validated",
+            "in_progress": "In progress",
+            "closed": "Closed",
+            "rejected": "Rejected"
+        }
     }
 }

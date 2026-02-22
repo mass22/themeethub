@@ -6,7 +6,8 @@ const schema = z.object({
   date: z.string().min(1, 'La date est requise'),
   slug: z.string().min(3, 'Le slug doit contenir au moins 3 caractères').regex(/^[a-z0-9-]+$/, 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets'),
   location: z.string().optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
+  speakers: z.array(z.string()).default([])
 })
 
 const state = reactive({
@@ -14,8 +15,12 @@ const state = reactive({
   date: '',
   slug: '',
   location: '',
-  description: ''
+  description: '',
+  speakerIds: [] as string[]
 })
+
+const events = useEventsStore()
+const speakersStore = useSpeakersStore()
 
 const errors = reactive({
   title: '',
@@ -27,8 +32,15 @@ const errors = reactive({
 
 const pending = ref(false)
 const router = useRouter()
-const events = useEventsStore()
 const { add: addToast } = useToast()
+
+onMounted(async () => {
+  await speakersStore.fetchAll()
+})
+
+const speakerOptions = computed(() =>
+  speakersStore.items.map((s) => ({ label: s.role ? `${s.name} (${s.role})` : s.name, value: s.id }))
+)
 
 // Fonction pour valider un champ spécifique
 function validateField(field: keyof typeof state) {
@@ -45,7 +57,7 @@ function validateField(field: keyof typeof state) {
 
 // Fonction pour valider tout le formulaire
 function validateForm() {
-  const result = schema.safeParse(state)
+  const result = schema.safeParse({ ...state, speakers: state.speakerIds })
 
   if (!result.success) {
     // Réinitialiser toutes les erreurs
@@ -81,8 +93,12 @@ async function onSubmit () {
   pending.value = true
   try {
     const created = await events.create({
-      ...state,
-      speakers: []
+      title: state.title,
+      date: state.date,
+      slug: state.slug,
+      location: state.location || undefined,
+      description: state.description || undefined,
+      speakers: state.speakerIds
     })
     addToast({ title: 'Événement créé avec succès', color: 'success' })
     router.push(`/events/${created.id}`)
@@ -146,6 +162,18 @@ async function onSubmit () {
           @blur="validateField('location')"
         />
         <p v-if="errors.location" class="text-sm text-red-600 mt-1">{{ errors.location }}</p>
+      </div>
+
+      <div>
+        <label for="speakers" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.speakers') }}</label>
+        <USelectMenu
+          v-model="state.speakerIds"
+          :items="speakerOptions"
+          multiple
+          value-key="value"
+          placeholder="Sélectionner des intervenants"
+          class="w-full"
+        />
       </div>
 
       <div>

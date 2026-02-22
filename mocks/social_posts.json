@@ -1,0 +1,5 @@
+[
+  {"id":"soc_001","eventId":"evt_001","platform":"LinkedIn","copy":"Rejoignez-nous pour Vue Montréal #1 ! Premier meetup de la saison avec Alex Lichter. 🚀","scheduledAt":"2025-09-09T12:00:00.000Z","status":"draft","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
+  {"id":"soc_002","eventId":"evt_001","platform":"Twitter","copy":"Vue Montréal #1 arrive ! 10 sept, 19h. Inscriptions ouvertes 👇","scheduledAt":"2025-09-08T18:00:00.000Z","status":"scheduled","createdAt":"2025-02-21T09:00:00.000Z","updatedAt":"2025-02-21T09:00:00.000Z"},
+  {"id":"soc_003","eventId":"evt_001","platform":"LinkedIn","copy":"Merci à tous les participants de Vue Montréal #1 !","status":"posted","createdAt":"2025-02-22T10:00:00.000Z","updatedAt":"2025-02-22T10:00:00.000Z"}
+]

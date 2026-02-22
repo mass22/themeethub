@@ -5,6 +5,8 @@
 > **The open-source platform to organize, manage, and grow your community meetups from one central hub.**  
 > Plateforme open source pour organiser, gérer et développer vos meetups communautaires.
 
+**Default branch:** `master`
+
 ---
 
 ## ✨ Features
@@ -52,6 +54,10 @@ Copy `.env.example` to `.env` and update values (API keys, DB connection, etc.):
 ```bash
 cp .env.example .env
 ```
+
+**Data source (useMocks):**  
+- `NUXT_USE_MOCKS=true` (default) — uses JSON files in `mocks/`, no database required.  
+- `NUXT_USE_MOCKS=false` — uses Prisma with `DATABASE_URL` (SQLite or PostgreSQL).
 
 ### 4. Run the dev server
 

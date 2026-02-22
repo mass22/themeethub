@@ -1,0 +1,4 @@
+[
+  {"id":"ctc_001","name":"Jean Tremblay","email":"jean@vuedev.ca","phone":"+1 514 555 0100","tags":["organizer"],"notes":"","createdAt":"2025-02-01T10:00:00.000Z","updatedAt":"2025-02-01T10:00:00.000Z"},
+  {"id":"ctc_002","name":"Sophie Martin","email":"sophie@meetup.com","phone":"+1 514 555 0101","tags":["logistics"],"notes":"","createdAt":"2025-02-05T14:00:00.000Z","updatedAt":"2025-02-05T14:00:00.000Z"}
+]

@@ -1,0 +1,4 @@
+[
+  {"id":"ven_001","name":"Espace Vue Montréal","address":"123 Rue Saint-Laurent, Montréal QC","capacity":80,"contactId":"ctc_001","notes":"Salle principale avec projecteur","createdAt":"2025-01-15T09:00:00.000Z","updatedAt":"2025-01-15T09:00:00.000Z"},
+  {"id":"ven_002","name":"Café Tech Hochelaga","address":"456 Avenue Hochelaga, Montréal QC","capacity":40,"notes":"Espace cosy, wifi inclus","createdAt":"2025-02-01T11:00:00.000Z","updatedAt":"2025-02-01T11:00:00.000Z"}
+]

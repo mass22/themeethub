@@ -1,0 +1,29 @@
+[
+  {
+    "id": "req_001",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "type": "sponsor",
+    "companyName": "Tech Corp",
+    "status": "new",
+    "createdAt": "2025-02-20T10:00:00.000Z"
+  },
+  {
+    "id": "req_002",
+    "name": "John Smith",
+    "email": "john@example.com",
+    "type": "speaker",
+    "role": "Tech Lead",
+    "status": "exploring_call",
+    "createdAt": "2025-02-19T14:30:00.000Z"
+  },
+  {
+    "id": "req_003",
+    "name": "Marie Dupont",
+    "email": "marie@startup.io",
+    "type": "sponsor",
+    "companyName": "Startup.io",
+    "status": "validated",
+    "createdAt": "2025-02-18T09:15:00.000Z"
+  }
+]

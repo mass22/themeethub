@@ -14,7 +14,15 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     loaded.value = true
   }
 
-  const create = async (payload: Partial<Speaker>) => {
+  const fetchById = async (id: string) => {
+    const cached = items.value.find((s) => s.id === id)
+    if (cached) return cached
+    const s = await $fetch<Speaker>(`/api/speakers/${id}`)
+    if (!items.value.find((x) => x.id === s.id)) items.value.push(s)
+    return s
+  }
+
+  const create = async (payload: Omit<Speaker, 'id' | 'createdAt' | 'updatedAt'>) => {
     const created = await $fetch<Speaker>('/api/speakers', { method: 'POST', body: payload })
     items.value.push(created)
     return created
@@ -29,6 +37,7 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     loaded,
     // Actions
     fetchAll,
+    fetchById,
     create,
     // Getters
     byId

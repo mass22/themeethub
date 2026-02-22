@@ -1,9 +1,12 @@
 export interface Speaker {
   id: string
   name: string
+  role?: string
   bio?: string
   avatar?: string
+  contactId?: string
   socials?: { x?: string; linkedin?: string; website?: string }
   topics?: string[]
-  history?: string[] // event ids
+  createdAt: string
+  updatedAt: string
 }

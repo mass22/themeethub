@@ -2,10 +2,139 @@
     "app": {
         "title": "TheMeetHub"
     },
+    "home": {
+        "tagline": "La plateforme open source pour organiser, gérer et développer vos meetups communautaires.",
+        "ctaDashboard": "Tableau de bord",
+        "ctaRequests": "Demandes",
+        "commandCenter": "Centre de commande",
+        "createEvent": "Créer un événement",
+        "inbox": "Boîte de réception",
+        "calendar": "Calendrier",
+        "upcomingEvents": "Prochains événements",
+        "noUpcomingEvents": "Aucun événement à venir",
+        "inboxSummary": "Résumé boîte de réception",
+        "todosPromo": "Tâches promo",
+        "todosLogistics": "Tâches logistique",
+        "noPromoTodos": "Aucun item promo à faire",
+        "noLogisticsTodos": "Aucun item logistique en attente",
+        "modules": "Modules"
+    },
     "nav": {
         "dashboard": "Tableau de bord",
         "events": "Événements",
-        "speakers": "Intervenants"
+        "contacts": "Contacts",
+        "venues": "Lieux",
+        "speakers": "Intervenants",
+        "sponsors": "Sponsors",
+        "promo": "Promo",
+        "logistics": "Logistique",
+        "contractors": "Prestataires",
+        "tools": "Outils",
+        "social": "Réseaux",
+        "requests": "Demandes"
+    },
+    "common": {
+        "create": "Créer",
+        "submit": "Enregistrer",
+        "cancel": "Annuler",
+        "updatedAt": "Modifié le"
+    },
+    "contacts": {
+        "create": "Créer un contact",
+        "back": "Retour aux contacts",
+        "form": {
+            "name": "Nom",
+            "email": "Email",
+            "phone": "Téléphone",
+            "notes": "Notes"
+        }
+    },
+    "venues": {
+        "create": "Créer un lieu",
+        "back": "Retour aux lieux",
+        "capacity": "Capacité",
+        "form": {
+            "name": "Nom",
+            "address": "Adresse",
+            "capacity": "Capacité",
+            "notes": "Notes"
+        }
+    },
+    "contractors": {
+        "create": "Créer un prestataire",
+        "back": "Retour aux prestataires",
+        "rate": "Taux",
+        "form": {
+            "name": "Nom",
+            "role": "Rôle",
+            "contact": "Contact",
+            "contactPlaceholder": "ID contact (ex: ctc_xxx)",
+            "rate": "Taux",
+            "notes": "Notes"
+        }
+    },
+    "tools": {
+        "create": "Créer un outil",
+        "back": "Retour aux outils",
+        "form": {
+            "name": "Nom",
+            "type": "Type",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "promo": {
+        "create": "Créer un item promo",
+        "back": "Retour à la promo",
+        "form": {
+            "event": "Événement",
+            "eventPlaceholder": "Sélectionner un événement",
+            "title": "Titre",
+            "channel": "Canal",
+            "dueAt": "Échéance",
+            "status": "Statut",
+            "notes": "Notes"
+        }
+    },
+    "logistics": {
+        "create": "Créer un item logistique",
+        "back": "Retour à la logistique",
+        "form": {
+            "event": "Événement",
+            "eventPlaceholder": "Sélectionner un événement",
+            "name": "Nom",
+            "category": "Catégorie",
+            "status": "Statut",
+            "notes": "Notes"
+        }
+    },
+    "social": {
+        "create": "Créer une publication",
+        "back": "Retour aux publications",
+        "form": {
+            "event": "Événement",
+            "eventPlaceholder": "Sélectionner un événement",
+            "platform": "Plateforme",
+            "copy": "Texte",
+            "scheduledAt": "Date de publication"
+        }
+    },
+    "status": {
+        "promo": {
+            "todo": "À faire",
+            "in_progress": "En cours",
+            "done": "Terminé"
+        },
+        "logistics": {
+            "todo": "À faire",
+            "ready": "Prêt",
+            "done": "Terminé"
+        },
+        "social": {
+            "draft": "Brouillon",
+            "scheduled": "Planifié",
+            "posted": "Publié"
+        }
     },
     "dashboard": {
         "title": "Dashboard",
@@ -23,9 +152,91 @@
         "attended": "Présents",
         "noDescription": "Aucune description disponible",
         "noLocation": "Lieu non spécifié",
-        "noSpeakers": "Aucun intervenant"
+        "noSpeakers": "Aucun intervenant",
+        "hub": {
+            "venue": "Lieu",
+            "sponsors": "Sponsors",
+            "promo": "Promo",
+            "logistics": "Logistique",
+            "contractors": "Prestataires",
+            "tools": "Outils",
+            "social": "Réseaux",
+            "add": "Ajouter",
+            "empty": "Aucun"
+        }
     },
     "speakers": {
-        "create": "Créer un intervenant"
+        "create": "Créer un intervenant",
+        "detail": "Détail intervenant",
+        "back": "Retour aux intervenants",
+        "form": {
+            "name": "Nom",
+            "namePlaceholder": "Nom de l'intervenant",
+            "role": "Rôle",
+            "rolePlaceholder": "Fonction ou titre",
+            "bio": "Biographie",
+            "bioPlaceholder": "Courte biographie",
+            "avatar": "URL de l'avatar",
+            "avatarPlaceholder": "https://...",
+            "submit": "Créer l'intervenant",
+            "cancel": "Annuler"
+        },
+        "topics": "Sujets",
+        "socials": "Réseaux sociaux",
+        "noBio": "Aucune biographie"
+    },
+    "sponsors": {
+        "create": "Créer un sponsor",
+        "open": "Ouvrir",
+        "back": "Retour aux sponsors",
+        "updatedAt": "Modifié le",
+        "form": {
+            "companyName": "Entreprise",
+            "companyNamePlaceholder": "Nom de l'entreprise",
+            "contactName": "Contact",
+            "contactNamePlaceholder": "Nom du contact",
+            "contactEmail": "Email du contact",
+            "contactEmailPlaceholder": "email{'@'}entreprise.com",
+            "submit": "Créer le sponsor",
+            "cancel": "Annuler",
+            "notes": "Notes"
+        }
+    },
+    "requests": {
+        "title": "Demandes",
+        "back": "Retour aux demandes",
+        "open": "Ouvrir",
+        "empty": "Aucune demande pour ce statut",
+        "createdAt": "Créé le",
+        "email": "Email",
+        "companyName": "Entreprise",
+        "companyLabel": "Entreprise",
+        "role": "Rôle",
+        "roleLabel": "Rôle",
+        "tabs": {
+            "all": "Toutes",
+            "sponsors": "Sponsors",
+            "speakers": "Intervenants"
+        },
+        "badge": {
+            "sponsor": "Sponsor",
+            "speaker": "Intervenant"
+        },
+        "statusLabel": "Statut",
+        "nextStatus": "Passer à {status}",
+        "reject": "Rejeter",
+        "convertToSponsor": "Convertir en Sponsor",
+        "convertToSpeaker": "Convertir en intervenant",
+        "notFound": "Demande non trouvée",
+        "error": "Erreur",
+        "errorLoad": "Erreur lors du chargement",
+        "status": {
+            "new": "Nouveau",
+            "exploring_call": "Exploration d'appel",
+            "validated": "Validé",
+            "in_progress": "En cours",
+            "closed": "Clôturé",
+            "rejected": "Rejeté"
+        }
     }
 }

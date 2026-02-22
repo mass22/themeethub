@@ -1,32 +1,53 @@
 <script setup lang="ts">
 import type { Event } from '~/types/event'
 import type { Speaker } from '~/types/speaker'
+import type { PromoItem } from '~/types/promoItem'
+import type { LogisticsItem } from '~/types/logisticsItem'
+import type { SocialPost } from '~/types/socialPost'
 
 const route = useRoute()
 const router = useRouter()
+const eventId = route.params.id as string
+
 const eventsStore = useEventsStore()
 const speakersStore = useSpeakersStore()
+const venuesStore = useVenuesStore()
+const sponsorsStore = useSponsorsStore()
+const promoStore = usePromoItemsStore()
+const logisticsStore = useLogisticsItemsStore()
+const contractorsStore = useContractorsStore()
+const toolsStore = useToolsStore()
+const socialStore = useSocialPostsStore()
 
-const eventId = route.params.id as string
 const event = ref<Event | null>(null)
 const speakers = ref<Speaker[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-// Récupérer l'événement et les speakers
+const linkedPromo = computed<PromoItem[]>(() =>
+  eventId ? promoStore.items.filter((p) => p.eventId === eventId) : []
+)
+const linkedLogistics = computed<LogisticsItem[]>(() =>
+  eventId ? logisticsStore.items.filter((l) => l.eventId === eventId) : []
+)
+const linkedSocial = computed<SocialPost[]>(() =>
+  eventId ? socialStore.items.filter((s) => s.eventId === eventId) : []
+)
+
 onMounted(async () => {
   try {
-    // Charger tous les événements si pas encore fait
-    if (!eventsStore.loaded) {
-      await eventsStore.fetchAll()
-    }
+    await Promise.all([
+      eventsStore.fetchAll(),
+      speakersStore.fetchAll(),
+      venuesStore.fetchAll(),
+      sponsorsStore.fetchAll(),
+      promoStore.fetchAll(),
+      logisticsStore.fetchAll(),
+      contractorsStore.fetchAll(),
+      toolsStore.fetchAll(),
+      socialStore.fetchAll()
+    ])
 
-    // Charger tous les speakers si pas encore fait
-    if (!speakersStore.loaded) {
-      await speakersStore.fetchAll()
-    }
-
-    // Trouver l'événement
     const foundEvent = eventsStore.byId(eventId)
     if (!foundEvent) {
       error.value = 'Événement non trouvé'
@@ -35,12 +56,9 @@ onMounted(async () => {
       return
     }
     event.value = foundEvent
-
-    // Récupérer les speakers de l'événement
-    speakers.value = event.value.speakers
+    speakers.value = foundEvent.speakers
       .map((speakerId: string) => speakersStore.byId(speakerId))
-      .filter((speaker): speaker is Speaker => speaker !== undefined)
-
+      .filter((s): s is Speaker => s !== undefined)
   } catch (err) {
     error.value = 'Erreur lors du chargement de l\'événement'
     console.error(err)
@@ -49,14 +67,10 @@ onMounted(async () => {
   }
 })
 
-// Navigation retour
-const goBack = () => {
-  router.push('/events')
-}
+const goBack = () => router.push('/events')
 
-// Formatage de la date
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('fr-FR', {
+const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString('fr-FR', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -64,24 +78,20 @@ const formatDate = (dateString: string) => {
     hour: '2-digit',
     minute: '2-digit'
   })
-}
+
+const addPromoLink = computed(() => ({ path: '/promo/new', query: { eventId } }))
+const addLogisticsLink = computed(() => ({ path: '/logistics/new', query: { eventId } }))
+const addSocialLink = computed(() => ({ path: '/social/new', query: { eventId } }))
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
-    <!-- Bouton retour -->
     <div class="mb-6">
-      <UButton
-        @click="goBack"
-        variant="soft"
-        icon="i-heroicons-arrow-left"
-        class="mb-4"
-      >
+      <UButton @click="goBack" variant="soft" icon="i-heroicons-arrow-left" class="mb-4">
         {{ $t('events.back') }}
       </UButton>
     </div>
 
-    <!-- Contenu principal -->
     <div v-if="loading" class="flex justify-center items-center py-12">
       <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
     </div>
@@ -97,20 +107,17 @@ const formatDate = (dateString: string) => {
       <div class="bg-white rounded-lg shadow-sm border p-8 mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ event.title }}</h1>
 
-        <!-- Informations principales -->
         <div class="grid md:grid-cols-2 gap-6 mb-6">
           <div>
             <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.date') }}</h3>
             <p class="text-lg text-gray-900">{{ formatDate(event.date) }}</p>
           </div>
-
           <div v-if="event.location">
             <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.location') }}</h3>
             <p class="text-lg text-gray-900">{{ event.location }}</p>
           </div>
         </div>
 
-        <!-- Description -->
         <div v-if="event.description" class="mb-6">
           <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.description') }}</h3>
           <p class="text-gray-900 leading-relaxed">{{ event.description }}</p>
@@ -119,31 +126,15 @@ const formatDate = (dateString: string) => {
           <p class="text-gray-500 italic">{{ $t('events.noDescription') }}</p>
         </div>
 
-        <!-- Liens externes -->
         <div v-if="event.zoomUrl || event.replayUrl" class="flex gap-4 mb-6">
-          <UButton
-            v-if="event.zoomUrl"
-            :to="event.zoomUrl"
-            target="_blank"
-            variant="solid"
-            color="info"
-            icon="i-simple-icons-zoom"
-          >
+          <UButton v-if="event.zoomUrl" :to="event.zoomUrl" target="_blank" variant="solid" color="info" icon="i-simple-icons-zoom">
             Rejoindre sur Zoom
           </UButton>
-
-          <UButton
-            v-if="event.replayUrl"
-            :to="event.replayUrl"
-            target="_blank"
-            variant="outline"
-            icon="i-heroicons-play"
-          >
+          <UButton v-if="event.replayUrl" :to="event.replayUrl" target="_blank" variant="outline" icon="i-heroicons-play">
             Voir le replay
           </UButton>
         </div>
 
-        <!-- Statistiques -->
         <div v-if="event.stats" class="bg-gray-50 rounded-lg p-4">
           <h3 class="text-sm font-medium text-gray-500 mb-3">{{ $t('events.stats') }}</h3>
           <div class="flex gap-6">
@@ -159,55 +150,120 @@ const formatDate = (dateString: string) => {
         </div>
       </div>
 
-      <!-- Section des speakers -->
-      <div v-if="speakers.length > 0" class="bg-white rounded-lg shadow-sm border p-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ $t('events.speakers') }}</h2>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="speaker in speakers"
-            :key="speaker.id"
-            class="bg-gray-50 rounded-lg p-6 hover:bg-gray-100 transition-colors"
-          >
-            <div class="flex items-center space-x-4">
-              <div v-if="speaker.avatar" class="flex-shrink-0">
-                <img
-                  :src="speaker.avatar"
-                  :alt="speaker.name"
-                  class="h-12 w-12 rounded-full object-cover"
-                />
-              </div>
-              <div v-else class="flex-shrink-0">
-                <div class="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                  <UIcon name="i-heroicons-user" class="h-6 w-6 text-blue-600" />
-                </div>
-              </div>
-
-              <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-semibold text-gray-900 truncate">{{ speaker.name }}</h3>
-                <p v-if="speaker.bio" class="text-sm text-gray-600 line-clamp-2">{{ speaker.bio }}</p>
-
-                <!-- Topics -->
-                <div v-if="speaker.topics && speaker.topics.length > 0" class="mt-2">
-                  <div class="flex flex-wrap gap-1">
-                    <span
-                      v-for="topic in speaker.topics.slice(0, 3)"
-                      :key="topic"
-                      class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                    >
-                      {{ topic }}
-                    </span>
-                  </div>
-                </div>
-              </div>
+      <!-- Hub: sections liées -->
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Venue / Location -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.venue') }}</h3>
             </div>
-          </div>
-        </div>
-      </div>
+          </template>
+          <p v-if="event.location" class="text-gray-700">{{ event.location }}</p>
+          <p v-else class="text-gray-500 italic">{{ $t('events.noLocation') }}</p>
+        </UCard>
 
-      <div v-else class="bg-white rounded-lg shadow-sm border p-8 text-center">
-        <UIcon name="i-heroicons-users" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-        <p class="text-gray-500">{{ $t('events.noSpeakers') }}</p>
+        <!-- Speakers -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.speakers') }}</h3>
+              <UButton size="xs" to="/speakers/new" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <ul v-if="speakers.length > 0" class="space-y-2">
+            <li v-for="s in speakers" :key="s.id">
+              <NuxtLink :to="`/speakers/${s.id}`" class="text-primary hover:underline">{{ s.name }}</NuxtLink>
+            </li>
+          </ul>
+          <p v-else class="text-gray-500 italic">{{ $t('events.noSpeakers') }}</p>
+        </UCard>
+
+        <!-- Sponsors -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.sponsors') }}</h3>
+              <UButton size="xs" to="/sponsors/new" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <p class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Promo -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.promo') }}</h3>
+              <UButton size="xs" :to="addPromoLink" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <ul v-if="linkedPromo.length > 0" class="space-y-2">
+            <li v-for="p in linkedPromo" :key="p.id">
+              <NuxtLink :to="`/promo/${p.id}`" class="text-primary hover:underline">{{ p.title }}</NuxtLink>
+              <UBadge :label="$t(`status.promo.${p.status}`)" size="xs" class="ml-2" />
+            </li>
+          </ul>
+          <p v-else class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Logistics -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.logistics') }}</h3>
+              <UButton size="xs" :to="addLogisticsLink" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <ul v-if="linkedLogistics.length > 0" class="space-y-2">
+            <li v-for="l in linkedLogistics" :key="l.id">
+              <NuxtLink :to="`/logistics/${l.id}`" class="text-primary hover:underline">{{ l.name }}</NuxtLink>
+              <UBadge :label="$t(`status.logistics.${l.status}`)" size="xs" class="ml-2" />
+            </li>
+          </ul>
+          <p v-else class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Contractors -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.contractors') }}</h3>
+              <UButton size="xs" to="/contractors/new" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <p class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Tools -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.tools') }}</h3>
+              <UButton size="xs" to="/tools/new" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <p class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Social -->
+        <UCard>
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold">{{ $t('events.hub.social') }}</h3>
+              <UButton size="xs" :to="addSocialLink" variant="soft">{{ $t('events.hub.add') }}</UButton>
+            </div>
+          </template>
+          <ul v-if="linkedSocial.length > 0" class="space-y-2">
+            <li v-for="s in linkedSocial" :key="s.id">
+              <NuxtLink :to="`/social/${s.id}`" class="text-primary hover:underline">
+                {{ s.platform || s.copy?.slice(0, 40) || s.id }}
+              </NuxtLink>
+              <UBadge :label="$t(`status.social.${s.status}`)" size="xs" class="ml-2" />
+            </li>
+          </ul>
+          <p v-else class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
+        </UCard>
       </div>
     </div>
   </div>

@@ -27,3 +27,7 @@ coverage/
 .env
 .env.*
 !.env.example
+
+# SQLite database (dev local)
+prisma/dev.db
+*.db

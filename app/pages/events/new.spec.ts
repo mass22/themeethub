@@ -27,6 +27,16 @@ vi.mock('~/store/events', () => ({
   useEventsStore: () => mockEventsStore
 }))
 
+const mockSpeakersStore = {
+  items: [],
+  fetchAll: vi.fn(),
+  loaded: false
+}
+
+vi.mock('~/store/speakers', () => ({
+  useSpeakersStore: () => mockSpeakersStore
+}))
+
 describe('NewEvent page', () => {
   let wrapper: VueWrapper
 
@@ -36,6 +46,7 @@ describe('NewEvent page', () => {
 
     wrapper = mount(NewEvent, {
       global: {
+        mocks: { $t: (k: string) => k },
         stubs: {
           UInput: {
             template: '<input v-bind="$attrs" />',
@@ -51,6 +62,10 @@ describe('NewEvent page', () => {
           },
           UCard: {
             template: '<div v-bind="$attrs"><slot /></div>',
+            inheritAttrs: false
+          },
+          USelectMenu: {
+            template: '<div data-testid="speakers-select">Speakers</div>',
             inheritAttrs: false
           }
         }
@@ -68,6 +83,7 @@ describe('NewEvent page', () => {
       expect(wrapper.find('label[for="date"]').text()).toBe('Date et heure')
       expect(wrapper.find('label[for="slug"]').text()).toBe('Slug')
       expect(wrapper.find('label[for="location"]').text()).toBe('Location')
+      expect(wrapper.find('label[for="speakers"]').exists()).toBe(true)
       expect(wrapper.find('label[for="description"]').text()).toBe('Description')
     })
 

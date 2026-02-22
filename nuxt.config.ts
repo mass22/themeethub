@@ -1,7 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
+  icon: { serverBundle: 'remote' },
   css: ['~/app/assets/css/main.css'],
   alias: {
     '@': '.',
@@ -22,6 +23,15 @@ export default defineNuxtConfig({
   },
   ssr: false,
 
+  vite: {
+    server: {
+      watch: {
+        usePolling: true,
+        interval: 1000
+      }
+    }
+  },
+
   i18n: {
     strategy: 'prefix_except_default',
     defaultLocale: 'fr',
@@ -35,6 +45,9 @@ export default defineNuxtConfig({
     useMocks: true,
     luma: { apiKey: '' },
     youtube: { apiKey: '' },
+    calSponsorLink: '',
+    calSpeakerLink: '',
+    fromEmail: '',
     public: { appName: 'TheMeetHub' }
   }
 })

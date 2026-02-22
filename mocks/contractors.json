@@ -1,0 +1,5 @@
+[
+  {"id":"cns_001","name":"Vidéo Pro MTL","role":"Vidéaste","contactId":"ctc_002","rate":150,"notes":"Enregistrement et montage","createdAt":"2025-02-10T08:00:00.000Z","updatedAt":"2025-02-10T08:00:00.000Z"},
+  {"id":"cns_002","name":"Catering Express","role":"Traiteur","rate":25,"notes":"Par personne, cocktail inclus","createdAt":"2025-02-12T10:00:00.000Z","updatedAt":"2025-02-12T10:00:00.000Z"},
+  {"id":"cns_003","name":"DesignLab","role":"Graphiste","rate":80,"notes":"Affiches et visuels promo","createdAt":"2025-02-15T14:00:00.000Z","updatedAt":"2025-02-15T14:00:00.000Z"}
+]

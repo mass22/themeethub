@@ -1,0 +1,50 @@
+// https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id           String   @id
+  title        String
+  slug         String   @unique
+  date         DateTime
+  location     String?
+  description  String?
+  lumaEventId  String?
+  zoomUrl      String?
+  replayUrl    String?
+  statsJson    String?  // JSON: { registered: number, attended: number }
+  speakersJson String   @default("[]") // JSON array of speaker ids
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Speaker {
+  id          String   @id
+  name        String
+  role        String?
+  bio         String?
+  avatar      String?
+  socialsJson String?
+  topicsJson  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Request {
+  id                        String    @id
+  name                      String
+  email                     String
+  type                      String // sponsor | speaker
+  companyName               String?
+  role                      String?
+  status                    String   @default("new")
+  createdAt                 DateTime @default(now())
+  exploringCallEmailSentAt  DateTime?
+  updatedAt                 DateTime @updatedAt
+}

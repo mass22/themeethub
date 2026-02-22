@@ -1,0 +1,5 @@
+[
+  {"id":"lgs_001","eventId":"evt_001","name":"Projecteur HD","category":"Équipement","ownerContactId":"ctc_002","status":"ready","notes":"Prévoir câble HDMI","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
+  {"id":"lgs_002","eventId":"evt_001","name":"Pizza et boissons","category":"Restauration","ownerContactId":"ctc_001","status":"todo","notes":"80 personnes estimées","createdAt":"2025-02-21T11:00:00.000Z","updatedAt":"2025-02-21T11:00:00.000Z"},
+  {"id":"lgs_003","eventId":"evt_001","name":"Badges participants","category":"Fournitures","status":"done","notes":"","createdAt":"2025-02-15T09:00:00.000Z","updatedAt":"2025-02-22T14:00:00.000Z"}
+]

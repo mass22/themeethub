@@ -4,8 +4,8 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 
 const filesToPatch = [
-  'node_modules/@vitejs/plugin-vue/dist/index.js',
-  'node_modules/vite/dist/node/chunks/dep-eRCq8YxU.js'
+  'node_modules/@vitejs/plugin-vue/dist/index.mjs',
+  'node_modules/vite/dist/node/chunks/config.js'
 ]
 
 let patchedCount = 0
@@ -28,23 +28,16 @@ for (const filePath of filesToPatch) {
       continue
     }
 
-    // Pour le plugin Vue
+    // Pour le plugin Vue (index.mjs - crypto déjà importé)
     if (filePath.includes('plugin-vue')) {
-      // Ajouter l'import de createHash au début si nécessaire
-      if (!content.includes('import { createHash } from "node:crypto"')) {
-        content = 'import { createHash } from "node:crypto";\n' + content
-      }
-
-      // Remplacer crypto.hash par createHash
       content = content.replace(
         'crypto.hash("sha256", text, "hex")',
-        'createHash("sha256").update(text).digest("hex")'
+        'crypto.createHash("sha256").update(text).digest("hex")'
       )
     }
 
-    // Pour Vite
-    if (filePath.includes('dep-eRCq8YxU.js')) {
-      // Remplacer crypto.hash par createHash pour Vite
+    // Pour Vite config.js (crypto.hash = API Node 21.7+, créer createHash pour compatibilité)
+    if (filePath.includes('vite') && filePath.includes('config.js')) {
       content = content.replace(
         /crypto\.hash\("sha256", ([^,]+), "hex"\)/g,
         'crypto.createHash("sha256").update($1).digest("hex")'
@@ -63,6 +56,5 @@ for (const filePath of filesToPatch) {
 console.log(`\n🎉 Patch terminé: ${patchedCount}/${filesToPatch.length} fichiers traités`)
 
 if (patchedCount === 0) {
-  console.log('⚠️  Aucun fichier n\'a pu être patché')
-  process.exit(1)
+  console.log('⚠️  Aucun fichier n\'a pu être patché (versions peut-être mises à jour)')
 }
