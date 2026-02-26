@@ -7,8 +7,12 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
   const loaded = ref(false)
 
   const fetchAll = async () => {
-    if (loaded.value) return
-    items.value = await $fetch<Sponsor[]>('/api/sponsors')
+    try {
+      items.value = await $fetch<Sponsor[]>('/api/sponsors')
+    } catch (e) {
+      console.error('[sponsors store] fetchAll failed:', e)
+      items.value = []
+    }
     loaded.value = true
   }
 

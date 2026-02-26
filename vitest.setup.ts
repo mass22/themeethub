@@ -93,11 +93,27 @@ if (!globalThis.useDataSource && process.env.NUXT_USE_MOCKS !== 'false') {
     listSocialPosts: vi.fn(() => []),
     getSocialPost: vi.fn(() => null),
     createSocialPost: vi.fn((data: any) => Promise.resolve({ id: 'soc_test', ...data, createdAt: '', updatedAt: '' })),
-    updateSocialPost: vi.fn((id: string, data: any) => Promise.resolve({ id, ...data }))
+    updateSocialPost: vi.fn((id: string, data: any) => Promise.resolve({ id, ...data })),
+    listExternalCommunities: vi.fn(() => []),
+    getExternalCommunity: vi.fn(() => null),
+    createExternalCommunity: vi.fn((data: any) => Promise.resolve({ id: 'ext_test', ...data, createdAt: '', updatedAt: '' })),
+    updateExternalCommunity: vi.fn((id: string, data: any) => Promise.resolve({ id, ...data })),
+    listExternalEvents: vi.fn(() => []),
+    getExternalEvent: vi.fn(() => null),
+    createExternalEvent: vi.fn((data: any) => Promise.resolve({ id: 'exe_test', ...data, createdAt: '', updatedAt: '' })),
+    updateExternalEvent: vi.fn((id: string, data: any) => Promise.resolve({ id, ...data })),
+    listParticipations: vi.fn(() => []),
+    getParticipation: vi.fn(() => null),
+    createParticipation: vi.fn((data: any) => Promise.resolve({ id: 'par_test', ...data, createdAt: '', updatedAt: '' })),
+    updateParticipation: vi.fn((id: string, data: any) => Promise.resolve({ id, ...data }))
   }))
 }
 
 // Auto-imports pour les composables Nuxt
+if (!globalThis.useLocalePath) {
+  globalThis.useLocalePath = () => (path: string) => path
+}
+
 if (!globalThis.useRouter) {
   globalThis.useRouter = () => ({
     push: vi.fn(),

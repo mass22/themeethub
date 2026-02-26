@@ -9,7 +9,12 @@ export const useRequestsStore = defineStore('requests', () => {
   const loaded = ref(false)
 
   const fetchAll = async () => {
-    items.value = await $fetch<Request[]>('/api/admin/requests')
+    try {
+      items.value = await $fetch<Request[]>('/api/admin/requests')
+    } catch (e) {
+      console.error('[requests store] fetchAll failed:', e)
+      items.value = []
+    }
     loaded.value = true
   }
 

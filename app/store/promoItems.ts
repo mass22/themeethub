@@ -26,7 +26,15 @@ export const usePromoItemsStore = defineStore('promoItems', () => {
     return created
   }
 
+  const patch = async (id: string, payload: Partial<Omit<PromoItem, 'id'>>) => {
+    const updated = await $fetch<PromoItem>(`/api/promo_items/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((x) => x.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    else items.value.push(updated)
+    return updated
+  }
+
   const byId = (id: string) => items.value.find((p) => p.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, byId }
 })

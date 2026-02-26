@@ -9,8 +9,12 @@ export const useEventsStore = defineStore('events', () => {
 
   // Actions
   const fetchAll = async () => {
-    if (loaded.value) return
-    items.value = await $fetch<Event[]>('/api/events')
+    try {
+      items.value = await $fetch<Event[]>('/api/events')
+    } catch (e) {
+      console.error('[events store] fetchAll failed:', e)
+      items.value = []
+    }
     loaded.value = true
   }
 

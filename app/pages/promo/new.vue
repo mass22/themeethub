@@ -5,16 +5,18 @@ import type { PromoItemStatus } from '~/types/promoItem'
 definePageMeta({ layout: 'default' })
 
 const schema = z.object({
-  eventId: z.string().min(1, 'Event required'),
+  eventId: z.string().optional(),
   title: z.string().min(1, 'Title required'),
   channel: z.string().optional(),
   dueAt: z.string().optional(),
   status: z.enum(['todo', 'in_progress', 'done']).default('todo'),
+  copy: z.string().optional(),
+  assetLinks: z.array(z.string()).optional(),
   notes: z.string().optional()
 })
 
 const route = useRoute()
-const state = reactive({ eventId: '', title: '', channel: '', dueAt: '', status: 'todo' as PromoItemStatus, notes: '' })
+const state = reactive({ eventId: '', title: '', channel: '', dueAt: '', status: 'todo' as PromoItemStatus, copy: '', assetLinksStr: '', notes: '' })
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
 const router = useRouter()
@@ -35,15 +37,20 @@ const eventOptions = computed(() =>
 )
 
 function validateForm() {
-  const result = schema.safeParse(state)
+  const payload = {
+    ...state,
+    eventId: state.eventId.trim() || undefined,
+    assetLinks: state.assetLinksStr ? state.assetLinksStr.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean) : undefined
+  }
+  const result = schema.safeParse(payload)
   if (!result.success) {
     result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as string
-      if (field && field in errors) errors[field] = issue.message
+      const field = (issue.path[0] === 'assetLinks' ? 'assetLinksStr' : issue.path[0]) as string
+      if (field && field in state) (errors as Record<string, string>)[field] = issue.message
     })
     return false
   }
-  Object.keys(errors).forEach((k) => { errors[k] = '' })
+  Object.keys(errors).forEach((k) => { (errors as Record<string, string>)[k] = '' })
   return true
 }
 
@@ -55,11 +62,13 @@ async function onSubmit() {
   pending.value = true
   try {
     const created = await store.create({
-      eventId: state.eventId,
+      eventId: state.eventId.trim() || undefined,
       title: state.title.trim(),
       channel: state.channel.trim() || undefined,
       dueAt: state.dueAt || undefined,
       status: state.status,
+      copy: state.copy.trim() || undefined,
+      assetLinks: state.assetLinksStr ? state.assetLinksStr.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean) : undefined,
       notes: state.notes.trim() || undefined
     })
     addToast({ title: 'Promo item created', color: 'success' })
@@ -77,7 +86,7 @@ async function onSubmit() {
     <h1 class="text-xl font-semibold mb-4">{{ $t('promo.create') }}</h1>
     <form @submit.prevent="onSubmit" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium mb-1">{{ $t('promo.form.event') }}</label>
+        <label class="block text-sm font-medium mb-1">{{ $t('promo.form.event') }} <span class="text-gray-400">({{ $t('common.optional') }})</span></label>
         <USelectMenu
           :model-value="eventOptions.find(o => o.value === state.eventId)"
           :items="eventOptions"
@@ -96,6 +105,14 @@ async function onSubmit() {
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('promo.form.channel') }}</label>
         <UInput v-model="state.channel" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ $t('promo.form.copy') }}</label>
+        <UTextarea v-model="state.copy" :rows="3" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ $t('promo.form.assetLinks') }}</label>
+        <UTextarea v-model="state.assetLinksStr" :rows="2" :placeholder="$t('promo.form.assetLinksPlaceholder')" />
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('promo.form.dueAt') }}</label>

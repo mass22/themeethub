@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
   components: [
     {
-      path: '~/components',
+      path: '~/app/components',
       pathPrefix: false,
     }
   ],

@@ -4,7 +4,7 @@ import type { SocialPostStatus } from '../../types/socialPost'
 const statusSchema = z.enum(['draft', 'scheduled', 'posted'] as [SocialPostStatus, ...SocialPostStatus[]])
 
 const schema = z.object({
-  eventId: z.string().min(1),
+  eventId: z.string().min(1).optional(),
   platform: z.string().optional(),
   copy: z.string().optional(),
   scheduledAt: z.string().optional(),

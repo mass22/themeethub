@@ -19,6 +19,7 @@ const logisticsStore = useLogisticsItemsStore()
 const INBOX_STATUSES = ['new', 'exploring_call', 'validated'] as const
 const MODULE_LINKS = [
   { to: '/events', key: 'nav.events' },
+  { to: '/calendar', key: 'nav.calendar' },
   { to: '/contacts', key: 'nav.contacts' },
   { to: '/venues', key: 'nav.venues' },
   { to: '/speakers', key: 'nav.speakers' },
@@ -97,7 +98,7 @@ const requestsLink = (status: string) => localePath(`/requests?status=${status}`
         <UButton :to="localePath('/requests')" variant="soft" size="sm">
           {{ t('home.inbox') }}
         </UButton>
-        <UButton :to="localePath('/events')" variant="soft" size="sm">
+        <UButton :to="localePath('/calendar')" variant="soft" size="sm">
           {{ t('home.calendar') }}
         </UButton>
       </div>

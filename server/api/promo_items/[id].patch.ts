@@ -9,6 +9,8 @@ const schema = z.object({
   channel: z.string().optional(),
   dueAt: z.string().optional(),
   status: statusSchema.optional(),
+  copy: z.string().optional(),
+  assetLinks: z.array(z.string()).optional(),
   notes: z.string().optional()
 })
 

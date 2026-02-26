@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import type { Event } from '~/types/event';
+import type { Event } from '~/types/event'
+
 defineProps<{ event: Event }>()
+const localePath = useLocalePath()
 </script>
 
 <template>
@@ -15,7 +17,7 @@ defineProps<{ event: Event }>()
     </div>
     <template #footer>
       <div class="p-4 pt-2">
-        <UButton :to="`/events/${event.id}`" variant="soft">{{ $t('events.open') }}</UButton>
+        <UButton :to="localePath(`/events/${event.id}`)" variant="soft">{{ $t('events.open') }}</UButton>
       </div>
     </template>
   </UCard>

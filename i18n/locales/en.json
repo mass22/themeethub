@@ -22,6 +22,7 @@
     "nav": {
         "dashboard": "Dashboard",
         "events": "Events",
+        "calendar": "Calendar",
         "contacts": "Contacts",
         "venues": "Venues",
         "speakers": "Speakers",
@@ -31,13 +32,15 @@
         "contractors": "Contractors",
         "tools": "Tools",
         "social": "Social",
-        "requests": "Requests"
+        "requests": "Requests",
+        "externalCommunities": "External communities"
     },
     "common": {
         "create": "Create",
         "submit": "Submit",
         "cancel": "Cancel",
-        "updatedAt": "Updated at"
+        "updatedAt": "Updated at",
+        "optional": "optional"
     },
     "contacts": {
         "create": "Create contact",
@@ -86,6 +89,12 @@
     "promo": {
         "create": "Create promo item",
         "back": "Back to promo",
+        "filterStatus": "Status",
+        "filterChannel": "Channel",
+        "empty": "No promo items",
+        "externalOpportunities": "External opportunities",
+        "noExternalOpportunities": "No upcoming external events",
+        "planParticipation": "Plan participation",
         "form": {
             "event": "Event",
             "eventPlaceholder": "Select event",
@@ -93,6 +102,9 @@
             "channel": "Channel",
             "dueAt": "Due date",
             "status": "Status",
+            "copy": "Copy",
+            "assetLinks": "Asset links",
+            "assetLinksPlaceholder": "URLs separated by commas or newlines",
             "notes": "Notes"
         }
     },
@@ -111,12 +123,63 @@
     "social": {
         "create": "Create social post",
         "back": "Back to social",
+        "postTitle": "Social post",
         "form": {
             "event": "Event",
             "eventPlaceholder": "Select event",
             "platform": "Platform",
             "copy": "Copy",
-            "scheduledAt": "Scheduled at"
+            "scheduledAt": "Scheduled at",
+            "assetLinks": "Asset links",
+            "assetLinksPlaceholder": "URLs separated by commas or newlines"
+        }
+    },
+    "externalCommunities": {
+        "title": "External communities",
+        "create": "Create community",
+        "back": "Back to communities",
+        "empty": "No external communities",
+        "events": "Events",
+        "noEvents": "No events for this community",
+        "form": {
+            "name": "Name",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "externalEvents": {
+        "title": "External events",
+        "create": "Create event",
+        "back": "Back to events",
+        "empty": "No external events",
+        "participations": "Participation plan",
+        "noParticipations": "No participation planned",
+        "form": {
+            "community": "Community",
+            "communityPlaceholder": "Select community",
+            "title": "Title",
+            "startAt": "Date",
+            "location": "Location",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "participations": {
+        "form": {
+            "intent": "Intent",
+            "followUpDueAt": "Follow-up due",
+            "notes": "Notes"
+        },
+        "intent": {
+            "attend": "Attend",
+            "network": "Network",
+            "ask_promo": "Ask for promo",
+            "propose_talk": "Propose a talk",
+            "sponsor": "Sponsor"
+        },
+        "status": {
+            "planned": "Planned",
+            "done": "Done"
         }
     },
     "status": {
@@ -140,8 +203,33 @@
         "title": "Dashboard",
         "upcoming": "Upcoming"
     },
+    "calendar": {
+        "title": "Agenda",
+        "rangeWeek": "Week",
+        "rangeMonth": "Month",
+        "filterAll": "All",
+        "filterEvent": "Event",
+        "filterPromo": "Promo",
+        "filterSocial": "Social",
+        "filterLogistics": "Logistics",
+        "filterExternalEvent": "External event",
+        "filterParticipation": "Participation",
+        "empty": "No items in this period",
+        "open": "Open",
+        "today": "Today",
+        "loading": "Loading...",
+        "legend": {
+            "event": "Event",
+            "promo": "Promo",
+            "logistics": "Logistics",
+            "social": "Social",
+            "external_event": "External event",
+            "participation": "Participation"
+        }
+    },
     "events": {
         "open": "Open",
+        "empty": "No events yet. Create one to get started.",
         "back": "Back to events",
         "location": "Location",
         "date": "Date",
@@ -187,6 +275,7 @@
     },
     "sponsors": {
         "create": "Create sponsor",
+        "empty": "No sponsors yet. Create one to get started.",
         "open": "Open",
         "back": "Back to sponsors",
         "updatedAt": "Updated at",

@@ -1,26 +1,16 @@
 <script setup lang="ts">
+import NavBar from '../components/NavBar.vue'
+
 const { t } = useI18n()
 </script>
 
 <template>
-  <UContainer class="py-6">
-    <header class="flex items-center justify-between mb-6">
-      <p class="text-xl font-semibold">{{ t('app.title') }}</p>
-
-      <ClientOnly>
-        <LangSwitcher />
-        <template #fallback>
-          <div class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md">
-            <span class="text-lg">🌐</span>
-            <span>Français</span>
-          </div>
-        </template>
-      </ClientOnly>
-    </header>
+  <div class="min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 w-full border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
       <NavBar />
-
-    <main>
+    </header>
+    <main class="flex-1 p-6">
       <slot />
     </main>
-  </UContainer>
+  </div>
 </template>

@@ -7,6 +7,7 @@ export interface LogisticsItem {
   category?: string
   ownerContactId?: string
   status: LogisticsItemStatus
+  dueAt?: string // ISO, optional
   notes?: string
   createdAt: string
   updatedAt: string

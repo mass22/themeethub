@@ -22,6 +22,7 @@
     "nav": {
         "dashboard": "Tableau de bord",
         "events": "Événements",
+        "calendar": "Calendrier",
         "contacts": "Contacts",
         "venues": "Lieux",
         "speakers": "Intervenants",
@@ -31,13 +32,15 @@
         "contractors": "Prestataires",
         "tools": "Outils",
         "social": "Réseaux",
-        "requests": "Demandes"
+        "requests": "Demandes",
+        "externalCommunities": "Communautés externes"
     },
     "common": {
         "create": "Créer",
         "submit": "Enregistrer",
         "cancel": "Annuler",
-        "updatedAt": "Modifié le"
+        "updatedAt": "Modifié le",
+        "optional": "optionnel"
     },
     "contacts": {
         "create": "Créer un contact",
@@ -86,6 +89,12 @@
     "promo": {
         "create": "Créer un item promo",
         "back": "Retour à la promo",
+        "filterStatus": "Statut",
+        "filterChannel": "Canal",
+        "empty": "Aucun item promo",
+        "externalOpportunities": "Opportunités externes",
+        "noExternalOpportunities": "Aucun événement externe à venir",
+        "planParticipation": "Planifier participation",
         "form": {
             "event": "Événement",
             "eventPlaceholder": "Sélectionner un événement",
@@ -93,6 +102,9 @@
             "channel": "Canal",
             "dueAt": "Échéance",
             "status": "Statut",
+            "copy": "Texte",
+            "assetLinks": "Liens médias",
+            "assetLinksPlaceholder": "URLs séparées par des virgules ou retours à la ligne",
             "notes": "Notes"
         }
     },
@@ -111,12 +123,63 @@
     "social": {
         "create": "Créer une publication",
         "back": "Retour aux publications",
+        "postTitle": "Publication",
         "form": {
             "event": "Événement",
             "eventPlaceholder": "Sélectionner un événement",
             "platform": "Plateforme",
             "copy": "Texte",
-            "scheduledAt": "Date de publication"
+            "scheduledAt": "Date de publication",
+            "assetLinks": "Liens médias",
+            "assetLinksPlaceholder": "URLs séparées par des virgules ou retours à la ligne"
+        }
+    },
+    "externalCommunities": {
+        "title": "Communautés externes",
+        "create": "Créer une communauté",
+        "back": "Retour aux communautés",
+        "empty": "Aucune communauté externe",
+        "events": "Événements",
+        "noEvents": "Aucun événement pour cette communauté",
+        "form": {
+            "name": "Nom",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "externalEvents": {
+        "title": "Événements externes",
+        "create": "Créer un événement",
+        "back": "Retour aux événements",
+        "empty": "Aucun événement externe",
+        "participations": "Plan de participation",
+        "noParticipations": "Aucune participation planifiée",
+        "form": {
+            "community": "Communauté",
+            "communityPlaceholder": "Sélectionner une communauté",
+            "title": "Titre",
+            "startAt": "Date",
+            "location": "Lieu",
+            "url": "URL",
+            "notes": "Notes"
+        }
+    },
+    "participations": {
+        "form": {
+            "intent": "Intention",
+            "followUpDueAt": "Suivi avant",
+            "notes": "Notes"
+        },
+        "intent": {
+            "attend": "Assister",
+            "network": "Réseautage",
+            "ask_promo": "Demander promo",
+            "propose_talk": "Proposer une conf",
+            "sponsor": "Sponsoriser"
+        },
+        "status": {
+            "planned": "Planifié",
+            "done": "Fait"
         }
     },
     "status": {
@@ -137,11 +200,36 @@
         }
     },
     "dashboard": {
-        "title": "Dashboard",
+        "title": "Tableau de bord",
         "upcoming": "À venir"
+    },
+    "calendar": {
+        "title": "Agenda",
+        "rangeWeek": "Semaine",
+        "rangeMonth": "Mois",
+        "filterAll": "Tous",
+        "filterEvent": "Événement",
+        "filterPromo": "Promo",
+        "filterSocial": "Réseaux",
+        "filterLogistics": "Logistique",
+        "filterExternalEvent": "Événement externe",
+        "filterParticipation": "Participation",
+        "empty": "Aucun élément dans cette période",
+        "open": "Ouvrir",
+        "today": "Aujourd'hui",
+        "loading": "Chargement...",
+        "legend": {
+            "event": "Événement",
+            "promo": "Promo",
+            "logistics": "Logistique",
+            "social": "Réseaux",
+            "external_event": "Événement externe",
+            "participation": "Participation"
+        }
     },
     "events": {
         "open": "Ouvrir",
+        "empty": "Aucun événement. Créez-en un pour commencer.",
         "back": "Retour aux événements",
         "location": "Lieu",
         "date": "Date",
@@ -187,6 +275,7 @@
     },
     "sponsors": {
         "create": "Créer un sponsor",
+        "empty": "Aucun sponsor. Créez-en un pour commencer.",
         "open": "Ouvrir",
         "back": "Retour aux sponsors",
         "updatedAt": "Modifié le",

@@ -9,6 +9,9 @@ import tools from '../../mocks/tools.json'
 import promoItems from '../../mocks/promo_items.json'
 import logisticsItems from '../../mocks/logistics_items.json'
 import socialPosts from '../../mocks/social_posts.json'
+import externalCommunities from '../../mocks/external_communities.json'
+import externalEvents from '../../mocks/external_events.json'
+import participations from '../../mocks/participations.json'
 import type { Event } from '../../types/event'
 import type { Speaker } from '../../types/speaker'
 import type { Sponsor } from '../../types/sponsor'
@@ -20,6 +23,9 @@ import type { Tool } from '../../types/tool'
 import type { PromoItem } from '../../types/promoItem'
 import type { LogisticsItem } from '../../types/logisticsItem'
 import type { SocialPost } from '../../types/socialPost'
+import type { ExternalCommunity } from '../../types/externalCommunity'
+import type { ExternalEvent } from '../../types/externalEvent'
+import type { Participation } from '../../types/participation'
 
 function randomId(prefix: string): string {
   return `${prefix}_${Math.random().toString(36).slice(2, 8)}`
@@ -77,6 +83,18 @@ export interface DataSource {
   getRequest(id: string): Promise<Request | null>
   createRequest(payload: { type: 'sponsor' | 'speaker'; name: string; email: string; companyName?: string; role?: string }): Promise<Request>
   patchRequestStatus(id: string, status: RequestStatus, options?: { exploringCallEmailSentAt?: string }): Promise<Request | null>
+  listExternalCommunities(): Promise<ExternalCommunity[]>
+  getExternalCommunity(id: string): Promise<ExternalCommunity | null>
+  createExternalCommunity(payload: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity>
+  updateExternalCommunity(id: string, payload: Partial<Omit<ExternalCommunity, 'id'>>): Promise<ExternalCommunity | null>
+  listExternalEvents(): Promise<ExternalEvent[]>
+  getExternalEvent(id: string): Promise<ExternalEvent | null>
+  createExternalEvent(payload: Omit<ExternalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalEvent>
+  updateExternalEvent(id: string, payload: Partial<Omit<ExternalEvent, 'id'>>): Promise<ExternalEvent | null>
+  listParticipations(): Promise<Participation[]>
+  getParticipation(id: string): Promise<Participation | null>
+  createParticipation(payload: Omit<Participation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Participation>
+  updateParticipation(id: string, payload: Partial<Omit<Participation, 'id'>>): Promise<Participation | null>
 }
 
 function createMockDataSource(): DataSource {
@@ -324,6 +342,63 @@ function createMockDataSource(): DataSource {
       }
       ;(requests as Request[]).push(r)
       return r
+    },
+    async listExternalCommunities(): Promise<ExternalCommunity[]> {
+      return externalCommunities as ExternalCommunity[]
+    },
+    async getExternalCommunity(id: string): Promise<ExternalCommunity | null> {
+      return (externalCommunities as ExternalCommunity[]).find((c) => c.id === id) ?? null
+    },
+    async createExternalCommunity(payload: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity> {
+      const id = randomId('ext')
+      const now = new Date().toISOString()
+      const c: ExternalCommunity = { id, ...payload, createdAt: now, updatedAt: now }
+      ;(externalCommunities as ExternalCommunity[]).push(c)
+      return c
+    },
+    async updateExternalCommunity(id: string, payload: Partial<Omit<ExternalCommunity, 'id'>>): Promise<ExternalCommunity | null> {
+      const c = (externalCommunities as ExternalCommunity[]).find((x) => x.id === id)
+      if (!c) return null
+      Object.assign(c, payload, { updatedAt: new Date().toISOString() })
+      return c
+    },
+    async listExternalEvents(): Promise<ExternalEvent[]> {
+      return externalEvents as ExternalEvent[]
+    },
+    async getExternalEvent(id: string): Promise<ExternalEvent | null> {
+      return (externalEvents as ExternalEvent[]).find((e) => e.id === id) ?? null
+    },
+    async createExternalEvent(payload: Omit<ExternalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalEvent> {
+      const id = randomId('exe')
+      const now = new Date().toISOString()
+      const e: ExternalEvent = { id, ...payload, createdAt: now, updatedAt: now }
+      ;(externalEvents as ExternalEvent[]).push(e)
+      return e
+    },
+    async updateExternalEvent(id: string, payload: Partial<Omit<ExternalEvent, 'id'>>): Promise<ExternalEvent | null> {
+      const e = (externalEvents as ExternalEvent[]).find((x) => x.id === id)
+      if (!e) return null
+      Object.assign(e, payload, { updatedAt: new Date().toISOString() })
+      return e
+    },
+    async listParticipations(): Promise<Participation[]> {
+      return participations as Participation[]
+    },
+    async getParticipation(id: string): Promise<Participation | null> {
+      return (participations as Participation[]).find((p) => p.id === id) ?? null
+    },
+    async createParticipation(payload: Omit<Participation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Participation> {
+      const id = randomId('par')
+      const now = new Date().toISOString()
+      const p: Participation = { id, ...payload, status: payload.status ?? 'planned', createdAt: now, updatedAt: now }
+      ;(participations as Participation[]).push(p)
+      return p
+    },
+    async updateParticipation(id: string, payload: Partial<Omit<Participation, 'id'>>): Promise<Participation | null> {
+      const p = (participations as Participation[]).find((x) => x.id === id)
+      if (!p) return null
+      Object.assign(p, payload, { updatedAt: new Date().toISOString() })
+      return p
     }
   }
 }
@@ -514,6 +589,18 @@ function createPrismaDataSource(): DataSource {
     async getSocialPost(_id: string): Promise<SocialPost | null> { return null },
     async createSocialPost(_p: Omit<SocialPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<SocialPost> { throw new Error('SocialPosts DB not implemented yet') },
     async updateSocialPost(_id: string, _p: Partial<Omit<SocialPost, 'id'>>): Promise<SocialPost | null> { throw new Error('SocialPosts DB not implemented yet') },
+    async listExternalCommunities(): Promise<ExternalCommunity[]> { return [] },
+    async getExternalCommunity(_id: string): Promise<ExternalCommunity | null> { return null },
+    async createExternalCommunity(_p: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity> { throw new Error('ExternalCommunities DB not implemented yet') },
+    async updateExternalCommunity(_id: string, _p: Partial<Omit<ExternalCommunity, 'id'>>): Promise<ExternalCommunity | null> { throw new Error('ExternalCommunities DB not implemented yet') },
+    async listExternalEvents(): Promise<ExternalEvent[]> { return [] },
+    async getExternalEvent(_id: string): Promise<ExternalEvent | null> { return null },
+    async createExternalEvent(_p: Omit<ExternalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalEvent> { throw new Error('ExternalEvents DB not implemented yet') },
+    async updateExternalEvent(_id: string, _p: Partial<Omit<ExternalEvent, 'id'>>): Promise<ExternalEvent | null> { throw new Error('ExternalEvents DB not implemented yet') },
+    async listParticipations(): Promise<Participation[]> { return [] },
+    async getParticipation(_id: string): Promise<Participation | null> { return null },
+    async createParticipation(_p: Omit<Participation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Participation> { throw new Error('Participations DB not implemented yet') },
+    async updateParticipation(_id: string, _p: Partial<Omit<Participation, 'id'>>): Promise<Participation | null> { throw new Error('Participations DB not implemented yet') },
     async listRequests(filters?: ListRequestsFilters): Promise<Request[]> {
       const where: { type?: string; status?: string } = {}
       if (filters?.type) where.type = filters.type

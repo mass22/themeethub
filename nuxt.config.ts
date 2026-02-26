@@ -1,26 +1,20 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-    compatibilityDate: '2025-07-15',
+  compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
+  srcDir: 'app',
   icon: { serverBundle: 'remote' },
   css: ['~/app/assets/css/main.css'],
   alias: {
-    '@': '.',
     '~': '.',
-    '@@': '.',
-    '~~': '.'
+    '@': '.'
   },
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
-  // '@nuxt/content' temporairement désactivé - incompatible avec Nuxt 4
+  plugins: ['~/app/plugins/fullcalendar.client.ts'],
   components: [
-    {
-      path: '~/components',
-      pathPrefix: false,
-    }
+    { path: 'app/components', pathPrefix: false }
   ],
-  imports: {
-    dirs: ['store']
-  },
+  imports: { dirs: ['store'] },
   ssr: false,
 
   vite: {

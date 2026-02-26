@@ -1,5 +1,7 @@
 [
-  {"id":"prm_001","eventId":"evt_001","title":"Annonce Twitter/X","channel":"Twitter","dueAt":"2025-09-08T18:00:00.000Z","status":"todo","notes":"Thread de présentation","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
+  {"id":"prm_001","eventId":"evt_001","title":"Annonce Twitter/X","channel":"Twitter","dueAt":"2025-09-08T18:00:00.000Z","status":"todo","copy":"Vue Montréal #1 - Inscriptions ouvertes !","notes":"Thread de présentation","assetLinks":["https://example.com/banner.png"],"createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
   {"id":"prm_002","eventId":"evt_001","title":"Post LinkedIn","channel":"LinkedIn","dueAt":"2025-09-07T12:00:00.000Z","status":"in_progress","notes":"","createdAt":"2025-02-21T09:00:00.000Z","updatedAt":"2025-02-21T09:00:00.000Z"},
-  {"id":"prm_003","eventId":"evt_001","title":"Newsletter communauté","channel":"Email","dueAt":"2025-09-05T10:00:00.000Z","status":"done","notes":"","createdAt":"2025-02-18T14:00:00.000Z","updatedAt":"2025-02-22T11:00:00.000Z"}
+  {"id":"prm_003","eventId":"evt_001","title":"Newsletter communauté","channel":"Email","dueAt":"2025-09-05T10:00:00.000Z","status":"done","copy":"Résumé de la saison passée","notes":"","createdAt":"2025-02-18T14:00:00.000Z","updatedAt":"2025-02-22T11:00:00.000Z"},
+  {"id":"prm_004","title":"Post général sans événement","channel":"Newsletter","dueAt":"2025-09-10T09:00:00.000Z","status":"todo","notes":"Campagne hors événement","createdAt":"2025-02-22T08:00:00.000Z","updatedAt":"2025-02-22T08:00:00.000Z"},
+  {"id":"prm_005","eventId":"evt_003","title":"Annonce Vue Montréal Fév 2026","channel":"Twitter","dueAt":"2026-02-20T12:00:00.000Z","status":"todo","notes":"","createdAt":"2026-01-15T10:00:00.000Z","updatedAt":"2026-01-15T10:00:00.000Z"}
 ]

@@ -26,7 +26,15 @@ export const useSocialPostsStore = defineStore('socialPosts', () => {
     return created
   }
 
+  const patch = async (id: string, payload: Partial<Omit<SocialPost, 'id'>>) => {
+    const updated = await $fetch<SocialPost>(`/api/social_posts/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((x) => x.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    else items.value.push(updated)
+    return updated
+  }
+
   const byId = (id: string) => items.value.find((s) => s.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, byId }
 })

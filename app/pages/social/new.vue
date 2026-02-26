@@ -5,7 +5,7 @@ import type { SocialPostStatus } from '~/types/socialPost'
 definePageMeta({ layout: 'default' })
 
 const schema = z.object({
-  eventId: z.string().min(1, 'Event required'),
+  eventId: z.string().optional(),
   platform: z.string().optional(),
   copy: z.string().optional(),
   scheduledAt: z.string().optional(),
@@ -14,7 +14,7 @@ const schema = z.object({
 })
 
 const route = useRoute()
-const state = reactive({ eventId: '', platform: '', copy: '', scheduledAt: '', status: 'draft' as SocialPostStatus })
+const state = reactive({ eventId: '', platform: '', copy: '', scheduledAt: '', status: 'draft' as SocialPostStatus, assetLinksStr: '' })
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
 const router = useRouter()
@@ -35,15 +35,20 @@ const eventOptions = computed(() =>
 )
 
 function validateForm() {
-  const result = schema.safeParse(state)
+  const payload = {
+    ...state,
+    eventId: state.eventId.trim() || undefined,
+    assetLinks: state.assetLinksStr ? state.assetLinksStr.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean) : undefined
+  }
+  const result = schema.safeParse(payload)
   if (!result.success) {
     result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as string
-      if (field && field in errors) errors[field] = issue.message
+      const field = (issue.path[0] === 'assetLinks' ? 'assetLinksStr' : issue.path[0]) as string
+      if (field && field in state) (errors as Record<string, string>)[field] = issue.message
     })
     return false
   }
-  Object.keys(errors).forEach((k) => { errors[k] = '' })
+  Object.keys(errors).forEach((k) => { (errors as Record<string, string>)[k] = '' })
   return true
 }
 
@@ -55,11 +60,12 @@ async function onSubmit() {
   pending.value = true
   try {
     const created = await store.create({
-      eventId: state.eventId,
+      eventId: state.eventId.trim() || undefined,
       platform: state.platform.trim() || undefined,
       copy: state.copy.trim() || undefined,
       scheduledAt: state.scheduledAt || undefined,
-      status: state.status
+      status: state.status,
+      assetLinks: state.assetLinksStr ? state.assetLinksStr.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean) : undefined
     })
     addToast({ title: 'Social post created', color: 'success' })
     router.push(`/social/${created.id}`)
@@ -76,7 +82,7 @@ async function onSubmit() {
     <h1 class="text-xl font-semibold mb-4">{{ $t('social.create') }}</h1>
     <form @submit.prevent="onSubmit" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium mb-1">{{ $t('social.form.event') }}</label>
+        <label class="block text-sm font-medium mb-1">{{ $t('social.form.event') }} <span class="text-gray-400">({{ $t('common.optional') }})</span></label>
         <USelectMenu
           :model-value="eventOptions.find(o => o.value === state.eventId)"
           :items="eventOptions"
@@ -98,6 +104,10 @@ async function onSubmit() {
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('social.form.scheduledAt') }}</label>
         <UInput v-model="state.scheduledAt" type="datetime-local" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ $t('social.form.assetLinks') }}</label>
+        <UTextarea v-model="state.assetLinksStr" :rows="2" :placeholder="$t('social.form.assetLinksPlaceholder')" />
       </div>
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('social.form.status') }}</label>

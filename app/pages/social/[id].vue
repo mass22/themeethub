@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import type { SocialPost } from '~/types/socialPost'
+import type { SocialPost, SocialPostStatus } from '~/types/socialPost'
 
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
 const store = useSocialPostsStore()
 const eventsStore = useEventsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const post = ref<SocialPost | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const statusPatching = ref(false)
 
 onMounted(async () => {
   try {
@@ -25,8 +27,25 @@ onMounted(async () => {
   }
 })
 
+async function changeStatus(newStatus: SocialPostStatus) {
+  if (!post.value || post.value.status === newStatus) return
+  statusPatching.value = true
+  try {
+    const updated = await store.patch(id, { status: newStatus })
+    post.value = updated
+    addToast({ title: 'Status updated', color: 'success' })
+  } catch {
+    addToast({ title: 'Error updating status', color: 'error' })
+  } finally {
+    statusPatching.value = false
+  }
+}
+
 const goBack = () => useRouter().push('/social')
-const eventTitle = computed(() => post.value ? (eventsStore.byId(post.value.eventId)?.title ?? post.value.eventId) : '')
+const eventTitle = computed(() => {
+  if (!post.value?.eventId) return null
+  return eventsStore.byId(post.value.eventId)?.title ?? post.value.eventId
+})
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
 
@@ -45,10 +64,23 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
     </div>
 
     <UCard v-else-if="post" class="max-w-2xl">
-      <h1 class="text-2xl font-bold mb-4">{{ post.platform || 'Social post' }}</h1>
-      <UBadge :label="$t(`status.social.${post.status}`)" :color="post.status === 'posted' ? 'green' : post.status === 'scheduled' ? 'blue' : 'gray'" class="mb-4" />
+      <h1 class="text-2xl font-bold mb-4">{{ post.platform || $t('social.postTitle') }}</h1>
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <UBadge :label="$t(`status.social.${post.status}`)" :color="post.status === 'posted' ? 'green' : post.status === 'scheduled' ? 'blue' : 'gray'" />
+        <USelectMenu
+          :model-value="{ label: $t(`status.social.${post.status}`), value: post.status }"
+          :items="[
+            { label: $t('status.social.draft'), value: 'draft' },
+            { label: $t('status.social.scheduled'), value: 'scheduled' },
+            { label: $t('status.social.posted'), value: 'posted' }
+          ]"
+          value-key="value"
+          :disabled="statusPatching"
+          @update:model-value="changeStatus(($event as { value: SocialPostStatus })?.value ?? post.status)"
+        />
+      </div>
       <dl class="space-y-3">
-        <div>
+        <div v-if="post.eventId && eventTitle">
           <dt class="text-sm text-gray-500">{{ $t('social.form.event') }}</dt>
           <dd><NuxtLink :to="`/events/${post.eventId}`" class="text-primary hover:underline">{{ eventTitle }}</NuxtLink></dd>
         </div>
@@ -59,6 +91,16 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
         <div v-if="post.scheduledAt">
           <dt class="text-sm text-gray-500">{{ $t('social.form.scheduledAt') }}</dt>
           <dd>{{ formatDate(post.scheduledAt) }}</dd>
+        </div>
+        <div v-if="post.assetLinks?.length">
+          <dt class="text-sm text-gray-500">{{ $t('social.form.assetLinks') }}</dt>
+          <dd>
+            <ul class="list-disc list-inside space-y-1">
+              <li v-for="(link, i) in post.assetLinks" :key="i">
+                <a :href="link" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">{{ link }}</a>
+              </li>
+            </ul>
+          </dd>
         </div>
         <div>
           <dt class="text-sm text-gray-500">{{ $t('common.updatedAt') }}</dt>
