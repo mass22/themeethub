@@ -13,6 +13,10 @@ if (!globalThis.getRouterParam) {
   globalThis.getRouterParam = (_event: any, key: string) => (key === 'id' ? 'spo_001' : undefined)
 }
 
+if (!globalThis.getQuery) {
+  globalThis.getQuery = () => ({})
+}
+
 const mockSponsors = [
   {
     id: 'spo_001',

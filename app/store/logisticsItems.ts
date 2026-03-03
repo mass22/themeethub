@@ -7,8 +7,12 @@ export const useLogisticsItemsStore = defineStore('logisticsItems', () => {
   const loaded = ref(false)
 
   const fetchAll = async () => {
-    if (loaded.value) return
-    items.value = await $fetch<LogisticsItem[]>('/api/logistics_items')
+    try {
+      items.value = await $fetch<LogisticsItem[]>('/api/logistics_items')
+    } catch (e) {
+      console.error('[logistics store] fetchAll failed:', e)
+      items.value = []
+    }
     loaded.value = true
   }
 
@@ -26,7 +30,15 @@ export const useLogisticsItemsStore = defineStore('logisticsItems', () => {
     return created
   }
 
+  const patch = async (id: string, payload: Partial<Omit<LogisticsItem, 'id'>>) => {
+    const updated = await $fetch<LogisticsItem>(`/api/logistics_items/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((x) => x.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    else items.value.push(updated)
+    return updated
+  }
+
   const byId = (id: string) => items.value.find((l) => l.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, byId }
 })

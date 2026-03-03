@@ -9,19 +9,24 @@ datasource db {
 }
 
 model Event {
-  id           String   @id
-  title        String
-  slug         String   @unique
-  date         DateTime
-  location     String?
-  description  String?
-  lumaEventId  String?
-  zoomUrl      String?
-  replayUrl    String?
-  statsJson    String?  // JSON: { registered: number, attended: number }
-  speakersJson String   @default("[]") // JSON array of speaker ids
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String   @id
+  title           String
+  slug            String   @unique
+  date            DateTime
+  location        String?
+  description     String?
+  bannerImageUrl  String?
+  lumaEventId     String?
+  zoomUrl         String?
+  replayUrl       String?
+  statsJson       String?  // JSON: { registered: number, attended: number }
+  speakersJson    String   @default("[]") // JSON array of speaker ids
+  sponsorsJson    String   @default("[]") // JSON array of sponsor ids
+  contractorsJson String   @default("[]") // JSON array of contractor ids
+  toolsJson       String   @default("[]") // JSON array of tool ids
+  venueId         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Speaker {

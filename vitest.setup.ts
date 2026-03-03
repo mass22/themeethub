@@ -124,6 +124,19 @@ if (!globalThis.useRouter) {
   })
 }
 
+if (!globalThis.useRoute) {
+  globalThis.useRoute = () => ({
+    path: '/',
+    query: {},
+    params: {},
+    fullPath: '/',
+    hash: '',
+    name: undefined,
+    meta: {},
+    matched: []
+  } as any)
+}
+
 if (!globalThis.useToast) {
   globalThis.useToast = () => ({
     add: vi.fn(),

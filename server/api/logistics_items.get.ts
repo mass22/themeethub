@@ -1,4 +1,9 @@
-export default defineEventHandler(async () => {
+import { parseLocale, localizeEntity } from '../utils/localize'
+
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  const locale = parseLocale(query)
   const ds = useDataSource()
-  return ds.listLogisticsItems()
+  const list = await ds.listLogisticsItems()
+  return list.map((l) => localizeEntity(l, locale, ['name', 'notes']))
 })

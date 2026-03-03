@@ -16,7 +16,7 @@ global.usePromoItemsStore = vi.fn(() => ({ items: [], fetchAll: vi.fn() }))
 global.useLogisticsItemsStore = vi.fn(() => ({ items: [], fetchAll: vi.fn() }))
 
 const mountOptions = {
-  global: { stubs: ['UButton', 'UBadge', 'NuxtLink'] }
+  global: { stubs: ['UButton', 'UBadge', 'NuxtLink', 'UCard', 'UIcon'] }
 }
 
 describe('Dashboard Page', () => {

@@ -6,6 +6,8 @@ const schema = z.object({
   contactEmail: z.string().email().optional(),
   tier: z.string().optional(),
   contactId: z.string().optional(),
+  logoUrl: z.string().optional().nullable(),
+  websiteUrl: z.string().optional().nullable(),
   notes: z.string().optional()
 })
 

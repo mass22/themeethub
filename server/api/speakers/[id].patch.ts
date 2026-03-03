@@ -6,6 +6,11 @@ const schema = z.object({
   bio: z.string().optional(),
   avatar: z.string().optional(),
   contactId: z.string().optional(),
+  socials: z.object({
+    x: z.string().optional(),
+    linkedin: z.string().optional(),
+    website: z.string().optional()
+  }).optional(),
   topics: z.array(z.string()).optional()
 })
 

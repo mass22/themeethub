@@ -9,23 +9,27 @@ const schema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
   role: z.string().optional(),
   bio: z.string().optional(),
-  avatar: z.string().optional()
+  avatar: z.string().optional(),
+  socialsWebsite: z.string().optional()
 })
 
 const state = reactive({
   name: '',
   role: '',
   bio: '',
-  avatar: ''
+  avatar: '',
+  socialsWebsite: ''
 })
 
 const errors = reactive({
   name: '',
   role: '',
   bio: '',
-  avatar: ''
+  avatar: '',
+  socialsWebsite: ''
 })
 
+const route = useRoute()
 const pending = ref(false)
 const router = useRouter()
 const speakersStore = useSpeakersStore()
@@ -54,14 +58,19 @@ async function onSubmit() {
 
   pending.value = true
   try {
+    const socials = state.socialsWebsite?.trim()
+      ? { website: state.socialsWebsite.trim() }
+      : undefined
     await speakersStore.create({
       name: state.name.trim(),
       role: state.role.trim() || undefined,
       bio: state.bio.trim() || undefined,
-      avatar: state.avatar.trim() || undefined
+      avatar: state.avatar.trim() || undefined,
+      socials
     })
     addToast({ title: 'Intervenant créé avec succès', color: 'success' })
-    router.push('/speakers')
+    const returnTo = route.query.returnTo as string
+    router.push(returnTo || '/speakers')
   } catch {
     addToast({ title: 'Erreur lors de la création', color: 'error' })
   } finally {
@@ -111,6 +120,16 @@ async function onSubmit() {
           v-model="state.avatar"
           type="url"
           :placeholder="$t('speakers.form.avatarPlaceholder')"
+        />
+      </div>
+
+      <div>
+        <label for="socialsWebsite" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('speakers.form.website') }}</label>
+        <UInput
+          id="socialsWebsite"
+          v-model="state.socialsWebsite"
+          type="url"
+          :placeholder="$t('speakers.form.websitePlaceholder')"
         />
       </div>
 

@@ -28,6 +28,14 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     return created
   }
 
+  const update = async (id: string, payload: Partial<Omit<Speaker, 'id' | 'createdAt' | 'updatedAt'>>) => {
+    const updated = await $fetch<Speaker>(`/api/speakers/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((s) => s.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    else items.value.push(updated)
+    return updated
+  }
+
   // Getter simple sans fonction
   const byId = (id: string) => items.value.find((e: Speaker) => e.id === id)
 
@@ -39,6 +47,7 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     fetchAll,
     fetchById,
     create,
+    update,
     // Getters
     byId
   }

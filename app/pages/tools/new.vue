@@ -10,6 +10,7 @@ const schema = z.object({
   notes: z.string().optional()
 })
 
+const route = useRoute()
 const state = reactive({ name: '', type: '', url: '', notes: '' })
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
@@ -44,7 +45,8 @@ async function onSubmit() {
       notes: state.notes.trim() || undefined
     })
     addToast({ title: 'Tool created', color: 'success' })
-    router.push(`/tools/${created.id}`)
+    const returnTo = route.query.returnTo as string
+    router.push(returnTo || `/tools/${created.id}`)
   } catch {
     addToast({ title: 'Error creating tool', color: 'error' })
   } finally {

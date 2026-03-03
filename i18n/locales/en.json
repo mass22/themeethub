@@ -21,6 +21,7 @@
     },
     "nav": {
         "dashboard": "Dashboard",
+        "organization": "Organization",
         "events": "Events",
         "calendar": "Calendar",
         "contacts": "Contacts",
@@ -201,7 +202,35 @@
     },
     "dashboard": {
         "title": "Dashboard",
-        "upcoming": "Upcoming"
+        "upcoming": "Upcoming",
+        "stats": {
+            "global": "Global statistics",
+            "totalEvents": "Events",
+            "totalRegistered": "Registered (total)",
+            "totalAttended": "Attended (total)",
+            "avgConversion": "Average attendance rate",
+            "pastEvents": "Past events",
+            "noStats": "No statistics"
+        },
+        "perEvent": "Per event",
+        "insights": "Insights",
+        "trends": "Trends",
+        "improvements": "Improvement areas",
+        "insightBestEvent": "Best attendance rate",
+        "insightNoStats": "event(s) without statistics",
+        "insightNoSpeakers": "event(s) without speakers",
+        "insightPromoOverdue": "promo item(s) overdue",
+        "insightLogisticsPending": "logistics item(s) pending",
+        "trendConversion": "Attendance rate evolution",
+        "improveFillStats": "Fill in statistics for past events",
+        "improveAddSpeakers": "Complete speakers for upcoming events",
+        "improvePromo": "Prioritize overdue promo items",
+        "improveLogistics": "Advance on pending logistics tasks",
+        "noInsights": "No insights yet.",
+        "noPastEvents": "No past events",
+        "trendUp": "Upward trend",
+        "trendDown": "Needs improvement",
+        "see": "View"
     },
     "calendar": {
         "title": "Agenda",
@@ -242,6 +271,8 @@
         "noLocation": "Location not specified",
         "noSpeakers": "No speakers",
         "hub": {
+            "bannerImage": "Banner image",
+            "bannerImageHelp": "URL of the event header image",
             "venue": "Venue",
             "sponsors": "Sponsors",
             "promo": "Promo",
@@ -250,11 +281,14 @@
             "tools": "Tools",
             "social": "Social",
             "add": "Add",
-            "empty": "None"
+            "empty": "None",
+            "selectOrCreate": "Select or create",
+            "createNew": "Create new"
         }
     },
     "speakers": {
         "create": "Create speaker",
+        "edit": "Edit speaker",
         "detail": "Speaker detail",
         "back": "Back to speakers",
         "form": {
@@ -266,7 +300,13 @@
             "bioPlaceholder": "Short biography",
             "avatar": "Avatar URL",
             "avatarPlaceholder": "https://...",
+            "website": "Website",
+            "linkedinPlaceholder": "LinkedIn URL",
+            "xPlaceholder": "X handle (without at sign)",
+            "websitePlaceholder": "https://...",
+            "topicsPlaceholder": "Topics separated by commas",
             "submit": "Create speaker",
+            "submitEdit": "Save changes",
             "cancel": "Cancel"
         },
         "topics": "Topics",
@@ -275,6 +315,7 @@
     },
     "sponsors": {
         "create": "Create sponsor",
+        "edit": "Edit sponsor",
         "empty": "No sponsors yet. Create one to get started.",
         "open": "Open",
         "back": "Back to sponsors",
@@ -286,9 +327,17 @@
             "contactNamePlaceholder": "Contact person name",
             "contactEmail": "Contact email",
             "contactEmailPlaceholder": "email{'@'}company.com",
+            "logoUrl": "Logo URL",
+            "logoUrlPlaceholder": "https://...",
+            "websiteUrl": "Website URL",
+            "websiteUrlPlaceholder": "https://...",
+            "tier": "Tier",
+            "tierPlaceholder": "Gold, Silver, Bronze...",
+            "notes": "Notes",
+            "notesPlaceholder": "Additional notes",
             "submit": "Create sponsor",
-            "cancel": "Cancel",
-            "notes": "Notes"
+            "submitEdit": "Save changes",
+            "cancel": "Cancel"
         }
     },
     "requests": {

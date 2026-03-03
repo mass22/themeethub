@@ -4,6 +4,10 @@ const schema = z.object({
   companyName: z.string().min(1).optional(),
   tier: z.string().optional(),
   contactId: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().email().optional().nullable(),
+  logoUrl: z.string().optional().nullable(),
+  websiteUrl: z.string().optional().nullable(),
   notes: z.string().optional()
 })
 

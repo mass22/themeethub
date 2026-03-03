@@ -41,6 +41,7 @@ export interface DataSource {
   listEvents(): Promise<Event[]>
   getEvent(id: string): Promise<Event | null>
   createEvent(payload: Omit<Event, 'id'>): Promise<Event>
+  updateEvent(id: string, payload: Partial<Omit<Event, 'id'>>): Promise<Event | null>
   listSpeakers(): Promise<Speaker[]>
   getSpeaker(id: string): Promise<Speaker | null>
   createSpeaker(payload: Omit<Speaker, 'id' | 'createdAt' | 'updatedAt'>): Promise<Speaker>
@@ -112,9 +113,31 @@ function createMockDataSource(): DataSource {
         id,
         stats: { registered: 0, attended: 0 },
         ...payload,
-        speakers: payload.speakers || []
+        bannerImageUrl: payload.bannerImageUrl ?? undefined,
+        speakers: payload.speakers || [],
+        sponsors: payload.sponsors || [],
+        contractors: payload.contractors || [],
+        tools: payload.tools || [],
+        venueId: payload.venueId
       }
       ;(events as Event[]).push(e)
+      return e
+    },
+    async updateEvent(id: string, payload: Partial<Omit<Event, 'id'>>): Promise<Event | null> {
+      const e = (events as Event[]).find((x) => x.id === id)
+      if (!e) return null
+      if (payload.speakers !== undefined) e.speakers = payload.speakers
+      if (payload.sponsors !== undefined) e.sponsors = payload.sponsors
+      if (payload.contractors !== undefined) e.contractors = payload.contractors
+      if (payload.tools !== undefined) e.tools = payload.tools
+      if (payload.venueId !== undefined) e.venueId = payload.venueId
+      if (payload.title !== undefined) e.title = payload.title
+      if (payload.slug !== undefined) e.slug = payload.slug
+      if (payload.date !== undefined) e.date = payload.date
+      if (payload.location !== undefined) e.location = payload.location
+      if (payload.description !== undefined) e.description = payload.description
+      if (payload.stats !== undefined) e.stats = payload.stats
+      if (payload.bannerImageUrl !== undefined) e.bannerImageUrl = payload.bannerImageUrl
       return e
     },
     async listSpeakers(): Promise<Speaker[]> {
@@ -151,6 +174,8 @@ function createMockDataSource(): DataSource {
         contactId: payload.contactId,
         contactName: payload.contactName,
         contactEmail: payload.contactEmail,
+        logoUrl: payload.logoUrl ?? undefined,
+        websiteUrl: payload.websiteUrl ?? undefined,
         notes: payload.notes,
         createdAt: now,
         updatedAt: now
@@ -410,23 +435,32 @@ function createPrismaDataSource(): DataSource {
     useMocks: false,
     async listEvents(): Promise<Event[]> {
       const rows = await prisma.event.findMany({ orderBy: { date: 'desc' } })
-      return rows.map((row) => ({
-        id: row.id,
-        title: row.title,
-        slug: row.slug,
-        date: row.date.toISOString(),
-        location: row.location ?? undefined,
-        description: row.description ?? undefined,
-        lumaEventId: row.lumaEventId ?? null,
-        zoomUrl: row.zoomUrl ?? null,
-        replayUrl: row.replayUrl ?? null,
-        stats: row.statsJson ? (JSON.parse(row.statsJson) as { registered: number; attended: number }) : undefined,
-        speakers: (JSON.parse(row.speakersJson || '[]') as string[])
-      }))
+      return rows.map((row) => {
+        const r = row as { sponsorsJson?: string | null; contractorsJson?: string | null; toolsJson?: string | null; venueId?: string | null; bannerImageUrl?: string | null }
+        return {
+          id: row.id,
+          title: row.title,
+          slug: row.slug,
+          date: row.date.toISOString(),
+          location: row.location ?? undefined,
+          description: row.description ?? undefined,
+          bannerImageUrl: r.bannerImageUrl ?? null,
+          lumaEventId: row.lumaEventId ?? null,
+          zoomUrl: row.zoomUrl ?? null,
+          replayUrl: row.replayUrl ?? null,
+          stats: row.statsJson ? (JSON.parse(row.statsJson) as { registered: number; attended: number }) : undefined,
+          speakers: (JSON.parse(row.speakersJson || '[]') as string[]),
+          sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
+          contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
+          tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+          venueId: r.venueId ?? undefined
+        }
+      })
     },
     async getEvent(id: string): Promise<Event | null> {
       const row = await prisma.event.findUnique({ where: { id } })
       if (!row) return null
+      const r = row as { sponsorsJson?: string | null; contractorsJson?: string | null; toolsJson?: string | null; venueId?: string | null; bannerImageUrl?: string | null }
       return {
         id: row.id,
         title: row.title,
@@ -434,11 +468,16 @@ function createPrismaDataSource(): DataSource {
         date: row.date.toISOString(),
         location: row.location ?? undefined,
         description: row.description ?? undefined,
+        bannerImageUrl: r.bannerImageUrl ?? null,
         lumaEventId: row.lumaEventId ?? null,
         zoomUrl: row.zoomUrl ?? null,
         replayUrl: row.replayUrl ?? null,
         stats: row.statsJson ? (JSON.parse(row.statsJson) as { registered: number; attended: number }) : undefined,
-        speakers: (JSON.parse(row.speakersJson || '[]') as string[])
+        speakers: (JSON.parse(row.speakersJson || '[]') as string[]),
+        sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
+        contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
+        tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+        venueId: r.venueId ?? undefined
       }
     },
     async createEvent(payload: Omit<Event, 'id'>): Promise<Event> {
@@ -452,13 +491,19 @@ function createPrismaDataSource(): DataSource {
           date: new Date(payload.date),
           location: payload.location ?? null,
           description: payload.description ?? null,
+          bannerImageUrl: payload.bannerImageUrl ?? null,
           lumaEventId: payload.lumaEventId ?? null,
           zoomUrl: payload.zoomUrl ?? null,
           replayUrl: payload.replayUrl ?? null,
           statsJson: JSON.stringify(stats),
-          speakersJson: JSON.stringify(payload.speakers || [])
+          speakersJson: JSON.stringify(payload.speakers || []),
+          sponsorsJson: JSON.stringify(payload.sponsors || []),
+          contractorsJson: JSON.stringify(payload.contractors || []),
+          toolsJson: JSON.stringify(payload.tools || []),
+          venueId: payload.venueId ?? null
         }
       })
+      const r = row as { sponsorsJson?: string; contractorsJson?: string; toolsJson?: string }
       return {
         id: row.id,
         title: row.title,
@@ -466,12 +511,37 @@ function createPrismaDataSource(): DataSource {
         date: row.date.toISOString(),
         location: row.location ?? undefined,
         description: row.description ?? undefined,
+        bannerImageUrl: (row as { bannerImageUrl?: string | null }).bannerImageUrl ?? null,
         lumaEventId: row.lumaEventId ?? null,
         zoomUrl: row.zoomUrl ?? null,
         replayUrl: row.replayUrl ?? null,
         stats: JSON.parse(row.statsJson || '{}') as { registered: number; attended: number },
-        speakers: JSON.parse(row.speakersJson || '[]') as string[]
+        speakers: JSON.parse(row.speakersJson || '[]') as string[],
+        sponsors: JSON.parse(r.sponsorsJson || '[]') as string[],
+        contractors: JSON.parse(r.contractorsJson || '[]') as string[],
+        tools: JSON.parse(r.toolsJson || '[]') as string[],
+        venueId: (row as { venueId?: string | null }).venueId ?? undefined
       }
+    },
+    async updateEvent(id: string, payload: Partial<Omit<Event, 'id'>>): Promise<Event | null> {
+      const existing = await prisma.event.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.speakers !== undefined) data.speakersJson = JSON.stringify(payload.speakers)
+      if (payload.sponsors !== undefined) data.sponsorsJson = JSON.stringify(payload.sponsors)
+      if (payload.contractors !== undefined) data.contractorsJson = JSON.stringify(payload.contractors)
+      if (payload.tools !== undefined) data.toolsJson = JSON.stringify(payload.tools)
+      if (payload.venueId !== undefined) data.venueId = payload.venueId
+      if (payload.title !== undefined) data.title = payload.title
+      if (payload.slug !== undefined) data.slug = payload.slug
+      if (payload.date !== undefined) data.date = new Date(payload.date)
+      if (payload.location !== undefined) data.location = payload.location
+      if (payload.description !== undefined) data.description = payload.description
+      if (payload.bannerImageUrl !== undefined) data.bannerImageUrl = payload.bannerImageUrl
+      if (payload.stats !== undefined) data.statsJson = JSON.stringify(payload.stats)
+      if (Object.keys(data).length === 0) return this.getEvent(id)
+      const row = await prisma.event.update({ where: { id }, data: data as never })
+      return this.getEvent(row.id)
     },
     async listSpeakers(): Promise<Speaker[]> {
       const rows = await prisma.speaker.findMany()
@@ -555,8 +625,31 @@ function createPrismaDataSource(): DataSource {
     async findSponsorByCompanyAndEmail(_companyName: string, _contactEmail: string): Promise<Sponsor | null> {
       return null
     },
-    async updateSpeaker(_id: string, _payload: Partial<Omit<Speaker, 'id'>>): Promise<Speaker | null> {
-      throw new Error('Speaker update DB not implemented yet')
+    async updateSpeaker(id: string, payload: Partial<Omit<Speaker, 'id'>>): Promise<Speaker | null> {
+      const existing = await prisma.speaker.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.role !== undefined) data.role = payload.role ?? null
+      if (payload.bio !== undefined) data.bio = payload.bio ?? null
+      if (payload.avatar !== undefined) data.avatar = payload.avatar ?? null
+      if (payload.socials !== undefined) data.socialsJson = payload.socials ? JSON.stringify(payload.socials) : null
+      if (payload.topics !== undefined) data.topicsJson = payload.topics ? JSON.stringify(payload.topics) : null
+      const row = await prisma.speaker.update({
+        where: { id },
+        data
+      })
+      return {
+        id: row.id,
+        name: row.name,
+        role: row.role ?? undefined,
+        bio: row.bio ?? undefined,
+        avatar: row.avatar ?? undefined,
+        socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
+        topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
+        createdAt: row.createdAt.toISOString(),
+        updatedAt: row.updatedAt.toISOString()
+      }
     },
     async updateSponsor(_id: string, _payload: Partial<Omit<Sponsor, 'id'>>): Promise<Sponsor | null> {
       throw new Error('Sponsor update DB not implemented yet')

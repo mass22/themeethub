@@ -7,7 +7,12 @@ const schema = z.object({
   slug: z.string().min(3, 'Le slug doit contenir au moins 3 caractères').regex(/^[a-z0-9-]+$/, 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets'),
   location: z.string().optional(),
   description: z.string().optional(),
-  speakers: z.array(z.string()).default([])
+  bannerImageUrl: z.string().optional(),
+  speakers: z.array(z.string()).default([]),
+  sponsors: z.array(z.string()).default([]),
+  contractors: z.array(z.string()).default([]),
+  tools: z.array(z.string()).default([]),
+  venueId: z.string().optional()
 })
 
 const state = reactive({
@@ -16,30 +21,59 @@ const state = reactive({
   slug: '',
   location: '',
   description: '',
-  speakerIds: [] as string[]
+  bannerImageUrl: '' as string,
+  speakerIds: [] as string[],
+  sponsorIds: [] as string[],
+  contractorIds: [] as string[],
+  toolIds: [] as string[],
+  venueId: '' as string
 })
 
 const events = useEventsStore()
 const speakersStore = useSpeakersStore()
+const sponsorsStore = useSponsorsStore()
+const contractorsStore = useContractorsStore()
+const toolsStore = useToolsStore()
+const venuesStore = useVenuesStore()
 
 const errors = reactive({
   title: '',
   date: '',
   slug: '',
   location: '',
-  description: ''
+  description: '',
+  bannerImageUrl: ''
 })
 
+const route = useRoute()
 const pending = ref(false)
 const router = useRouter()
 const { add: addToast } = useToast()
 
 onMounted(async () => {
-  await speakersStore.fetchAll()
+  await Promise.all([
+    speakersStore.fetchAll(),
+    sponsorsStore.fetchAll(),
+    contractorsStore.fetchAll(),
+    toolsStore.fetchAll(),
+    venuesStore.fetchAll()
+  ])
 })
 
 const speakerOptions = computed(() =>
   speakersStore.items.map((s) => ({ label: s.role ? `${s.name} (${s.role})` : s.name, value: s.id }))
+)
+const sponsorOptions = computed(() =>
+  sponsorsStore.items.map((s) => ({ label: s.companyName, value: s.id }))
+)
+const contractorOptions = computed(() =>
+  contractorsStore.items.map((c) => ({ label: c.role ? `${c.name} (${c.role})` : c.name, value: c.id }))
+)
+const toolOptions = computed(() =>
+  toolsStore.items.map((t) => ({ label: t.type ? `${t.name} (${t.type})` : t.name, value: t.id }))
+)
+const venueOptions = computed(() =>
+  venuesStore.items.map((v) => ({ label: v.name, value: v.id }))
 )
 
 // Fonction pour valider un champ spécifique
@@ -57,7 +91,15 @@ function validateField(field: keyof typeof state) {
 
 // Fonction pour valider tout le formulaire
 function validateForm() {
-  const result = schema.safeParse({ ...state, speakers: state.speakerIds })
+  const result = schema.safeParse({
+    ...state,
+    bannerImageUrl: state.bannerImageUrl || undefined,
+    speakers: state.speakerIds,
+    sponsors: state.sponsorIds,
+    contractors: state.contractorIds,
+    tools: state.toolIds,
+    venueId: state.venueId || undefined
+  })
 
   if (!result.success) {
     // Réinitialiser toutes les erreurs
@@ -98,10 +140,16 @@ async function onSubmit () {
       slug: state.slug,
       location: state.location || undefined,
       description: state.description || undefined,
-      speakers: state.speakerIds
-    })
+      bannerImageUrl: state.bannerImageUrl?.trim() || undefined,
+    speakers: state.speakerIds,
+    sponsors: state.sponsorIds,
+    contractors: state.contractorIds,
+    tools: state.toolIds,
+    venueId: state.venueId || undefined
+  })
     addToast({ title: 'Événement créé avec succès', color: 'success' })
-    router.push(`/events/${created.id}`)
+    const returnTo = route.query.returnTo as string
+    router.push(returnTo || `/events/${created.id}`)
   } catch (error) {
     addToast({ title: 'Erreur lors de la création', color: 'error' })
   } finally {
@@ -153,6 +201,20 @@ async function onSubmit () {
       </div>
 
       <div>
+        <label for="bannerImageUrl" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.bannerImage') }}</label>
+        <UInput
+          id="bannerImageUrl"
+          v-model="state.bannerImageUrl"
+          type="url"
+          placeholder="https://..."
+          :class="errors.bannerImageUrl ? 'error-field' : ''"
+          @blur="validateField('bannerImageUrl')"
+        />
+        <p v-if="errors.bannerImageUrl" class="text-sm text-red-600 mt-1">{{ errors.bannerImageUrl }}</p>
+        <p v-else class="text-xs text-gray-500 mt-1">{{ $t('events.hub.bannerImageHelp') }}</p>
+      </div>
+
+      <div>
         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
         <UInput
           id="location"
@@ -166,14 +228,86 @@ async function onSubmit () {
 
       <div>
         <label for="speakers" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.speakers') }}</label>
-        <USelectMenu
-          v-model="state.speakerIds"
-          :items="speakerOptions"
-          multiple
-          value-key="value"
-          placeholder="Sélectionner des intervenants"
-          class="w-full"
-        />
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.speakerIds"
+            :items="speakerOptions"
+            multiple
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/speakers/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
+      </div>
+
+      <div>
+        <label for="sponsors" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.sponsors') }}</label>
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.sponsorIds"
+            :items="sponsorOptions"
+            multiple
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/sponsors/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
+      </div>
+
+      <div>
+        <label for="contractors" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.contractors') }}</label>
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.contractorIds"
+            :items="contractorOptions"
+            multiple
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/contractors/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
+      </div>
+
+      <div>
+        <label for="tools" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.tools') }}</label>
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.toolIds"
+            :items="toolOptions"
+            multiple
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/tools/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
+      </div>
+
+      <div>
+        <label for="venue" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.venue') }}</label>
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.venueId"
+            :items="venueOptions"
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/venues/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
       </div>
 
       <div>

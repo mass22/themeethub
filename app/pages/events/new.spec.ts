@@ -5,9 +5,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import NewEvent from './new.vue'
 
 // Mocks pour les composables
-const mockRouter = {
-  push: vi.fn()
-}
+const mockRouter = { push: vi.fn() }
+const mockRoute = { query: {}, params: {}, path: '/events/new', fullPath: '/events/new' }
 
 const mockEventsStore = {
   create: vi.fn()
@@ -20,6 +19,7 @@ const mockToast = {
 // Mock des composables globaux
 vi.mock('#app', () => ({
   useRouter: () => mockRouter,
+  useRoute: () => mockRoute,
   useToast: () => mockToast
 }))
 
@@ -36,6 +36,11 @@ const mockSpeakersStore = {
 vi.mock('~/store/speakers', () => ({
   useSpeakersStore: () => mockSpeakersStore
 }))
+
+const mockSponsorsStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
+const mockContractorsStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
+vi.mock('~/store/sponsors', () => ({ useSponsorsStore: () => mockSponsorsStore }))
+vi.mock('~/store/contractors', () => ({ useContractorsStore: () => mockContractorsStore }))
 
 describe('NewEvent page', () => {
   let wrapper: VueWrapper

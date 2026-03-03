@@ -5,11 +5,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import NewSpeaker from './new.vue'
 
 const mockRouter = { push: vi.fn() }
+const mockRoute = { query: {}, params: {}, path: '/speakers/new', fullPath: '/speakers/new' }
 const mockSpeakersStore = { create: vi.fn(() => Promise.resolve({ id: 'spk_test' })) }
 const mockToast = { add: vi.fn() }
 
 vi.mock('#app', () => ({
   useRouter: () => mockRouter,
+  useRoute: () => mockRoute,
   useToast: () => mockToast
 }))
 

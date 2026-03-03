@@ -6,7 +6,12 @@ const schema = z.object({
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/),
   location: z.string().optional(),
   description: z.string().optional(),
-  speakers: z.array(z.string()).default([])
+  bannerImageUrl: z.string().optional().nullable(),
+  speakers: z.array(z.string()).default([]),
+  sponsors: z.array(z.string()).default([]),
+  contractors: z.array(z.string()).default([]),
+  tools: z.array(z.string()).default([]),
+  venueId: z.string().optional()
 })
 
 export default defineEventHandler(async (event) => {

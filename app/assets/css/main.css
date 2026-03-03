@@ -1,2 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+
+/* Fond subtil avec gradient pour un rendu premium */
+.app-bg {
+  background: linear-gradient(135deg, rgb(248 250 252 / 0.98) 0%, rgb(241 245 249 / 0.95) 50%, rgb(226 232 240 / 0.9) 100%);
+}
+
+.dark .app-bg {
+  background: linear-gradient(160deg, rgb(15 23 42 / 0.98) 0%, rgb(30 41 59 / 0.95) 50%, rgb(51 65 85 / 0.9) 100%);
+}

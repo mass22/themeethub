@@ -11,6 +11,7 @@ const schema = z.object({
   notes: z.string().optional()
 })
 
+const route = useRoute()
 const state = reactive({ name: '', role: '', contactId: '', rateStr: '', notes: '' })
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
@@ -53,7 +54,8 @@ async function onSubmit() {
       notes: state.notes.trim() || undefined
     })
     addToast({ title: 'Contractor created', color: 'success' })
-    router.push(`/contractors/${created.id}`)
+    const returnTo = route.query.returnTo as string
+    router.push(returnTo || `/contractors/${created.id}`)
   } catch {
     addToast({ title: 'Error creating contractor', color: 'error' })
   } finally {

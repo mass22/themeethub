@@ -7,8 +7,12 @@ export const useContractorsStore = defineStore('contractors', () => {
   const loaded = ref(false)
 
   const fetchAll = async () => {
-    if (loaded.value) return
-    items.value = await $fetch<Contractor[]>('/api/contractors')
+    try {
+      items.value = await $fetch<Contractor[]>('/api/contractors')
+    } catch (e) {
+      console.error('[contractors store] fetchAll failed:', e)
+      items.value = []
+    }
     loaded.value = true
   }
 

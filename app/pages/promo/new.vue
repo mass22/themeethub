@@ -87,14 +87,19 @@ async function onSubmit() {
     <form @submit.prevent="onSubmit" class="space-y-4">
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('promo.form.event') }} <span class="text-gray-400">({{ $t('common.optional') }})</span></label>
-        <USelectMenu
-          :model-value="eventOptions.find(o => o.value === state.eventId)"
-          :items="eventOptions"
-          value-key="value"
-          :placeholder="$t('promo.form.eventPlaceholder')"
-          class="w-full"
-          @update:model-value="state.eventId = ($event as { value: string })?.value ?? ''"
-        />
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            :model-value="eventOptions.find(o => o.value === state.eventId)"
+            :items="eventOptions"
+            value-key="value"
+            :placeholder="$t('promo.form.eventPlaceholder')"
+            class="flex-1"
+            @update:model-value="state.eventId = ($event as { value: string })?.value ?? ''"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/events/new', query: { returnTo: $route.fullPath } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
         <p v-if="errors.eventId" class="text-sm text-red-600 mt-1">{{ errors.eventId }}</p>
       </div>
       <div>

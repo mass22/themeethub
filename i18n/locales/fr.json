@@ -21,6 +21,7 @@
     },
     "nav": {
         "dashboard": "Tableau de bord",
+        "organization": "Organisation",
         "events": "Événements",
         "calendar": "Calendrier",
         "contacts": "Contacts",
@@ -114,6 +115,7 @@
         "form": {
             "event": "Événement",
             "eventPlaceholder": "Sélectionner un événement",
+            "createNewEvent": "Créer un nouvel événement",
             "name": "Nom",
             "category": "Catégorie",
             "status": "Statut",
@@ -201,7 +203,35 @@
     },
     "dashboard": {
         "title": "Tableau de bord",
-        "upcoming": "À venir"
+        "upcoming": "À venir",
+        "stats": {
+            "global": "Statistiques globales",
+            "totalEvents": "Événements",
+            "totalRegistered": "Inscrits (total)",
+            "totalAttended": "Présents (total)",
+            "avgConversion": "Taux de présence moyen",
+            "pastEvents": "Événements passés",
+            "noStats": "Sans statistiques"
+        },
+        "perEvent": "Par événement",
+        "insights": "Insights",
+        "trends": "Tendances",
+        "improvements": "Axes d'amélioration",
+        "insightBestEvent": "Meilleur taux de présence",
+        "insightNoStats": "événement(s) sans statistiques",
+        "insightNoSpeakers": "événement(s) sans intervenants",
+        "insightPromoOverdue": "item(s) promo en retard",
+        "insightLogisticsPending": "item(s) logistique en attente",
+        "trendConversion": "Évolution du taux de présence",
+        "improveFillStats": "Remplir les statistiques des événements passés",
+        "improveAddSpeakers": "Compléter les intervenants pour les événements à venir",
+        "improvePromo": "Prioriser les items promo en retard",
+        "improveLogistics": "Avancer sur les tâches logistique en attente",
+        "noInsights": "Aucun insight pour le moment.",
+        "noPastEvents": "Aucun événement passé",
+        "trendUp": "Tendance à la hausse",
+        "trendDown": "À améliorer",
+        "see": "Voir"
     },
     "calendar": {
         "title": "Agenda",
@@ -242,6 +272,8 @@
         "noLocation": "Lieu non spécifié",
         "noSpeakers": "Aucun intervenant",
         "hub": {
+            "bannerImage": "Image de bannière",
+            "bannerImageHelp": "URL de l'image d'en-tête de l'événement",
             "venue": "Lieu",
             "sponsors": "Sponsors",
             "promo": "Promo",
@@ -250,11 +282,14 @@
             "tools": "Outils",
             "social": "Réseaux",
             "add": "Ajouter",
-            "empty": "Aucun"
+            "empty": "Aucun",
+            "selectOrCreate": "Sélectionner ou créer",
+            "createNew": "Créer un nouveau"
         }
     },
     "speakers": {
         "create": "Créer un intervenant",
+        "edit": "Modifier l'intervenant",
         "detail": "Détail intervenant",
         "back": "Retour aux intervenants",
         "form": {
@@ -266,7 +301,13 @@
             "bioPlaceholder": "Courte biographie",
             "avatar": "URL de l'avatar",
             "avatarPlaceholder": "https://...",
+            "website": "Site web",
+            "linkedinPlaceholder": "URL LinkedIn",
+            "xPlaceholder": "Handle X (sans arobase)",
+            "websitePlaceholder": "https://...",
+            "topicsPlaceholder": "Sujets séparés par des virgules",
             "submit": "Créer l'intervenant",
+            "submitEdit": "Enregistrer les modifications",
             "cancel": "Annuler"
         },
         "topics": "Sujets",
@@ -275,6 +316,7 @@
     },
     "sponsors": {
         "create": "Créer un sponsor",
+        "edit": "Modifier le sponsor",
         "empty": "Aucun sponsor. Créez-en un pour commencer.",
         "open": "Ouvrir",
         "back": "Retour aux sponsors",
@@ -286,9 +328,17 @@
             "contactNamePlaceholder": "Nom du contact",
             "contactEmail": "Email du contact",
             "contactEmailPlaceholder": "email{'@'}entreprise.com",
+            "logoUrl": "URL du logo",
+            "logoUrlPlaceholder": "https://...",
+            "websiteUrl": "URL du site web",
+            "websiteUrlPlaceholder": "https://...",
+            "tier": "Niveau",
+            "tierPlaceholder": "Gold, Silver, Bronze...",
+            "notes": "Notes",
+            "notesPlaceholder": "Notes complémentaires",
             "submit": "Créer le sponsor",
-            "cancel": "Annuler",
-            "notes": "Notes"
+            "submitEdit": "Enregistrer les modifications",
+            "cancel": "Annuler"
         }
     },
     "requests": {

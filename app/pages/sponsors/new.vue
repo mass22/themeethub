@@ -6,9 +6,12 @@ definePageMeta({
 const state = reactive({
   companyName: '',
   contactName: '',
-  contactEmail: ''
+  contactEmail: '',
+  logoUrl: '' as string,
+  websiteUrl: '' as string
 })
 
+const route = useRoute()
 const pending = ref(false)
 const router = useRouter()
 const sponsorsStore = useSponsorsStore()
@@ -25,10 +28,13 @@ async function onSubmit() {
     await sponsorsStore.create({
       companyName: state.companyName.trim(),
       contactName: state.contactName.trim(),
-      contactEmail: state.contactEmail.trim()
+      contactEmail: state.contactEmail.trim(),
+      logoUrl: state.logoUrl?.trim() || undefined,
+      websiteUrl: state.websiteUrl?.trim() || undefined
     })
     addToast({ title: 'Sponsor créé avec succès', color: 'success' })
-    router.push('/sponsors')
+    const returnTo = route.query.returnTo as string
+    router.push(returnTo || '/sponsors')
   } catch (e: unknown) {
     const err = e as { statusCode?: number; statusMessage?: string }
     if (err.statusCode === 409) {
@@ -74,6 +80,26 @@ async function onSubmit() {
           type="email"
           required
           :placeholder="$t('sponsors.form.contactEmailPlaceholder')"
+        />
+      </div>
+
+      <div>
+        <label for="logoUrl" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.logoUrl') }}</label>
+        <UInput
+          id="logoUrl"
+          v-model="state.logoUrl"
+          type="url"
+          :placeholder="$t('sponsors.form.logoUrlPlaceholder')"
+        />
+      </div>
+
+      <div>
+        <label for="websiteUrl" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.websiteUrl') }}</label>
+        <UInput
+          id="websiteUrl"
+          v-model="state.websiteUrl"
+          type="url"
+          :placeholder="$t('sponsors.form.websiteUrlPlaceholder')"
         />
       </div>
 

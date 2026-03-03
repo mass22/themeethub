@@ -30,6 +30,14 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
     return created
   }
 
+  const update = async (id: string, payload: Partial<Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>>) => {
+    const updated = await $fetch<Sponsor>(`/api/sponsors/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((s) => s.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    else items.value.push(updated)
+    return updated
+  }
+
   const byId = (id: string) => items.value.find((s) => s.id === id)
 
   return {
@@ -38,6 +46,7 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
     fetchAll,
     fetchById,
     create,
+    update,
     byId
   }
 })

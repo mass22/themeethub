@@ -1,4 +1,5 @@
 import type { CalendarItem, CalendarItemType } from '../../types/calendarItem'
+import { parseLocale, localize } from '../utils/localize'
 
 /** Vérifie qu'une chaîne est un ISO 8601 valide (parseable en Date). */
 function isValidIso(iso: string): boolean {
@@ -15,6 +16,7 @@ function parseToIso(val: string | undefined | null): string | null {
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
+  const locale = parseLocale(query)
   const from = query.from as string | undefined
   const to = query.to as string | undefined
   const type = query.type as CalendarItemType | CalendarItemType[] | undefined
@@ -66,7 +68,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: e.id,
         type: 'event',
-        title: e.title,
+        title: localize(e.title, locale) ?? e.title,
         startAt,
         href: `/events/${e.id}`,
         meta: { location: e.location }
@@ -82,7 +84,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: p.id,
         type: 'promo',
-        title: p.title,
+        title: localize(p.title, locale) ?? p.title,
         startAt,
         status: p.status,
         href: `/promo/${p.id}`,
@@ -99,7 +101,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: s.id,
         type: 'social',
-        title: s.copy?.slice(0, 50) ?? `Post #${s.id}`,
+        title: localize(s.copy, locale)?.slice(0, 50) ?? s.copy?.slice(0, 50) ?? `Post #${s.id}`,
         startAt,
         status: s.status,
         href: `/social/${s.id}`,
@@ -116,7 +118,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: l.id,
         type: 'logistics',
-        title: l.name,
+        title: localize(l.name, locale) ?? l.name,
         startAt,
         status: l.status,
         href: `/logistics/${l.id}`,
@@ -133,7 +135,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: e.id,
         type: 'external_event',
-        title: e.title,
+        title: localize(e.title, locale) ?? e.title,
         startAt,
         status: undefined,
         href: `/external-events/${e.id}`,
@@ -151,7 +153,7 @@ export default defineEventHandler(async (event) => {
       items.push({
         id: p.id,
         type: 'participation',
-        title: evt ? `Follow-up: ${evt.title}` : `Participation #${p.id}`,
+        title: evt ? `Follow-up: ${localize(evt.title, locale) ?? evt.title}` : `Participation #${p.id}`,
         startAt,
         status: p.status,
         href: `/external-events/${p.externalEventId}`,

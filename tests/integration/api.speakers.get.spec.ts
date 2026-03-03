@@ -13,6 +13,10 @@ if (!globalThis.getRouterParam) {
   globalThis.getRouterParam = vi.fn((_event: any, key: string) => (key === 'id' ? 'spk_001' : undefined))
 }
 
+if (!globalThis.getQuery) {
+  globalThis.getQuery = () => ({})
+}
+
 const mockSpeaker = {
   id: 'spk_001',
   name: 'Alex Lichter',

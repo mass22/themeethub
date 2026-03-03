@@ -16,9 +16,9 @@ const switchLanguage = () => {
 <template>
   <button
     @click="switchLanguage"
-    class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+    class="flex items-center gap-2 px-3 py-2 w-full text-sm font-medium text-slate-600 dark:text-slate-400 bg-slate-100/80 dark:bg-slate-800/60 hover:bg-slate-200/80 dark:hover:bg-slate-700/60 rounded-lg transition-colors"
   >
-    <span class="text-lg">🌐</span>
+    <UIcon name="i-heroicons-language" class="w-4 h-4" />
     <span>{{ currentLocale?.name || locale }}</span>
   </button>
 </template>

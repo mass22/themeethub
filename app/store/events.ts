@@ -24,6 +24,13 @@ export const useEventsStore = defineStore('events', () => {
     return created
   }
 
+  const update = async (id: string, payload: Partial<Event>) => {
+    const updated = await $fetch<Event>(`/api/events/${id}`, { method: 'PATCH', body: payload })
+    const idx = items.value.findIndex((e) => e.id === id)
+    if (idx >= 0) items.value[idx] = updated
+    return updated
+  }
+
   // Getter simple sans fonction
   const byId = (id: string) => items.value.find((e: Event) => e.id === id)
 
@@ -34,6 +41,7 @@ export const useEventsStore = defineStore('events', () => {
     // Actions
     fetchAll,
     create,
+    update,
     // Getters
     byId
   }
