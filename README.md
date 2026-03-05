@@ -2,8 +2,7 @@
 
 # TheMeetHub
 
-> **The open-source platform to organize, manage, and grow your community meetups from one central hub.**  
-> Plateforme open source pour organiser, gérer et développer vos meetups communautaires.
+> **The open-source platform to organize, manage, and grow your community meetups from one central hub.**
 
 **Default branch:** `master`
 
@@ -17,7 +16,7 @@
 - 📋 **Logistics** — Tasks, items, and owners linked to events.
 - 👥 **Community Tools** — Contacts, sponsors, venues, contractors, tools.
 - 🌐 **External Communities** — Track other communities, their events, and your participations.
-- 📊 **Admin Dashboard** — Stats globales, insights (promo en retard, logistique en attente), tendances de conversion, accès rapide à tous les modules.
+- 📊 **Admin Dashboard** — Global stats, insights (overdue promo, pending logistics), conversion trends, quick access to all modules.
 - 🧩 **Data Source** — JSON mocks (default, no DB) or Prisma + SQLite / PostgreSQL.
 - ⚡ **Built with Nuxt 4 & Nitro** — Modern, fast, and fully extensible.
 - 🧠 **MCP Architecture** — Model Context Providers for clean, modular code.
@@ -115,7 +114,7 @@ themeethub/
 ├── public/               # Static files
 ├── server/               # Nitro (backend)
 │   ├── api/              # API routes
-│   ├── middleware/      # Middlewares serveur
+│   ├── middleware/      # Server middlewares
 │   ├── model/           # MCP
 │   ├── providers/       # Backends
 │   └── utils/           # DataSource (mock + Prisma)
