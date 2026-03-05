@@ -19,14 +19,18 @@ model Event {
   lumaEventId     String?
   zoomUrl         String?
   replayUrl       String?
-  statsJson       String?  // JSON: { registered: number, attended: number }
-  speakersJson    String   @default("[]") // JSON array of speaker ids
-  sponsorsJson    String   @default("[]") // JSON array of sponsor ids
-  contractorsJson String   @default("[]") // JSON array of contractor ids
-  toolsJson       String   @default("[]") // JSON array of tool ids
+  statsJson       String?
+  speakersJson    String   @default("[]")
+  sponsorsJson    String   @default("[]")
+  contractorsJson String   @default("[]")
+  toolsJson       String   @default("[]")
   venueId         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  promoItems     PromoItem[]
+  logisticsItems LogisticsItem[]
+  socialPosts    SocialPost[]
 }
 
 model Speaker {
@@ -35,21 +39,181 @@ model Speaker {
   role        String?
   bio         String?
   avatar      String?
+  contactId   String?
   socialsJson String?
   topicsJson  String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  contact Contact? @relation("SpeakerContact", fields: [contactId], references: [id])
 }
 
 model Request {
   id                        String    @id
   name                      String
   email                     String
-  type                      String // sponsor | speaker
+  type                      String
   companyName               String?
   role                      String?
   status                    String   @default("new")
   createdAt                 DateTime @default(now())
   exploringCallEmailSentAt  DateTime?
   updatedAt                 DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id
+  name      String
+  email     String
+  phone     String?
+  tagsJson  String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sponsors     Sponsor[]       @relation("SponsorContact")
+  venues       Venue[]        @relation("VenueContact")
+  contractors  Contractor[]   @relation("ContractorContact")
+  speakers     Speaker[]      @relation("SpeakerContact")
+  logisticsItems LogisticsItem[] @relation("LogisticsOwner")
+  participations Participation[] @relation("ParticipationOwner")
+}
+
+model Sponsor {
+  id           String   @id
+  companyName  String
+  tier         String?
+  contactId    String?
+  contactName  String?
+  contactEmail String?
+  logoUrl      String?
+  websiteUrl   String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  contact Contact? @relation("SponsorContact", fields: [contactId], references: [id])
+}
+
+model Venue {
+  id        String   @id
+  name      String
+  address   String?
+  capacity  Int?
+  contactId String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contact Contact? @relation("VenueContact", fields: [contactId], references: [id])
+}
+
+model Contractor {
+  id        String   @id
+  name      String
+  role      String?
+  contactId String?
+  rate      Float?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  contact Contact? @relation("ContractorContact", fields: [contactId], references: [id])
+}
+
+model Tool {
+  id        String   @id
+  name      String
+  type      String?
+  url       String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PromoItem {
+  id          String   @id
+  eventId     String?
+  title       String
+  channel     String?
+  dueAt       DateTime?
+  status      String   @default("todo")
+  copy        String?
+  assetLinksJson String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event Event? @relation(fields: [eventId], references: [id])
+}
+
+model LogisticsItem {
+  id              String   @id
+  eventId         String
+  name            String
+  category        String?
+  ownerContactId String?
+  status          String   @default("todo")
+  dueAt           DateTime?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id])
+  owner Contact? @relation("LogisticsOwner", fields: [ownerContactId], references: [id])
+}
+
+model SocialPost {
+  id             String   @id
+  eventId        String?
+  platform       String?
+  copy           String?
+  scheduledAt    DateTime?
+  status         String   @default("draft")
+  assetLinksJson String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  event Event? @relation(fields: [eventId], references: [id])
+}
+
+model ExternalCommunity {
+  id        String   @id
+  name      String
+  url       String?
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  externalEvents ExternalEvent[]
+}
+
+model ExternalEvent {
+  id          String   @id
+  communityId String
+  title       String
+  startAt     DateTime
+  location    String?
+  url         String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  community     ExternalCommunity @relation(fields: [communityId], references: [id])
+  participations Participation[]
+}
+
+model Participation {
+  id               String   @id
+  externalEventId  String
+  intent           String
+  ownerContactId   String?
+  status           String   @default("planned")
+  followUpDueAt    DateTime?
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  externalEvent ExternalEvent @relation(fields: [externalEventId], references: [id])
+  owner         Contact?     @relation("ParticipationOwner", fields: [ownerContactId], references: [id])
 }

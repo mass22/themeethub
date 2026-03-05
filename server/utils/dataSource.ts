@@ -551,6 +551,7 @@ function createPrismaDataSource(): DataSource {
         role: row.role ?? undefined,
         bio: row.bio ?? undefined,
         avatar: row.avatar ?? undefined,
+        contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
         createdAt: row.createdAt.toISOString(),
@@ -566,6 +567,7 @@ function createPrismaDataSource(): DataSource {
         role: row.role ?? undefined,
         bio: row.bio ?? undefined,
         avatar: row.avatar ?? undefined,
+        contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
         createdAt: row.createdAt.toISOString(),
@@ -581,6 +583,7 @@ function createPrismaDataSource(): DataSource {
           role: payload.role ?? null,
           bio: payload.bio ?? null,
           avatar: payload.avatar ?? null,
+          contactId: payload.contactId ?? null,
           socialsJson: payload.socials ? JSON.stringify(payload.socials) : null,
           topicsJson: payload.topics ? JSON.stringify(payload.topics) : null
         }
@@ -591,6 +594,7 @@ function createPrismaDataSource(): DataSource {
         role: row.role ?? undefined,
         bio: row.bio ?? undefined,
         avatar: row.avatar ?? undefined,
+        contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
         createdAt: row.createdAt.toISOString(),
@@ -607,6 +611,7 @@ function createPrismaDataSource(): DataSource {
         role: match.role ?? undefined,
         bio: match.bio ?? undefined,
         avatar: match.avatar ?? undefined,
+        contactId: match.contactId ?? undefined,
         socials: match.socialsJson ? (JSON.parse(match.socialsJson) as Speaker['socials']) : undefined,
         topics: match.topicsJson ? (JSON.parse(match.topicsJson) as string[]) : undefined,
         createdAt: match.createdAt.toISOString(),
@@ -614,16 +619,85 @@ function createPrismaDataSource(): DataSource {
       }
     },
     async listSponsors(): Promise<Sponsor[]> {
-      return []
+      const rows = await prisma.sponsor.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        companyName: r.companyName,
+        tier: r.tier ?? undefined,
+        contactId: r.contactId ?? undefined,
+        contactName: r.contactName ?? undefined,
+        contactEmail: r.contactEmail ?? undefined,
+        logoUrl: r.logoUrl ?? null,
+        websiteUrl: r.websiteUrl ?? null,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
     },
-    async getSponsor(_id: string): Promise<Sponsor | null> {
-      return null
+    async getSponsor(id: string): Promise<Sponsor | null> {
+      const r = await prisma.sponsor.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        companyName: r.companyName,
+        tier: r.tier ?? undefined,
+        contactId: r.contactId ?? undefined,
+        contactName: r.contactName ?? undefined,
+        contactEmail: r.contactEmail ?? undefined,
+        logoUrl: r.logoUrl ?? null,
+        websiteUrl: r.websiteUrl ?? null,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
     },
-    async createSponsor(_payload: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>): Promise<Sponsor> {
-      throw new Error('Sponsors DB not implemented yet')
+    async createSponsor(payload: Omit<Sponsor, 'id' | 'createdAt' | 'updatedAt'>): Promise<Sponsor> {
+      const id = randomId('spo')
+      const r = await prisma.sponsor.create({
+        data: {
+          id,
+          companyName: payload.companyName,
+          tier: payload.tier ?? null,
+          contactId: payload.contactId ?? null,
+          contactName: payload.contactName ?? null,
+          contactEmail: payload.contactEmail ?? null,
+          logoUrl: payload.logoUrl ?? null,
+          websiteUrl: payload.websiteUrl ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        companyName: r.companyName,
+        tier: r.tier ?? undefined,
+        contactId: r.contactId ?? undefined,
+        contactName: r.contactName ?? undefined,
+        contactEmail: r.contactEmail ?? undefined,
+        logoUrl: r.logoUrl ?? null,
+        websiteUrl: r.websiteUrl ?? null,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
     },
-    async findSponsorByCompanyAndEmail(_companyName: string, _contactEmail: string): Promise<Sponsor | null> {
-      return null
+    async findSponsorByCompanyAndEmail(companyName: string, contactEmail: string): Promise<Sponsor | null> {
+      const r = await prisma.sponsor.findFirst({
+        where: { companyName, contactEmail }
+      })
+      if (!r) return null
+      return {
+        id: r.id,
+        companyName: r.companyName,
+        tier: r.tier ?? undefined,
+        contactId: r.contactId ?? undefined,
+        contactName: r.contactName ?? undefined,
+        contactEmail: r.contactEmail ?? undefined,
+        logoUrl: r.logoUrl ?? null,
+        websiteUrl: r.websiteUrl ?? null,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
     },
     async updateSpeaker(id: string, payload: Partial<Omit<Speaker, 'id'>>): Promise<Speaker | null> {
       const existing = await prisma.speaker.findUnique({ where: { id } })
@@ -633,6 +707,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.role !== undefined) data.role = payload.role ?? null
       if (payload.bio !== undefined) data.bio = payload.bio ?? null
       if (payload.avatar !== undefined) data.avatar = payload.avatar ?? null
+      if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
       if (payload.socials !== undefined) data.socialsJson = payload.socials ? JSON.stringify(payload.socials) : null
       if (payload.topics !== undefined) data.topicsJson = payload.topics ? JSON.stringify(payload.topics) : null
       const row = await prisma.speaker.update({
@@ -651,49 +726,677 @@ function createPrismaDataSource(): DataSource {
         updatedAt: row.updatedAt.toISOString()
       }
     },
-    async updateSponsor(_id: string, _payload: Partial<Omit<Sponsor, 'id'>>): Promise<Sponsor | null> {
-      throw new Error('Sponsor update DB not implemented yet')
+    async updateSponsor(id: string, payload: Partial<Omit<Sponsor, 'id'>>): Promise<Sponsor | null> {
+      const existing = await prisma.sponsor.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.companyName !== undefined) data.companyName = payload.companyName
+      if (payload.tier !== undefined) data.tier = payload.tier ?? null
+      if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
+      if (payload.contactName !== undefined) data.contactName = payload.contactName ?? null
+      if (payload.contactEmail !== undefined) data.contactEmail = payload.contactEmail ?? null
+      if (payload.logoUrl !== undefined) data.logoUrl = payload.logoUrl ?? null
+      if (payload.websiteUrl !== undefined) data.websiteUrl = payload.websiteUrl ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getSponsor(id)
+      await prisma.sponsor.update({ where: { id }, data: data as never })
+      return this.getSponsor(id)
     },
-    async listContacts(): Promise<Contact[]> { return [] },
-    async getContact(_id: string): Promise<Contact | null> { return null },
-    async createContact(_p: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>): Promise<Contact> { throw new Error('Contacts DB not implemented yet') },
-    async updateContact(_id: string, _p: Partial<Omit<Contact, 'id'>>): Promise<Contact | null> { throw new Error('Contacts DB not implemented yet') },
-    async listVenues(): Promise<Venue[]> { return [] },
-    async getVenue(_id: string): Promise<Venue | null> { return null },
-    async createVenue(_p: Omit<Venue, 'id' | 'createdAt' | 'updatedAt'>): Promise<Venue> { throw new Error('Venues DB not implemented yet') },
-    async updateVenue(_id: string, _p: Partial<Omit<Venue, 'id'>>): Promise<Venue | null> { throw new Error('Venues DB not implemented yet') },
-    async listContractors(): Promise<Contractor[]> { return [] },
-    async getContractor(_id: string): Promise<Contractor | null> { return null },
-    async createContractor(_p: Omit<Contractor, 'id' | 'createdAt' | 'updatedAt'>): Promise<Contractor> { throw new Error('Contractors DB not implemented yet') },
-    async updateContractor(_id: string, _p: Partial<Omit<Contractor, 'id'>>): Promise<Contractor | null> { throw new Error('Contractors DB not implemented yet') },
-    async listTools(): Promise<Tool[]> { return [] },
-    async getTool(_id: string): Promise<Tool | null> { return null },
-    async createTool(_p: Omit<Tool, 'id' | 'createdAt' | 'updatedAt'>): Promise<Tool> { throw new Error('Tools DB not implemented yet') },
-    async updateTool(_id: string, _p: Partial<Omit<Tool, 'id'>>): Promise<Tool | null> { throw new Error('Tools DB not implemented yet') },
-    async listPromoItems(): Promise<PromoItem[]> { return [] },
-    async getPromoItem(_id: string): Promise<PromoItem | null> { return null },
-    async createPromoItem(_p: Omit<PromoItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<PromoItem> { throw new Error('PromoItems DB not implemented yet') },
-    async updatePromoItem(_id: string, _p: Partial<Omit<PromoItem, 'id'>>): Promise<PromoItem | null> { throw new Error('PromoItems DB not implemented yet') },
-    async listLogisticsItems(): Promise<LogisticsItem[]> { return [] },
-    async getLogisticsItem(_id: string): Promise<LogisticsItem | null> { return null },
-    async createLogisticsItem(_p: Omit<LogisticsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<LogisticsItem> { throw new Error('LogisticsItems DB not implemented yet') },
-    async updateLogisticsItem(_id: string, _p: Partial<Omit<LogisticsItem, 'id'>>): Promise<LogisticsItem | null> { throw new Error('LogisticsItems DB not implemented yet') },
-    async listSocialPosts(): Promise<SocialPost[]> { return [] },
-    async getSocialPost(_id: string): Promise<SocialPost | null> { return null },
-    async createSocialPost(_p: Omit<SocialPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<SocialPost> { throw new Error('SocialPosts DB not implemented yet') },
-    async updateSocialPost(_id: string, _p: Partial<Omit<SocialPost, 'id'>>): Promise<SocialPost | null> { throw new Error('SocialPosts DB not implemented yet') },
-    async listExternalCommunities(): Promise<ExternalCommunity[]> { return [] },
-    async getExternalCommunity(_id: string): Promise<ExternalCommunity | null> { return null },
-    async createExternalCommunity(_p: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity> { throw new Error('ExternalCommunities DB not implemented yet') },
-    async updateExternalCommunity(_id: string, _p: Partial<Omit<ExternalCommunity, 'id'>>): Promise<ExternalCommunity | null> { throw new Error('ExternalCommunities DB not implemented yet') },
-    async listExternalEvents(): Promise<ExternalEvent[]> { return [] },
-    async getExternalEvent(_id: string): Promise<ExternalEvent | null> { return null },
-    async createExternalEvent(_p: Omit<ExternalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalEvent> { throw new Error('ExternalEvents DB not implemented yet') },
-    async updateExternalEvent(_id: string, _p: Partial<Omit<ExternalEvent, 'id'>>): Promise<ExternalEvent | null> { throw new Error('ExternalEvents DB not implemented yet') },
-    async listParticipations(): Promise<Participation[]> { return [] },
-    async getParticipation(_id: string): Promise<Participation | null> { return null },
-    async createParticipation(_p: Omit<Participation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Participation> { throw new Error('Participations DB not implemented yet') },
-    async updateParticipation(_id: string, _p: Partial<Omit<Participation, 'id'>>): Promise<Participation | null> { throw new Error('Participations DB not implemented yet') },
+    async listContacts(): Promise<Contact[]> {
+      const rows = await prisma.contact.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        email: r.email,
+        phone: r.phone ?? undefined,
+        tags: r.tagsJson ? (JSON.parse(r.tagsJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getContact(id: string): Promise<Contact | null> {
+      const r = await prisma.contact.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        name: r.name,
+        email: r.email,
+        phone: r.phone ?? undefined,
+        tags: r.tagsJson ? (JSON.parse(r.tagsJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createContact(payload: Omit<Contact, 'id' | 'createdAt' | 'updatedAt'>): Promise<Contact> {
+      const id = randomId('ctc')
+      const r = await prisma.contact.create({
+        data: {
+          id,
+          name: payload.name,
+          email: payload.email,
+          phone: payload.phone ?? null,
+          tagsJson: payload.tags ? JSON.stringify(payload.tags) : null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        name: r.name,
+        email: r.email,
+        phone: r.phone ?? undefined,
+        tags: r.tagsJson ? (JSON.parse(r.tagsJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateContact(id: string, payload: Partial<Omit<Contact, 'id'>>): Promise<Contact | null> {
+      const existing = await prisma.contact.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.email !== undefined) data.email = payload.email
+      if (payload.phone !== undefined) data.phone = payload.phone ?? null
+      if (payload.tags !== undefined) data.tagsJson = payload.tags ? JSON.stringify(payload.tags) : null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getContact(id)
+      await prisma.contact.update({ where: { id }, data: data as never })
+      return this.getContact(id)
+    },
+    async listVenues(): Promise<Venue[]> {
+      const rows = await prisma.venue.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        address: r.address ?? undefined,
+        capacity: r.capacity ?? undefined,
+        contactId: r.contactId ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getVenue(id: string): Promise<Venue | null> {
+      const r = await prisma.venue.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        name: r.name,
+        address: r.address ?? undefined,
+        capacity: r.capacity ?? undefined,
+        contactId: r.contactId ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createVenue(payload: Omit<Venue, 'id' | 'createdAt' | 'updatedAt'>): Promise<Venue> {
+      const id = randomId('ven')
+      const r = await prisma.venue.create({
+        data: {
+          id,
+          name: payload.name,
+          address: payload.address ?? null,
+          capacity: payload.capacity ?? null,
+          contactId: payload.contactId ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        name: r.name,
+        address: r.address ?? undefined,
+        capacity: r.capacity ?? undefined,
+        contactId: r.contactId ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateVenue(id: string, payload: Partial<Omit<Venue, 'id'>>): Promise<Venue | null> {
+      const existing = await prisma.venue.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.address !== undefined) data.address = payload.address ?? null
+      if (payload.capacity !== undefined) data.capacity = payload.capacity ?? null
+      if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getVenue(id)
+      await prisma.venue.update({ where: { id }, data: data as never })
+      return this.getVenue(id)
+    },
+    async listContractors(): Promise<Contractor[]> {
+      const rows = await prisma.contractor.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        role: r.role ?? undefined,
+        contactId: r.contactId ?? undefined,
+        rate: r.rate ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getContractor(id: string): Promise<Contractor | null> {
+      const r = await prisma.contractor.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        name: r.name,
+        role: r.role ?? undefined,
+        contactId: r.contactId ?? undefined,
+        rate: r.rate ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createContractor(payload: Omit<Contractor, 'id' | 'createdAt' | 'updatedAt'>): Promise<Contractor> {
+      const id = randomId('cns')
+      const r = await prisma.contractor.create({
+        data: {
+          id,
+          name: payload.name,
+          role: payload.role ?? null,
+          contactId: payload.contactId ?? null,
+          rate: payload.rate ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        name: r.name,
+        role: r.role ?? undefined,
+        contactId: r.contactId ?? undefined,
+        rate: r.rate ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateContractor(id: string, payload: Partial<Omit<Contractor, 'id'>>): Promise<Contractor | null> {
+      const existing = await prisma.contractor.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.role !== undefined) data.role = payload.role ?? null
+      if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
+      if (payload.rate !== undefined) data.rate = payload.rate ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getContractor(id)
+      await prisma.contractor.update({ where: { id }, data: data as never })
+      return this.getContractor(id)
+    },
+    async listTools(): Promise<Tool[]> {
+      const rows = await prisma.tool.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        type: r.type ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getTool(id: string): Promise<Tool | null> {
+      const r = await prisma.tool.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        name: r.name,
+        type: r.type ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createTool(payload: Omit<Tool, 'id' | 'createdAt' | 'updatedAt'>): Promise<Tool> {
+      const id = randomId('tls')
+      const r = await prisma.tool.create({
+        data: {
+          id,
+          name: payload.name,
+          type: payload.type ?? null,
+          url: payload.url ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        name: r.name,
+        type: r.type ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateTool(id: string, payload: Partial<Omit<Tool, 'id'>>): Promise<Tool | null> {
+      const existing = await prisma.tool.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.type !== undefined) data.type = payload.type ?? null
+      if (payload.url !== undefined) data.url = payload.url ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getTool(id)
+      await prisma.tool.update({ where: { id }, data: data as never })
+      return this.getTool(id)
+    },
+    async listPromoItems(): Promise<PromoItem[]> {
+      const rows = await prisma.promoItem.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        title: r.title,
+        channel: r.channel ?? undefined,
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        status: r.status as PromoItem['status'],
+        copy: r.copy ?? undefined,
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getPromoItem(id: string): Promise<PromoItem | null> {
+      const r = await prisma.promoItem.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        title: r.title,
+        channel: r.channel ?? undefined,
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        status: r.status as PromoItem['status'],
+        copy: r.copy ?? undefined,
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createPromoItem(payload: Omit<PromoItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<PromoItem> {
+      const id = randomId('prm')
+      const r = await prisma.promoItem.create({
+        data: {
+          id,
+          eventId: payload.eventId ?? null,
+          title: payload.title,
+          channel: payload.channel ?? null,
+          dueAt: payload.dueAt ? new Date(payload.dueAt) : null,
+          status: payload.status ?? 'todo',
+          copy: payload.copy ?? null,
+          assetLinksJson: payload.assetLinks ? JSON.stringify(payload.assetLinks) : null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        title: r.title,
+        channel: r.channel ?? undefined,
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        status: r.status as PromoItem['status'],
+        copy: r.copy ?? undefined,
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updatePromoItem(id: string, payload: Partial<Omit<PromoItem, 'id'>>): Promise<PromoItem | null> {
+      const existing = await prisma.promoItem.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.eventId !== undefined) data.eventId = payload.eventId ?? null
+      if (payload.title !== undefined) data.title = payload.title
+      if (payload.channel !== undefined) data.channel = payload.channel ?? null
+      if (payload.dueAt !== undefined) data.dueAt = payload.dueAt ? new Date(payload.dueAt) : null
+      if (payload.status !== undefined) data.status = payload.status
+      if (payload.copy !== undefined) data.copy = payload.copy ?? null
+      if (payload.assetLinks !== undefined) data.assetLinksJson = payload.assetLinks ? JSON.stringify(payload.assetLinks) : null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getPromoItem(id)
+      await prisma.promoItem.update({ where: { id }, data: data as never })
+      return this.getPromoItem(id)
+    },
+    async listLogisticsItems(): Promise<LogisticsItem[]> {
+      const rows = await prisma.logisticsItem.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        eventId: r.eventId,
+        name: r.name,
+        category: r.category ?? undefined,
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as LogisticsItem['status'],
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getLogisticsItem(id: string): Promise<LogisticsItem | null> {
+      const r = await prisma.logisticsItem.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        eventId: r.eventId,
+        name: r.name,
+        category: r.category ?? undefined,
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as LogisticsItem['status'],
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createLogisticsItem(payload: Omit<LogisticsItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<LogisticsItem> {
+      const id = randomId('lgs')
+      const r = await prisma.logisticsItem.create({
+        data: {
+          id,
+          eventId: payload.eventId,
+          name: payload.name,
+          category: payload.category ?? null,
+          ownerContactId: payload.ownerContactId ?? null,
+          status: payload.status ?? 'todo',
+          dueAt: payload.dueAt ? new Date(payload.dueAt) : null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        eventId: r.eventId,
+        name: r.name,
+        category: r.category ?? undefined,
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as LogisticsItem['status'],
+        dueAt: r.dueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateLogisticsItem(id: string, payload: Partial<Omit<LogisticsItem, 'id'>>): Promise<LogisticsItem | null> {
+      const existing = await prisma.logisticsItem.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.eventId !== undefined) data.eventId = payload.eventId
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.category !== undefined) data.category = payload.category ?? null
+      if (payload.ownerContactId !== undefined) data.ownerContactId = payload.ownerContactId ?? null
+      if (payload.status !== undefined) data.status = payload.status
+      if (payload.dueAt !== undefined) data.dueAt = payload.dueAt ? new Date(payload.dueAt) : null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getLogisticsItem(id)
+      await prisma.logisticsItem.update({ where: { id }, data: data as never })
+      return this.getLogisticsItem(id)
+    },
+    async listSocialPosts(): Promise<SocialPost[]> {
+      const rows = await prisma.socialPost.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        platform: r.platform ?? undefined,
+        copy: r.copy ?? undefined,
+        scheduledAt: r.scheduledAt?.toISOString() ?? undefined,
+        status: r.status as SocialPost['status'],
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getSocialPost(id: string): Promise<SocialPost | null> {
+      const r = await prisma.socialPost.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        platform: r.platform ?? undefined,
+        copy: r.copy ?? undefined,
+        scheduledAt: r.scheduledAt?.toISOString() ?? undefined,
+        status: r.status as SocialPost['status'],
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createSocialPost(payload: Omit<SocialPost, 'id' | 'createdAt' | 'updatedAt'>): Promise<SocialPost> {
+      const id = randomId('soc')
+      const r = await prisma.socialPost.create({
+        data: {
+          id,
+          eventId: payload.eventId ?? null,
+          platform: payload.platform ?? null,
+          copy: payload.copy ?? null,
+          scheduledAt: payload.scheduledAt ? new Date(payload.scheduledAt) : null,
+          status: payload.status ?? 'draft',
+          assetLinksJson: payload.assetLinks ? JSON.stringify(payload.assetLinks) : null
+        }
+      })
+      return {
+        id: r.id,
+        eventId: r.eventId ?? undefined,
+        platform: r.platform ?? undefined,
+        copy: r.copy ?? undefined,
+        scheduledAt: r.scheduledAt?.toISOString() ?? undefined,
+        status: r.status as SocialPost['status'],
+        assetLinks: r.assetLinksJson ? (JSON.parse(r.assetLinksJson) as string[]) : undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateSocialPost(id: string, payload: Partial<Omit<SocialPost, 'id'>>): Promise<SocialPost | null> {
+      const existing = await prisma.socialPost.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.eventId !== undefined) data.eventId = payload.eventId ?? null
+      if (payload.platform !== undefined) data.platform = payload.platform ?? null
+      if (payload.copy !== undefined) data.copy = payload.copy ?? null
+      if (payload.scheduledAt !== undefined) data.scheduledAt = payload.scheduledAt ? new Date(payload.scheduledAt) : null
+      if (payload.status !== undefined) data.status = payload.status
+      if (payload.assetLinks !== undefined) data.assetLinksJson = payload.assetLinks ? JSON.stringify(payload.assetLinks) : null
+      if (Object.keys(data).length === 0) return this.getSocialPost(id)
+      await prisma.socialPost.update({ where: { id }, data: data as never })
+      return this.getSocialPost(id)
+    },
+    async listExternalCommunities(): Promise<ExternalCommunity[]> {
+      const rows = await prisma.externalCommunity.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        name: r.name,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getExternalCommunity(id: string): Promise<ExternalCommunity | null> {
+      const r = await prisma.externalCommunity.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        name: r.name,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createExternalCommunity(payload: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity> {
+      const id = randomId('ext')
+      const r = await prisma.externalCommunity.create({
+        data: {
+          id,
+          name: payload.name,
+          url: payload.url ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        name: r.name,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateExternalCommunity(id: string, payload: Partial<Omit<ExternalCommunity, 'id'>>): Promise<ExternalCommunity | null> {
+      const existing = await prisma.externalCommunity.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.name !== undefined) data.name = payload.name
+      if (payload.url !== undefined) data.url = payload.url ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getExternalCommunity(id)
+      await prisma.externalCommunity.update({ where: { id }, data: data as never })
+      return this.getExternalCommunity(id)
+    },
+    async listExternalEvents(): Promise<ExternalEvent[]> {
+      const rows = await prisma.externalEvent.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        communityId: r.communityId,
+        title: r.title,
+        startAt: r.startAt.toISOString(),
+        location: r.location ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getExternalEvent(id: string): Promise<ExternalEvent | null> {
+      const r = await prisma.externalEvent.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        communityId: r.communityId,
+        title: r.title,
+        startAt: r.startAt.toISOString(),
+        location: r.location ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createExternalEvent(payload: Omit<ExternalEvent, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalEvent> {
+      const id = randomId('exe')
+      const r = await prisma.externalEvent.create({
+        data: {
+          id,
+          communityId: payload.communityId,
+          title: payload.title,
+          startAt: new Date(payload.startAt),
+          location: payload.location ?? null,
+          url: payload.url ?? null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        communityId: r.communityId,
+        title: r.title,
+        startAt: r.startAt.toISOString(),
+        location: r.location ?? undefined,
+        url: r.url ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateExternalEvent(id: string, payload: Partial<Omit<ExternalEvent, 'id'>>): Promise<ExternalEvent | null> {
+      const existing = await prisma.externalEvent.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.communityId !== undefined) data.communityId = payload.communityId
+      if (payload.title !== undefined) data.title = payload.title
+      if (payload.startAt !== undefined) data.startAt = new Date(payload.startAt)
+      if (payload.location !== undefined) data.location = payload.location ?? null
+      if (payload.url !== undefined) data.url = payload.url ?? null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getExternalEvent(id)
+      await prisma.externalEvent.update({ where: { id }, data: data as never })
+      return this.getExternalEvent(id)
+    },
+    async listParticipations(): Promise<Participation[]> {
+      const rows = await prisma.participation.findMany()
+      return rows.map((r) => ({
+        id: r.id,
+        externalEventId: r.externalEventId,
+        intent: r.intent as Participation['intent'],
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as Participation['status'],
+        followUpDueAt: r.followUpDueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }))
+    },
+    async getParticipation(id: string): Promise<Participation | null> {
+      const r = await prisma.participation.findUnique({ where: { id } })
+      if (!r) return null
+      return {
+        id: r.id,
+        externalEventId: r.externalEventId,
+        intent: r.intent as Participation['intent'],
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as Participation['status'],
+        followUpDueAt: r.followUpDueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async createParticipation(payload: Omit<Participation, 'id' | 'createdAt' | 'updatedAt'>): Promise<Participation> {
+      const id = randomId('par')
+      const r = await prisma.participation.create({
+        data: {
+          id,
+          externalEventId: payload.externalEventId,
+          intent: payload.intent,
+          ownerContactId: payload.ownerContactId ?? null,
+          status: payload.status ?? 'planned',
+          followUpDueAt: payload.followUpDueAt ? new Date(payload.followUpDueAt) : null,
+          notes: payload.notes ?? null
+        }
+      })
+      return {
+        id: r.id,
+        externalEventId: r.externalEventId,
+        intent: r.intent as Participation['intent'],
+        ownerContactId: r.ownerContactId ?? undefined,
+        status: r.status as Participation['status'],
+        followUpDueAt: r.followUpDueAt?.toISOString() ?? undefined,
+        notes: r.notes ?? undefined,
+        createdAt: r.createdAt.toISOString(),
+        updatedAt: r.updatedAt.toISOString()
+      }
+    },
+    async updateParticipation(id: string, payload: Partial<Omit<Participation, 'id'>>): Promise<Participation | null> {
+      const existing = await prisma.participation.findUnique({ where: { id } })
+      if (!existing) return null
+      const data: Record<string, unknown> = {}
+      if (payload.externalEventId !== undefined) data.externalEventId = payload.externalEventId
+      if (payload.intent !== undefined) data.intent = payload.intent
+      if (payload.ownerContactId !== undefined) data.ownerContactId = payload.ownerContactId ?? null
+      if (payload.status !== undefined) data.status = payload.status
+      if (payload.followUpDueAt !== undefined) data.followUpDueAt = payload.followUpDueAt ? new Date(payload.followUpDueAt) : null
+      if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (Object.keys(data).length === 0) return this.getParticipation(id)
+      await prisma.participation.update({ where: { id }, data: data as never })
+      return this.getParticipation(id)
+    },
     async listRequests(filters?: ListRequestsFilters): Promise<Request[]> {
       const where: { type?: string; status?: string } = {}
       if (filters?.type) where.type = filters.type

@@ -11,12 +11,14 @@
 
 ## ✨ Features
 
-- 🗓 **Event Management** — Create, update, and publish your meetups with ease.
+- 🗓 **Event Management** — Create, update, and publish your meetups with ease (Luma, Zoom, replays).
 - 🎤 **Speaker Management** — Accept proposals, store bios, and showcase profiles.
-- 📣 **Content & Media** — Link YouTube replays, upload visuals, and keep an archive.
-- 👥 **Community Tools** — Manage members, contacts, and collaborations.
+- 📣 **Content & Media** — Promo items, social posts, YouTube replays, visuals archive.
+- 📋 **Logistics** — Tasks, items, and owners linked to events.
+- 👥 **Community Tools** — Contacts, sponsors, venues, contractors, tools.
+- 🌐 **External Communities** — Track other communities, their events, and your participations.
 - 📊 **Dashboard** — Centralized view of upcoming events, stats, and tasks.
-- 🧩 **Backend-Agnostic** — Works with Supabase, Firebase, Prisma, or any custom API.
+- 🧩 **Data Source** — JSON mocks (default, no DB) or Prisma + SQLite / PostgreSQL.
 - ⚡ **Built with Nuxt 4 & Nitro** — Modern, fast, and fully extensible.
 - 🧠 **MCP Architecture** — Model Context Providers for clean, modular code.
 
@@ -26,9 +28,10 @@
 
 - **[Nuxt 4](https://nuxt.com/)** — Vue 3 framework with SSR & hybrid rendering
 - **[Nitro](https://nitro.unjs.io/)** — Lightweight server engine, backend-agnostic
+- **[Prisma](https://www.prisma.io/)** — ORM with SQLite (dev) or PostgreSQL (prod)
 - **Tailwind CSS** — Utility-first styling
 - **MCP (Model Context Providers)** — Modular server-side logic
-- **Optional providers** — Supabase, Firebase, REST, or in-memory mock
+- **Data sources** — JSON mocks (no DB) or Prisma + SQLite/PostgreSQL
 
 ---
 
@@ -49,15 +52,23 @@ npm install
 
 ### 3. Configure environment
 
-Copy `.env.example` to `.env` and update values (API keys, DB connection, etc.):  
+Copy `.env.example` to `.env` and update values:
 
 ```bash
 cp .env.example .env
 ```
 
-**Data source (useMocks):**  
+**Data source:**  
 - `NUXT_USE_MOCKS=true` (default) — uses JSON files in `mocks/`, no database required.  
 - `NUXT_USE_MOCKS=false` — uses Prisma with `DATABASE_URL` (SQLite or PostgreSQL).
+
+**With Prisma (SQLite):** set `NUXT_USE_MOCKS=false` and run:
+
+```bash
+npm run db:push
+```
+
+Optional: `npm run db:studio` to open Prisma Studio.
 
 ### 4. Run the dev server
 
@@ -83,16 +94,32 @@ themeethub/
 │   ├── composables/     # Composables
 │   ├── layouts/         # Layouts
 │   ├── middleware/      # Route middlewares
-│   ├── pages/           # Routing 
+│   ├── pages/           # Routing
 │   ├── plugins/         # Nuxt Plugins
 │   └── utils/           # Helpers
-├── public/              # Static files
-├── server/              # Nitro (backend)
-│   ├── api/             # API routes
+├── mocks/                # JSON mock data (when NUXT_USE_MOCKS=true)
+│   ├── events.json
+│   ├── speakers.json
+│   ├── sponsors.json
+│   ├── contacts.json
+│   ├── promo_items.json
+│   ├── logistics_items.json
+│   ├── social_posts.json
+│   ├── external_communities.json
+│   ├── external_events.json
+│   ├── participations.json
+│   └── ...
+├── prisma/
+│   ├── schema.prisma    # Models: Event, Speaker, Sponsor, Contact, Venue, etc.
+│   └── migrations/
+├── public/               # Static files
+├── server/               # Nitro (backend)
+│   ├── api/              # API routes
 │   ├── middleware/      # Middlewares serveur
 │   ├── model/           # MCP
-│   └── providers/       # Backends
-├── shared/              # Shared code
+│   ├── providers/       # Backends
+│   └── utils/           # DataSource (mock + Prisma)
+├── shared/               # Shared code
 │   ├── types/           # Typescript types/interfaces
 │   └── utils/           # Common Helpers
 ├── nuxt.config.ts
@@ -100,7 +127,6 @@ themeethub/
 ├── tsconfig.json
 ├── .env.example
 └── README.md
-
 
 ```
 
@@ -122,13 +148,15 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for guidelines.
 
 ## 📅 Roadmap (MVP)
 
-- [ ] Event CRUD
-- [ ] Speaker proposals
+- [x] Event CRUD
+- [x] Speaker / sponsor proposals (Request)
+- [x] Prisma + SQLite + JSON mocks
+- [x] Contacts, sponsors, venues, contractors, tools
+- [x] Promo items, logistics, social posts
+- [x] External communities & participations
 - [ ] Admin dashboard
 - [ ] Public event page with Luma/YouTube integration
-- [ ] Backend providers: Supabase + in-memory mock
 - [ ] Authentication (magic link)
-- [ ] Community members list
 - [ ] Deployment template (Vercel/Netlify)
 
 ---
