@@ -17,7 +17,7 @@
 - 📋 **Logistics** — Tasks, items, and owners linked to events.
 - 👥 **Community Tools** — Contacts, sponsors, venues, contractors, tools.
 - 🌐 **External Communities** — Track other communities, their events, and your participations.
-- 📊 **Dashboard** — Centralized view of upcoming events, stats, and tasks.
+- 📊 **Admin Dashboard** — Stats globales, insights (promo en retard, logistique en attente), tendances de conversion, accès rapide à tous les modules.
 - 🧩 **Data Source** — JSON mocks (default, no DB) or Prisma + SQLite / PostgreSQL.
 - ⚡ **Built with Nuxt 4 & Nitro** — Modern, fast, and fully extensible.
 - 🧠 **MCP Architecture** — Model Context Providers for clean, modular code.
@@ -154,7 +154,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for guidelines.
 - [x] Contacts, sponsors, venues, contractors, tools
 - [x] Promo items, logistics, social posts
 - [x] External communities & participations
-- [ ] Admin dashboard
+- [x] Admin dashboard
 - [ ] Public event page with Luma/YouTube integration
 - [ ] Authentication (magic link)
 - [ ] Deployment template (Vercel/Netlify)
