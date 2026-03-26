@@ -1,9 +1,14 @@
+import type { Venue } from './venue'
+
+export type EventLocationMode = 'in_person' | 'online' | 'hybrid'
+
 export interface Event {
   id: string
   title: string
   slug: string
   date: string // ISO
-  location?: string
+  // Mode de participation (remplace l'ancienne valeur texte libre)
+  location?: EventLocationMode
   description?: string
   bannerImageUrl?: string | null
   lumaEventId?: string | null
@@ -15,4 +20,5 @@ export interface Event {
   contractors: string[] // contractor ids
   tools: string[] // tool ids
   venueId?: string
+  venue?: Venue | null
 }

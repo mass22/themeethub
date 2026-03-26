@@ -4,7 +4,7 @@ const schema = z.object({
   title: z.string().min(3).optional(),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/).optional(),
   date: z.string().min(1).optional(),
-  location: z.string().optional(),
+  location: z.enum(['in_person', 'online', 'hybrid']).optional(),
   description: z.string().optional(),
   bannerImageUrl: z.string().optional().nullable(),
   speakers: z.array(z.string()).optional(),

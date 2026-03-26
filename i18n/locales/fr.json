@@ -261,7 +261,12 @@
         "open": "Ouvrir",
         "empty": "Aucun événement. Créez-en un pour commencer.",
         "back": "Retour aux événements",
-        "location": "Lieu",
+        "location": "Mode",
+        "locationModes": {
+            "in_person": "Présentiel",
+            "online": "En ligne",
+            "hybrid": "Mixte"
+        },
         "date": "Date",
         "description": "Description",
         "speakers": "Intervenants",
@@ -269,7 +274,7 @@
         "registered": "Inscrits",
         "attended": "Présents",
         "noDescription": "Aucune description disponible",
-        "noLocation": "Lieu non spécifié",
+        "noLocation": "Mode non spécifié",
         "noSpeakers": "Aucun intervenant",
         "hub": {
             "bannerImage": "Image de bannière",

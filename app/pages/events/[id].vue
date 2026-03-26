@@ -13,6 +13,7 @@ const route = useRoute()
 const router = useRouter()
 const eventId = route.params.id as string
 const { add: addToast } = useToast()
+const { t } = useI18n()
 
 const eventsStore = useEventsStore()
 const speakersStore = useSpeakersStore()
@@ -34,17 +35,66 @@ const selectedSponsorId = ref<string | null>(null)
 const selectedContractorId = ref<string | null>(null)
 const selectedToolId = ref<string | null>(null)
 const selectedVenueId = ref<string | null>(null)
-const selectedPromoId = ref<string | null>(null)
-const selectedLogisticsId = ref<string | null>(null)
-const selectedSocialId = ref<string | null>(null)
 
 const statsForm = reactive({ registered: 0, attended: 0 })
 const statsSaving = ref(false)
 const bannerForm = reactive({ bannerImageUrl: '' })
 const bannerSaving = ref(false)
+const descriptionForm = reactive({ description: '' })
+const descriptionSaving = ref(false)
+
+const titleForm = reactive({ title: '' })
+const titleSaving = ref(false)
+
+const dateForm = reactive({ dateTimeLocal: '' })
+const dateSaving = ref(false)
+
+const locationForm = reactive<{ location: LocationMode | '' }>({ location: '' })
+const locationSaving = ref(false)
+
+const LOCATION_MODES = ['in_person', 'online', 'hybrid'] as const
+type LocationMode = (typeof LOCATION_MODES)[number]
+
+function normalizeLocationMode(val: string | undefined | null): LocationMode | '' {
+  if (!val) return ''
+  return LOCATION_MODES.includes(val as LocationMode) ? (val as LocationMode) : 'in_person'
+}
+
+function formatLocationMode(val: string | undefined | null): string {
+  if (!val) return ''
+  if (!LOCATION_MODES.includes(val as LocationMode)) return t('events.locationModes.in_person')
+  const key = `events.locationModes.${val}`
+  const res = t(key)
+  // Si la traduction manque, i18n renvoie souvent la key elle-même.
+  return res === key ? val : res
+}
+
+function toDateTimeLocalValue(iso: string | undefined | null): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function toIsoFromDateTimeLocal(val: string | undefined | null): string | null {
+  if (!val || typeof val !== 'string') return null
+  const d = new Date(val)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString()
+}
 
 watch(event, (e) => {
   bannerForm.bannerImageUrl = e?.bannerImageUrl ?? ''
+}, { immediate: true })
+
+watch(event, (e) => {
+  descriptionForm.description = e?.description ?? ''
+}, { immediate: true })
+
+watch(event, (e) => {
+  titleForm.title = e?.title ?? ''
+  dateForm.dateTimeLocal = toDateTimeLocalValue(e?.date ?? undefined)
+  locationForm.location = normalizeLocationMode(e?.location)
 }, { immediate: true })
 
 watch(event, (e) => {
@@ -102,6 +152,96 @@ async function saveBanner() {
   }
 }
 
+const descriptionChanged = computed(() =>
+  event.value && (event.value.description ?? '') !== descriptionForm.description
+)
+
+async function saveDescription() {
+  if (!event.value || descriptionSaving.value) return
+  descriptionSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, {
+      description: descriptionForm.description.trim()
+    })
+    event.value = updated
+    addToast({ title: 'Description enregistrée', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
+  } finally {
+    descriptionSaving.value = false
+  }
+}
+
+const titleChanged = computed(() =>
+  event.value && (event.value.title ?? '') !== titleForm.title
+)
+
+async function saveTitle() {
+  if (!event.value || titleSaving.value) return
+  titleSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, {
+      title: titleForm.title.trim()
+    })
+    event.value = updated
+    addToast({ title: 'Titre enregistré', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
+  } finally {
+    titleSaving.value = false
+  }
+}
+
+const dateIso = computed(() => toIsoFromDateTimeLocal(dateForm.dateTimeLocal))
+const dateValid = computed(() => dateIso.value !== null)
+const dateChanged = computed(() => {
+  if (!event.value) return false
+  if (!dateIso.value) return false
+  return (event.value.date ?? '') !== dateIso.value
+})
+
+async function saveDate() {
+  if (!event.value || dateSaving.value) return
+  const iso = dateIso.value
+  if (!iso) {
+    addToast({ title: 'Date invalide', color: 'error' })
+    return
+  }
+  dateSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, {
+      date: iso
+    })
+    event.value = updated
+    addToast({ title: 'Date enregistrée', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
+  } finally {
+    dateSaving.value = false
+  }
+}
+
+const locationChanged = computed(() =>
+  event.value && normalizeLocationMode(event.value.location) !== locationForm.location
+)
+
+async function saveLocation() {
+  if (!event.value || locationSaving.value) return
+  locationSaving.value = true
+  try {
+    const nextLocation = locationForm.location || undefined
+    const updated = await eventsStore.update(eventId, {
+      location: nextLocation
+    })
+    event.value = updated
+    addToast({ title: 'Lieu enregistré', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
+  } finally {
+    locationSaving.value = false
+  }
+}
+
 const linkedSponsors = computed<Sponsor[]>(() => {
   if (!event.value?.sponsors) return []
   return event.value.sponsors
@@ -146,21 +286,6 @@ const toolOptions = computed(() =>
 )
 const venueOptions = computed(() =>
   venuesStore.items.map((v) => ({ label: v.name, value: v.id }))
-)
-const promoOptions = computed(() =>
-  promoStore.items
-    .filter((p) => p.eventId !== eventId)
-    .map((p) => ({ label: p.title, value: p.id }))
-)
-const logisticsOptions = computed(() =>
-  logisticsStore.items
-    .filter((l) => l.eventId !== eventId)
-    .map((l) => ({ label: l.name, value: l.id }))
-)
-const socialOptions = computed(() =>
-  socialStore.items
-    .filter((s) => s.eventId !== eventId)
-    .map((s) => ({ label: s.platform || s.copy?.slice(0, 30) || s.id, value: s.id }))
 )
 
 const linkedTools = computed<Tool[]>(() => {
@@ -271,42 +396,12 @@ async function removeTool(toolId: string) {
 async function setVenue(venueId: string | null) {
   if (!event.value) return
   await eventsStore.update(eventId, { venueId: venueId ?? undefined })
-  event.value = { ...event.value, venueId }
-}
-
-async function addPromo(promoId: string) {
-  try {
-    await promoStore.patch(promoId, { eventId: eventId })
-    await promoStore.fetchById(promoId)
-    addToast({ title: 'Item promo ajouté', color: 'success' })
-  } catch {
-    addToast({ title: 'Erreur lors de l\'ajout', color: 'error' })
-  }
-}
-
-async function addLogistics(logisticsId: string) {
-  try {
-    await logisticsStore.patch(logisticsId, { eventId: eventId })
-    await logisticsStore.fetchById(logisticsId)
-    addToast({ title: 'Item logistique ajouté', color: 'success' })
-  } catch {
-    addToast({ title: 'Erreur lors de l\'ajout', color: 'error' })
-  }
-}
-
-async function addSocial(socialId: string) {
-  try {
-    await socialStore.patch(socialId, { eventId: eventId })
-    await socialStore.fetchById(socialId)
-    addToast({ title: 'Publication ajoutée', color: 'success' })
-  } catch {
-    addToast({ title: 'Erreur lors de l\'ajout', color: 'error' })
-  }
+  event.value = { ...event.value, venueId: venueId ?? undefined }
 }
 
 async function removePromo(promoId: string) {
   try {
-    await promoStore.patch(promoId, { eventId: undefined })
+    await promoStore.patch(promoId, { eventId: null })
     await promoStore.fetchById(promoId)
     addToast({ title: 'Item promo retiré', color: 'success' })
   } catch {
@@ -331,7 +426,7 @@ async function removeLogistics(logisticsId: string) {
 
 async function removeSocial(socialId: string) {
   try {
-    await socialStore.patch(socialId, { eventId: undefined })
+    await socialStore.patch(socialId, { eventId: null })
     await socialStore.fetchById(socialId)
     addToast({ title: 'Publication retirée', color: 'success' })
   } catch {
@@ -359,24 +454,6 @@ async function confirmAddVenue() {
   } catch {
     addToast({ title: 'Erreur lors de l\'assignation', color: 'error' })
   }
-}
-
-async function confirmAddPromo() {
-  if (!selectedPromoId.value) return
-  await addPromo(selectedPromoId.value)
-  selectedPromoId.value = null
-}
-
-async function confirmAddLogistics() {
-  if (!selectedLogisticsId.value) return
-  await addLogistics(selectedLogisticsId.value)
-  selectedLogisticsId.value = null
-}
-
-async function confirmAddSocial() {
-  if (!selectedSocialId.value) return
-  await addSocial(selectedSocialId.value)
-  selectedSocialId.value = null
 }
 
 onMounted(async () => {
@@ -412,7 +489,9 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => router.push('/events')
+const goBack = () => {
+  void router.push('/events')
+}
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('fr-FR', {
@@ -460,25 +539,80 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
             class="w-full h-48 object-cover rounded-t-lg"
           />
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ event.title }}</h1>
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-500 mb-2">Titre</label>
+            <UInput v-model="titleForm.title" class="w-full" />
+          </div>
+          <UButton
+            size="sm"
+            :loading="titleSaving"
+            :disabled="!titleChanged"
+            @click="saveTitle"
+          >
+            {{ $t('common.submit') }}
+          </UButton>
+        </div>
 
         <div class="grid md:grid-cols-2 gap-6 mb-6">
           <div>
             <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.date') }}</h3>
-            <p class="text-lg text-gray-900">{{ formatDate(event.date) }}</p>
+            <UInput v-model="dateForm.dateTimeLocal" type="datetime-local" class="w-full" />
+            <div class="mt-2">
+              <UButton
+                size="sm"
+                :loading="dateSaving"
+                :disabled="!dateValid || !dateChanged"
+                @click="saveDate"
+              >
+                {{ $t('common.submit') }}
+              </UButton>
+            </div>
           </div>
-          <div v-if="event.location">
+          <div>
             <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.location') }}</h3>
-            <p class="text-lg text-gray-900">{{ event.location }}</p>
+            <USelectMenu
+              v-model="locationForm.location"
+              :items="[
+                { label: $t('events.locationModes.in_person'), value: 'in_person' },
+                { label: $t('events.locationModes.online'), value: 'online' },
+                { label: $t('events.locationModes.hybrid'), value: 'hybrid' }
+              ]"
+              value-key="value"
+              :placeholder="$t('events.locationModes.in_person')"
+              class="w-full"
+            />
+            <div class="mt-2">
+              <UButton
+                size="sm"
+                :loading="locationSaving"
+                :disabled="!locationChanged"
+                @click="saveLocation"
+              >
+                {{ $t('common.submit') }}
+              </UButton>
+            </div>
           </div>
         </div>
 
-        <div v-if="event.description" class="mb-6">
+        <div class="mb-6">
           <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.description') }}</h3>
-          <p class="text-gray-900 leading-relaxed">{{ event.description }}</p>
-        </div>
-        <div v-else class="mb-6">
-          <p class="text-gray-500 italic">{{ $t('events.noDescription') }}</p>
+          <UTextarea
+            v-model="descriptionForm.description"
+            :rows="5"
+            :placeholder="$t('events.noDescription')"
+            class="w-full"
+          />
+          <div class="mt-2 flex items-center gap-3">
+            <UButton
+              size="sm"
+              :loading="descriptionSaving"
+              :disabled="!descriptionChanged"
+              @click="saveDescription"
+            >
+              {{ $t('common.submit') }}
+            </UButton>
+          </div>
         </div>
 
         <div v-if="event.zoomUrl || event.replayUrl" class="flex gap-4 mb-6">
@@ -553,7 +687,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
               <USelectMenu
-                :model-value="(selectedVenueId ? venueOptions.find(o => o.value === selectedVenueId) : null) ?? (linkedVenue ? { label: linkedVenue.name, value: linkedVenue.id } : undefined)"
+                :model-value="selectedVenueId ?? undefined"
                 :items="venueOptions"
                 value-key="value"
                 :placeholder="$t('events.hub.selectOrCreate')"
@@ -579,7 +713,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
             <NuxtLink :to="`/venues/${linkedVenue.id}`" class="text-primary hover:underline">{{ linkedVenue.name }}</NuxtLink>
             <p v-if="linkedVenue.address" class="text-sm text-gray-600">{{ linkedVenue.address }}</p>
           </div>
-          <p v-else-if="event.location" class="mt-3 text-gray-700">{{ event.location }}</p>
+          <p v-else-if="event.location" class="mt-3 text-gray-700">{{ formatLocationMode(event.location) }}</p>
           <p v-else class="mt-3 text-gray-500 italic">{{ $t('events.noLocation') }}</p>
         </UCard>
 
@@ -591,7 +725,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
               <USelectMenu
-                :model-value="speakerOptions.find(o => o.value === selectedSpeakerId)"
+                :model-value="selectedSpeakerId ?? undefined"
                 :items="speakerOptions"
                 value-key="value"
                 :placeholder="$t('events.hub.selectOrCreate')"
@@ -627,7 +761,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
               <USelectMenu
-                :model-value="sponsorOptions.find(o => o.value === selectedSponsorId)"
+                :model-value="selectedSponsorId ?? undefined"
                 :items="sponsorOptions"
                 value-key="value"
                 :placeholder="$t('events.hub.selectOrCreate')"
@@ -662,21 +796,6 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           </template>
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
-              <USelectMenu
-                :model-value="promoOptions.find(o => o.value === selectedPromoId)"
-                :items="promoOptions"
-                value-key="value"
-                :placeholder="$t('events.hub.selectOrCreate')"
-                class="min-w-48"
-                @update:model-value="selectedPromoId = typeof $event === 'string' ? $event : ($event as { value?: string } | null)?.value ?? null"
-              />
-              <UButton
-                size="sm"
-                :disabled="!selectedPromoId"
-                @click="confirmAddPromo"
-              >
-                {{ $t('events.hub.add') }}
-              </UButton>
               <UButton size="sm" variant="outline" :to="addPromoLink">
                 {{ $t('events.hub.createNew') }}
               </UButton>
@@ -701,21 +820,6 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           </template>
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
-              <USelectMenu
-                :model-value="logisticsOptions.find(o => o.value === selectedLogisticsId)"
-                :items="logisticsOptions"
-                value-key="value"
-                :placeholder="$t('events.hub.selectOrCreate')"
-                class="min-w-48"
-                @update:model-value="selectedLogisticsId = typeof $event === 'string' ? $event : ($event as { value?: string } | null)?.value ?? null"
-              />
-              <UButton
-                size="sm"
-                :disabled="!selectedLogisticsId"
-                @click="confirmAddLogistics"
-              >
-                {{ $t('events.hub.add') }}
-              </UButton>
               <UButton size="sm" variant="outline" :to="addLogisticsLink">
                 {{ $t('events.hub.createNew') }}
               </UButton>
@@ -741,7 +845,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
               <USelectMenu
-                :model-value="contractorOptions.find(o => o.value === selectedContractorId)"
+                :model-value="selectedContractorId ?? undefined"
                 :items="contractorOptions"
                 value-key="value"
                 :placeholder="$t('events.hub.selectOrCreate')"
@@ -777,7 +881,7 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
               <USelectMenu
-                :model-value="toolOptions.find(o => o.value === selectedToolId)"
+                :model-value="selectedToolId ?? undefined"
                 :items="toolOptions"
                 value-key="value"
                 :placeholder="$t('events.hub.selectOrCreate')"
@@ -812,21 +916,6 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           </template>
           <div class="space-y-3">
             <div class="flex gap-2 items-center flex-wrap">
-              <USelectMenu
-                :model-value="socialOptions.find(o => o.value === selectedSocialId)"
-                :items="socialOptions"
-                value-key="value"
-                :placeholder="$t('events.hub.selectOrCreate')"
-                class="min-w-48"
-                @update:model-value="selectedSocialId = typeof $event === 'string' ? $event : ($event as { value?: string } | null)?.value ?? null"
-              />
-              <UButton
-                size="sm"
-                :disabled="!selectedSocialId"
-                @click="confirmAddSocial"
-              >
-                {{ $t('events.hub.add') }}
-              </UButton>
               <UButton size="sm" variant="outline" :to="addSocialLink">
                 {{ $t('events.hub.createNew') }}
               </UButton>

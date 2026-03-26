@@ -59,6 +59,15 @@ const promoDueThreshold = computed(() => {
   return d.toISOString()
 })
 
+const LOCATION_MODES = ['in_person', 'online', 'hybrid'] as const
+function formatEventLocation(value?: string) {
+  if (!value) return ''
+  if (!LOCATION_MODES.includes(value as any)) return t('events.locationModes.in_person')
+  const key = `events.locationModes.${value}`
+  const res = t(key)
+  return res === key ? value : res
+}
+
 const promoItems = computed<PromoItem[]>(() => {
   try {
     return promoStore.items
@@ -130,9 +139,7 @@ const requestsLink = (status: string) => localePath(`/requests?status=${status}`
             <span class="font-medium">{{ e.title }}</span>
             <span class="text-sm text-slate-500 dark:text-slate-400 ml-2">
               {{ new Date(e.date).toLocaleDateString() }}
-              <template v-if="e.location">
-                · {{ e.location }}
-              </template>
+              <template v-if="e.location"> · {{ formatEventLocation(e.location) }}</template>
             </span>
           </div>
           <UButton :to="localePath(`/events/${e.id}`)" variant="soft" size="xs">

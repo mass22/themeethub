@@ -260,7 +260,12 @@
         "open": "Open",
         "empty": "No events yet. Create one to get started.",
         "back": "Back to events",
-        "location": "Location",
+        "location": "Mode",
+        "locationModes": {
+            "in_person": "In-person",
+            "online": "Online",
+            "hybrid": "Hybrid"
+        },
         "date": "Date",
         "description": "Description",
         "speakers": "Speakers",
@@ -268,7 +273,7 @@
         "registered": "Registered",
         "attended": "Attended",
         "noDescription": "No description available",
-        "noLocation": "Location not specified",
+        "noLocation": "Mode not specified",
         "noSpeakers": "No speakers",
         "hub": {
             "bannerImage": "Banner image",

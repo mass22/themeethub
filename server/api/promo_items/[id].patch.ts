@@ -4,7 +4,7 @@ import type { PromoItemStatus } from '../../../types/promoItem'
 const statusSchema = z.enum(['todo', 'in_progress', 'done'] as [PromoItemStatus, ...PromoItemStatus[]])
 
 const schema = z.object({
-  eventId: z.string().min(1).optional(),
+  eventId: z.string().min(1).nullable().optional(),
   title: z.string().min(1).optional(),
   channel: z.string().optional(),
   dueAt: z.string().optional(),

@@ -91,7 +91,7 @@ describe('POST /api/events', () => {
         title: 'Valid Title',
         date: '2025-10-01T00:00:00Z',
         slug: 'valid-slug',
-        location: 'Montréal, QC',
+        location: 'in_person',
         description: 'Description optionnelle',
         speakers: []
       }

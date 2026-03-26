@@ -2,7 +2,7 @@ export type SocialPostStatus = 'draft' | 'scheduled' | 'posted'
 
 export interface SocialPost {
   id: string
-  eventId?: string
+  eventId?: string | null
   platform?: string
   copy?: string
   scheduledAt?: string

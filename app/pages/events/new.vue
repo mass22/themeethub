@@ -5,7 +5,8 @@ const schema = z.object({
   title: z.string().min(3, 'Le titre doit contenir au moins 3 caractères'),
   date: z.string().min(1, 'La date est requise'),
   slug: z.string().min(3, 'Le slug doit contenir au moins 3 caractères').regex(/^[a-z0-9-]+$/, 'Le slug ne peut contenir que des lettres minuscules, chiffres et tirets'),
-  location: z.string().optional(),
+  // Mode de participation : remplace l'ancienne valeur texte libre
+  location: z.union([z.enum(['in_person', 'online', 'hybrid']), z.literal('')]).optional(),
   description: z.string().optional(),
   bannerImageUrl: z.string().optional(),
   speakers: z.array(z.string()).default([]),
@@ -215,13 +216,18 @@ async function onSubmit () {
       </div>
 
       <div>
-        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-        <UInput
+        <label for="location" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.location') }}</label>
+        <USelectMenu
           id="location"
           v-model="state.location"
-          placeholder="Montréal, QC"
+          :items="[
+            { label: $t('events.locationModes.in_person'), value: 'in_person' },
+            { label: $t('events.locationModes.online'), value: 'online' },
+            { label: $t('events.locationModes.hybrid'), value: 'hybrid' }
+          ]"
+          value-key="value"
           :class="errors.location ? 'error-field' : ''"
-          @blur="validateField('location')"
+          :placeholder="$t('events.locationModes.in_person')"
         />
         <p v-if="errors.location" class="text-sm text-red-600 mt-1">{{ errors.location }}</p>
       </div>
