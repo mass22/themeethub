@@ -15,8 +15,8 @@ const sidebarOpen = ref(false)
       @click="sidebarOpen = false"
     />
 
-    <!-- Main content -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <!-- Main content (lg:ml-64 : la sidebar est fixed w-64, sinon le contenu est sous la nav) -->
+    <div class="flex-1 flex flex-col min-w-0 lg:ml-64">
       <!-- Top bar : hamburger (mobile) + page context -->
       <header class="sticky top-0 z-30 h-14 flex items-center gap-4 px-4 lg:px-6 pl-6 lg:pl-10 border-b border-slate-200/80 dark:border-slate-700/80 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shrink-0">
         <UButton

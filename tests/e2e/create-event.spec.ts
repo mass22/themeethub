@@ -1,14 +1,20 @@
 import { expect, test } from '@playwright/test'
 
 test('create event via form', async ({ page }) => {
-  await page.goto('/events/new')
+  const suffix = Date.now()
+  const title = `Playwright Event ${suffix}`
+  const slug = `playwright-e2e-${suffix}`
 
-  // Remplir le formulaire avec les bons labels
-  await page.getByLabel('Titre').fill('Playwright Event')
+  await page.goto('/events/new')
+  await expect(page.getByRole('heading', { name: 'Créer un événement' })).toBeVisible({ timeout: 15000 })
+
+  await page.getByLabel('Titre').fill(title)
   await page.getByLabel('Date et heure').fill('2025-12-01T10:00')
-  await page.getByLabel('Slug').fill('playwright-event')
-  await page.getByLabel('Location').fill('Montréal, QC')
-  await page.getByLabel('Description').fill('Événement créé par Playwright')
+  await page.getByLabel('Slug').fill(slug)
+  await page.locator('#location').click()
+  await page.locator('[data-slot="itemLabel"]').filter({ hasText: /^Présentiel$/ }).click()
+  await page.keyboard.press('Escape')
+  await page.locator('#description [contenteditable="true"]').fill('Événement créé par Playwright')
 
   // Cliquer sur le bouton avec le bon texte
   await page.getByRole('button', { name: 'Créer l\'événement' }).click()
@@ -18,5 +24,5 @@ test('create event via form', async ({ page }) => {
 
   // Aller à la liste des événements et vérifier que l'événement est visible
   await page.goto('/events')
-  await expect(page.getByRole('heading', { name: 'Playwright Event' }).first()).toBeVisible()
+  await expect(page.getByRole('heading', { name: title }).first()).toBeVisible()
 })

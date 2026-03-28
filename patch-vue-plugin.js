@@ -8,6 +8,9 @@ const filesToPatch = [
   'node_modules/vite/dist/node/chunks/config.js'
 ]
 
+/** @nuxt/ui colors plugin : useHead avant contexte Unhead en SPA (ssr: false) */
+const nuxtUiColorsPath = 'node_modules/@nuxt/ui/dist/runtime/plugins/colors.js'
+
 let patchedCount = 0
 
 for (const filePath of filesToPatch) {
@@ -57,4 +60,35 @@ console.log(`\n🎉 Patch terminé: ${patchedCount}/${filesToPatch.length} fichi
 
 if (patchedCount === 0) {
   console.log('⚠️  Aucun fichier n\'a pu être patché (versions peut-être mises à jour)')
+}
+
+// --- @nuxt/ui : useHead différé (nextTick) pour ssr: false + Unhead ---
+if (existsSync(nuxtUiColorsPath)) {
+  let colorsSrc = readFileSync(nuxtUiColorsPath, 'utf8')
+  if (colorsSrc.includes('__THEMEETHUB_NUXT_UI_COLORS_NEXTICK__')) {
+    console.log('✅ @nuxt/ui colors.js déjà patché (useHead + nextTick)')
+  } else {
+    if (!colorsSrc.includes('import { computed } from "vue"')) {
+      console.log('⚠️  @nuxt/ui colors.js : format inattendu, patch ignoré')
+    } else {
+      colorsSrc = colorsSrc.replace(
+        'import { computed } from "vue";',
+        'import { computed, nextTick } from "vue";'
+      )
+      colorsSrc = colorsSrc.replace(
+        '  useHead(headData);\n});',
+        `  const applyUiColorsHead = () => useHead(headData);
+  if (import.meta.client) {
+    nextTick(applyUiColorsHead);
+  } else {
+    applyUiColorsHead();
+  }
+}); // __THEMEETHUB_NUXT_UI_COLORS_NEXTICK__`
+      )
+      writeFileSync(nuxtUiColorsPath, colorsSrc)
+      console.log('✅ @nuxt/ui colors.js patché (useHead via nextTick pour SPA)')
+    }
+  }
+} else {
+  console.log(`⚠️  Fichier non trouvé: ${nuxtUiColorsPath}`)
 }

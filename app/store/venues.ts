@@ -8,7 +8,11 @@ export const useVenuesStore = defineStore('venues', () => {
 
   const fetchAll = async () => {
     if (loaded.value) return
-    items.value = await $fetch<Venue[]>('/api/venues')
+    try {
+      items.value = await fetchWithRetry(() => $fetch<Venue[]>('/api/venues'))
+    } catch {
+      items.value = []
+    }
     loaded.value = true
   }
 

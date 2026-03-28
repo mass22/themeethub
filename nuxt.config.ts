@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
+const mainConfig = defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
   srcDir: 'app',
@@ -26,7 +26,11 @@ export default defineNuxtConfig({
         '@nuxt/ui > prosemirror-transform',
         '@nuxt/ui > prosemirror-model',
         '@nuxt/ui > prosemirror-view',
-        '@nuxt/ui > prosemirror-gapcursor'
+        '@nuxt/ui > prosemirror-gapcursor',
+        '@fullcalendar/core',
+        'better-auth/vue',
+        'better-auth/client/plugins',
+        'zod'
       ]
     }
   },
@@ -47,6 +51,16 @@ export default defineNuxtConfig({
     calSponsorLink: '',
     calSpeakerLink: '',
     fromEmail: '',
-    public: { appName: 'TheMeetHub' }
+    public: {
+      appName: 'TheMeetHub',
+      /** Affiche « Continuer avec GitHub » (définir NUXT_PUBLIC_GITHUB_AUTH=true + clés serveur) */
+      githubAuth: false,
+      /** Activé uniquement par nuxt.config.e2e.ts pour les tests Playwright. */
+      e2eBypassAuth: false,
+    }
   }
 })
+
+export default process.env.NUXT_E2E === '1'
+  ? (await import('./nuxt.config.e2e')).default
+  : mainConfig

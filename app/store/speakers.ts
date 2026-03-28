@@ -10,7 +10,11 @@ export const useSpeakersStore = defineStore('Speakers', () => {
   // Actions
   const fetchAll = async () => {
     if (loaded.value) return
-    items.value = await $fetch<Speaker[]>('/api/speakers')
+    try {
+      items.value = await fetchWithRetry(() => $fetch<Speaker[]>('/api/speakers'))
+    } catch {
+      items.value = []
+    }
     loaded.value = true
   }
 

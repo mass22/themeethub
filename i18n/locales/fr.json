@@ -382,5 +382,17 @@
             "closed": "Clôturé",
             "rejected": "Rejeté"
         }
+    },
+    "auth": {
+        "title": "Connexion",
+        "subtitle": "Recevez un lien par e-mail pour accéder au back office.",
+        "email": "Adresse e-mail",
+        "emailPlaceholder": "vous{'@'}exemple.com",
+        "sendLink": "Envoyer le lien",
+        "linkSent": "Si cette adresse est autorisée, un lien de connexion vient d’être envoyé.",
+        "errorGeneric": "Impossible d’envoyer le lien. Réessayez plus tard.",
+        "or": "ou",
+        "signInGithub": "Continuer avec GitHub",
+        "errorGithub": "Connexion GitHub impossible. Vérifiez la configuration ou réessayez."
     }
 }

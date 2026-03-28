@@ -381,5 +381,17 @@
             "closed": "Closed",
             "rejected": "Rejected"
         }
+    },
+    "auth": {
+        "title": "Sign in",
+        "subtitle": "We will email you a magic link to access the back office.",
+        "email": "Email address",
+        "emailPlaceholder": "you{'@'}example.com",
+        "sendLink": "Send magic link",
+        "linkSent": "If this address is allowed, a sign-in link has been sent.",
+        "errorGeneric": "Could not send the link. Please try again later.",
+        "or": "or",
+        "signInGithub": "Continue with GitHub",
+        "errorGithub": "GitHub sign-in failed. Check configuration or try again."
     }
 }
