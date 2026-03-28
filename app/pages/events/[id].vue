@@ -597,9 +597,8 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
 
         <div class="mb-6">
           <h3 class="text-sm font-medium text-gray-500 mb-2">{{ $t('events.description') }}</h3>
-          <UTextarea
+          <EventDescriptionEditor
             v-model="descriptionForm.description"
-            :rows="5"
             :placeholder="$t('events.noDescription')"
             class="w-full"
           />

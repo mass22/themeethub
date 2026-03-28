@@ -317,13 +317,9 @@ async function onSubmit () {
 
       <div>
         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-        <UTextarea
-          id="description"
-          v-model="state.description"
-          :rows="4"
-          :class="errors.description ? 'error-field' : ''"
-          @blur="validateField('description')"
-        />
+        <div id="description" :class="errors.description ? 'error-field' : ''">
+          <EventDescriptionEditor v-model="state.description" placeholder="Résumé, ordre du jour, liens utiles…" />
+        </div>
         <p v-if="errors.description" class="text-sm text-red-600 mt-1">{{ errors.description }}</p>
       </div>
 

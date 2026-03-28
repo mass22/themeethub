@@ -61,6 +61,13 @@ describe('NewEvent page', () => {
             template: '<textarea v-bind="$attrs" />',
             inheritAttrs: false
           },
+          EventDescriptionEditor: {
+            props: ['modelValue'],
+            emits: ['update:modelValue'],
+            inheritAttrs: false,
+            template:
+              '<textarea :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />'
+          },
           UButton: {
             template: '<button v-bind="$attrs"><slot /></button>',
             inheritAttrs: false
@@ -70,8 +77,10 @@ describe('NewEvent page', () => {
             inheritAttrs: false
           },
           USelectMenu: {
-            template: '<div data-testid="speakers-select">Speakers</div>',
-            inheritAttrs: false
+            props: ['id', 'placeholder'],
+            inheritAttrs: true,
+            template:
+              '<input type="text" readonly :id="id" :placeholder="placeholder" />'
           }
         }
       }
@@ -87,7 +96,8 @@ describe('NewEvent page', () => {
       expect(wrapper.find('label[for="title"]').text()).toBe('Titre')
       expect(wrapper.find('label[for="date"]').text()).toBe('Date et heure')
       expect(wrapper.find('label[for="slug"]').text()).toBe('Slug')
-      expect(wrapper.find('label[for="location"]').text()).toBe('Location')
+      // $t mock renvoie la clé i18n
+      expect(wrapper.find('label[for="location"]').text()).toBe('events.location')
       expect(wrapper.find('label[for="speakers"]').exists()).toBe(true)
       expect(wrapper.find('label[for="description"]').text()).toBe('Description')
     })
@@ -164,7 +174,7 @@ describe('NewEvent page', () => {
       const locationInput = wrapper.find('#location')
 
       expect(slugInput.attributes('placeholder')).toBe('vue-montreal-1')
-      expect(locationInput.attributes('placeholder')).toBe('Montréal, QC')
+      expect(locationInput.attributes('placeholder')).toBe('events.locationModes.in_person')
     })
   })
 })

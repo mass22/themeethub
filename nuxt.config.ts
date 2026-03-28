@@ -18,6 +18,16 @@ export default defineNuxtConfig({
         usePolling: true,
         interval: 1000
       }
+    },
+    // Doc Nuxt UI Editor : évite les erreurs ProseMirror « keyed plugin » en dev
+    optimizeDeps: {
+      include: [
+        '@nuxt/ui > prosemirror-state',
+        '@nuxt/ui > prosemirror-transform',
+        '@nuxt/ui > prosemirror-model',
+        '@nuxt/ui > prosemirror-view',
+        '@nuxt/ui > prosemirror-gapcursor'
+      ]
     }
   },
 
