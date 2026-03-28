@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Contractor } from '~/types/contractor'
+import type { Contractor } from '~~/types/contractor'
 
 definePageMeta({ layout: 'default' })
 

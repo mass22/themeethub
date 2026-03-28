@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Event } from '~/types/event'
-import type { Speaker } from '~/types/speaker'
-import type { Sponsor } from '~/types/sponsor'
-import type { Contractor } from '~/types/contractor'
-import type { Tool } from '~/types/tool'
-import type { Venue } from '~/types/venue'
-import type { PromoItem } from '~/types/promoItem'
-import type { LogisticsItem } from '~/types/logisticsItem'
-import type { SocialPost } from '~/types/socialPost'
+import type { Event } from '~~/types/event'
+import type { Speaker } from '~~/types/speaker'
+import type { Sponsor } from '~~/types/sponsor'
+import type { Contractor } from '~~/types/contractor'
+import type { Tool } from '~~/types/tool'
+import type { Venue } from '~~/types/venue'
+import type { PromoItem } from '~~/types/promoItem'
+import type { LogisticsItem } from '~~/types/logisticsItem'
+import type { SocialPost } from '~~/types/socialPost'
 
 const route = useRoute()
 const router = useRouter()

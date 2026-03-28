@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { ExternalEvent } from '~/types/externalEvent'
+import type { ExternalEvent } from '~~/types/externalEvent'
 
 export const useExternalEventsStore = defineStore('externalEvents', () => {
   const items = ref<ExternalEvent[]>([])

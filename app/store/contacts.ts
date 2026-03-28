@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Contact } from '~/types/contact'
+import type { Contact } from '~~/types/contact'
 
 export const useContactsStore = defineStore('contacts', () => {
   const items = ref<Contact[]>([])

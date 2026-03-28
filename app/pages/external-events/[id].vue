@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ExternalEvent } from '~/types/externalEvent'
-import type { Participation, ParticipationIntent, ParticipationStatus } from '~/types/participation'
+import type { ExternalEvent } from '~~/types/externalEvent'
+import type { Participation, ParticipationIntent, ParticipationStatus } from '~~/types/participation'
 
 definePageMeta({ layout: 'default' })
 

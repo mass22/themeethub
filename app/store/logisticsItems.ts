@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { LogisticsItem } from '~/types/logisticsItem'
+import type { LogisticsItem } from '~~/types/logisticsItem'
 
 export const useLogisticsItemsStore = defineStore('logisticsItems', () => {
   const items = ref<LogisticsItem[]>([])

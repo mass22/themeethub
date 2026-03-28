@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Speaker } from '~/types/speaker'
+import type { Speaker } from '~~/types/speaker'
 
 definePageMeta({
   layout: 'default'

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { Request, RequestStatus } from '~/types/request'
+import type { Request, RequestStatus } from '~~/types/request'
 
 const STATUSES: RequestStatus[] = ['new', 'exploring_call', 'validated', 'in_progress', 'closed', 'rejected']
 

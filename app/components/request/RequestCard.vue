@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Request } from '~/types/request'
+import type { Request } from '~~/types/request'
 
 defineProps<{ request: Request }>()
 

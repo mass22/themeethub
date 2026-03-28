@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Venue } from '~/types/venue'
+import type { Venue } from '~~/types/venue'
 
 definePageMeta({ layout: 'default' })
 

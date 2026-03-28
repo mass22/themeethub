@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LogisticsItem } from '~/types/logisticsItem'
+import type { LogisticsItem } from '~~/types/logisticsItem'
 
 definePageMeta({ layout: 'default' })
 

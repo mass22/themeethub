@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Tool } from '~/types/tool'
+import type { Tool } from '~~/types/tool'
 
 definePageMeta({ layout: 'default' })
 

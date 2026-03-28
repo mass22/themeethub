@@ -5,7 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import enLocale from '@fullcalendar/core/locales/en-gb'
-import type { CalendarItem, CalendarItemType } from '~/types/calendarItem'
+import type { CalendarItem, CalendarItemType } from '~~/types/calendarItem'
 import type { EventClickArg } from '@fullcalendar/core'
 
 /** Couleurs FullCalendar par type — appliquées via la propriété `color` (priorité sur le CSS par défaut) */

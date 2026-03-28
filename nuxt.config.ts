@@ -4,15 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: false },
   srcDir: 'app',
   icon: { serverBundle: 'remote' },
-  css: ['~/app/assets/css/main.css'],
-  alias: {
-    '~': '.',
-    '@': '.'
-  },
+  css: ['~/assets/css/main.css'],
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
-  plugins: ['~/app/plugins/fullcalendar.client.ts'],
   components: [
-    { path: 'app/components', pathPrefix: false }
+    { path: 'components', pathPrefix: false }
   ],
   imports: { dirs: ['store'] },
   ssr: false,

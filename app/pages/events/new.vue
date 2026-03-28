@@ -180,7 +180,6 @@ async function onSubmit () {
           id="date"
           type="datetime-local"
           v-model="state.date"
-          :min="new Date().toISOString().slice(0, 16)"
           :class="errors.date ? 'error-field' : ''"
           @blur="validateField('date')"
         />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Sponsor } from '~/types/sponsor'
+import type { Sponsor } from '~~/types/sponsor'
 
 defineProps<{ sponsor: Sponsor }>()
 </script>

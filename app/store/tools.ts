@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Tool } from '~/types/tool'
+import type { Tool } from '~~/types/tool'
 
 export const useToolsStore = defineStore('tools', () => {
   const items = ref<Tool[]>([])

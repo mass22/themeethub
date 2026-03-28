@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { Speaker } from '~/types/speaker'
+import type { Speaker } from '~~/types/speaker'
 
 definePageMeta({
   layout: 'default'

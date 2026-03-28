@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { ExternalCommunity } from '~/types/externalCommunity'
+import type { ExternalCommunity } from '~~/types/externalCommunity'
 
 export const useExternalCommunitiesStore = defineStore('externalCommunities', () => {
   const items = ref<ExternalCommunity[]>([])

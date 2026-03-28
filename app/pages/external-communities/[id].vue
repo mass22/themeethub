@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ExternalCommunity } from '~/types/externalCommunity'
+import type { ExternalCommunity } from '~~/types/externalCommunity'
 
 definePageMeta({ layout: 'default' })
 

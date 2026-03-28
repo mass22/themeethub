@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Request, RequestStatus } from '~/types/request'
+import type { Request, RequestStatus } from '~~/types/request'
 
 definePageMeta({
   layout: 'default'

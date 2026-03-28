@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Speaker } from '~/types/speaker'
+import type { Speaker } from '~~/types/speaker'
 
 export const useSpeakersStore = defineStore('Speakers', () => {
   // État (équivalent de state)

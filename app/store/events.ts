@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Event } from '~/types/event'
+import type { Event } from '~~/types/event'
 
 export const useEventsStore = defineStore('events', () => {
   // État (équivalent de state)

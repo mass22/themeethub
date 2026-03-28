@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Contact } from '~/types/contact'
+import type { Contact } from '~~/types/contact'
 
 definePageMeta({ layout: 'default' })
 

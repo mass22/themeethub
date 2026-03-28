@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { SocialPost } from '~/types/socialPost'
+import type { SocialPost } from '~~/types/socialPost'
 
 export const useSocialPostsStore = defineStore('socialPosts', () => {
   const items = ref<SocialPost[]>([])

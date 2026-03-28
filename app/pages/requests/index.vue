@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RequestStatus, RequestType } from '~/types/request'
+import type { RequestStatus, RequestType } from '~~/types/request'
 import RequestCard from '../../components/request/RequestCard.vue'
 
 definePageMeta({

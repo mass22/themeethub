@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PromoItem, PromoItemStatus } from '~/types/promoItem'
+import type { PromoItem, PromoItemStatus } from '~~/types/promoItem'
 
 definePageMeta({ layout: 'default' })
 

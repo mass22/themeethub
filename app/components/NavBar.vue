@@ -27,7 +27,7 @@ const orgMenuItems = computed<DropdownMenuItem[][]>(() => [
     { label: t('nav.logistics'), to: localePath('/logistics'), icon: 'i-heroicons-clipboard-document-list' },
     { label: t('nav.contractors'), to: localePath('/contractors'), icon: 'i-heroicons-briefcase' },
     { label: t('nav.tools'), to: localePath('/tools'), icon: 'i-heroicons-wrench-screwdriver' },
-    { label: t('nav.social'), to: localePath('/social'), icon: 'i-heroicons-share-social' }
+    { label: t('nav.social'), to: localePath('/social'), icon: 'i-heroicons-share' }
   ],
   [
     { type: 'separator' }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { SocialPostStatus } from '~/types/socialPost'
+import type { SocialPostStatus } from '~~/types/socialPost'
 
 definePageMeta({ layout: 'default' })
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import type { LogisticsItemStatus } from '~/types/logisticsItem'
+import type { LogisticsItemStatus } from '~~/types/logisticsItem'
 
 definePageMeta({ layout: 'default' })
 

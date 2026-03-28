@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Event } from '~/types/event'
-import type { PromoItem } from '~/types/promoItem'
-import type { LogisticsItem } from '~/types/logisticsItem'
+import type { Event } from '~~/types/event'
+import type { PromoItem } from '~~/types/promoItem'
+import type { LogisticsItem } from '~~/types/logisticsItem'
 
 definePageMeta({ layout: 'default' })
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Event } from '~/types/event'
+import type { Event } from '~~/types/event'
 
 defineProps<{ event: Event }>()
 const localePath = useLocalePath()

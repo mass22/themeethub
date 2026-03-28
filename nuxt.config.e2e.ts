@@ -20,19 +20,14 @@ if (!globalThis.crypto.hash) {
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false }, // Désactivé pour les tests
-  css: ['~/app/assets/css/main.css'],
-  alias: {
-    '@': '.',
-    '~': '.',
-    '@@': '.',
-    '~~': '.'
-  },
+  srcDir: 'app',
+  css: ['~/assets/css/main.css'],
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
   components: [
     {
-      path: '~/app/components',
+      path: 'components',
       pathPrefix: false,
-    }
+    },
   ],
   imports: {
     dirs: ['store']
