@@ -21,6 +21,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false }, // Désactivé pour les tests
   srcDir: 'app',
+  /** Même mode que la config principale : le bundle local manque parfois certains noms heroicons en dev. */
+  icon: { serverBundle: 'remote' },
   css: ['~/assets/css/main.css'],
   modules: ['@nuxt/ui', '@nuxt/image', '@nuxtjs/i18n', '@pinia/nuxt'],
   components: [
@@ -47,13 +49,30 @@ export default defineNuxtConfig({
     useMocks: true,
     luma: { apiKey: '' },
     youtube: { apiKey: '' },
-    public: { appName: 'TheMeetHub' }
+    public: {
+      appName: 'TheMeetHub',
+      /** Désactive la redirection login pour les tests Playwright (nuxt dev --config-file nuxt.config.e2e.ts). */
+      e2eBypassAuth: true,
+    },
   },
 
-  // Configuration Vite pour résoudre crypto.hash
+  // Aligné sur nuxt.config.ts : évite re-optimisation + reload pendant les e2e (fetch annulés → createFetchError).
   vite: {
     define: {
       'crypto.hash': 'globalThis.crypto.hash'
+    },
+    optimizeDeps: {
+      include: [
+        '@nuxt/ui > prosemirror-state',
+        '@nuxt/ui > prosemirror-transform',
+        '@nuxt/ui > prosemirror-model',
+        '@nuxt/ui > prosemirror-view',
+        '@nuxt/ui > prosemirror-gapcursor',
+        '@fullcalendar/core',
+        'better-auth/vue',
+        'better-auth/client/plugins',
+        'zod'
+      ]
     }
   }
 })

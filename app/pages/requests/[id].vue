@@ -148,7 +148,7 @@ const convertToSponsor = async () => {
     </div>
 
     <div v-else-if="error" class="text-center py-12">
-      <UIcon name="i-heroicons-exclamation-triangle" class="h-12 w-12 text-red-500 mx-auto mb-4" />
+      <UIcon name="i-lucide-circle-alert" class="h-12 w-12 text-red-500 mx-auto mb-4" />
       <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ t('requests.error') }}</h2>
       <p class="text-gray-600">{{ error }}</p>
     </div>

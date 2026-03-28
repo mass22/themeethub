@@ -8,7 +8,11 @@ export const usePromoItemsStore = defineStore('promoItems', () => {
 
   const fetchAll = async () => {
     if (loaded.value) return
-    items.value = await $fetch<PromoItem[]>('/api/promo_items')
+    try {
+      items.value = await fetchWithRetry(() => $fetch<PromoItem[]>('/api/promo_items'))
+    } catch {
+      items.value = []
+    }
     loaded.value = true
   }
 

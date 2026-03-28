@@ -8,7 +8,7 @@ export const useContractorsStore = defineStore('contractors', () => {
 
   const fetchAll = async () => {
     try {
-      items.value = await $fetch<Contractor[]>('/api/contractors')
+      items.value = await fetchWithRetry(() => $fetch<Contractor[]>('/api/contractors'))
     } catch (e) {
       console.error('[contractors store] fetchAll failed:', e)
       items.value = []

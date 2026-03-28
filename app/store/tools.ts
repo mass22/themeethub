@@ -8,7 +8,11 @@ export const useToolsStore = defineStore('tools', () => {
 
   const fetchAll = async () => {
     if (loaded.value) return
-    items.value = await $fetch<Tool[]>('/api/tools')
+    try {
+      items.value = await fetchWithRetry(() => $fetch<Tool[]>('/api/tools'))
+    } catch {
+      items.value = []
+    }
     loaded.value = true
   }
 

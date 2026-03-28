@@ -8,7 +8,7 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
 
   const fetchAll = async () => {
     try {
-      items.value = await $fetch<Sponsor[]>('/api/sponsors')
+      items.value = await fetchWithRetry(() => $fetch<Sponsor[]>('/api/sponsors'))
     } catch (e) {
       console.error('[sponsors store] fetchAll failed:', e)
       items.value = []

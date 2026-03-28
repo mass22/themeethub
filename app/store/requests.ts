@@ -10,7 +10,7 @@ export const useRequestsStore = defineStore('requests', () => {
 
   const fetchAll = async () => {
     try {
-      items.value = await $fetch<Request[]>('/api/admin/requests')
+      items.value = await fetchWithRetry(() => $fetch<Request[]>('/api/admin/requests'))
     } catch (e) {
       console.error('[requests store] fetchAll failed:', e)
       items.value = []

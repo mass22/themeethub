@@ -10,7 +10,7 @@ export const useEventsStore = defineStore('events', () => {
   // Actions
   const fetchAll = async () => {
     try {
-      items.value = await $fetch<Event[]>('/api/events')
+      items.value = await fetchWithRetry(() => $fetch<Event[]>('/api/events'))
     } catch (e) {
       console.error('[events store] fetchAll failed:', e)
       items.value = []

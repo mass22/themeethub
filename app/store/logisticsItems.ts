@@ -8,7 +8,7 @@ export const useLogisticsItemsStore = defineStore('logisticsItems', () => {
 
   const fetchAll = async () => {
     try {
-      items.value = await $fetch<LogisticsItem[]>('/api/logistics_items')
+      items.value = await fetchWithRetry(() => $fetch<LogisticsItem[]>('/api/logistics_items'))
     } catch (e) {
       console.error('[logistics store] fetchAll failed:', e)
       items.value = []
