@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { magicLink } from 'better-auth/plugins/magic-link'
+import { parseAllowedEmails, isEmailAllowed } from '../server/utils/authAccess'
 import { usePrisma } from '../server/utils/prisma'
 
 const prisma = usePrisma()
@@ -44,17 +45,6 @@ async function sendMagicLinkEmail(params: { to: string; subject: string; html: s
   console.log('[auth:magic-link] (no RESEND_API_KEY) email would be sent:', params)
 }
 
-function parseAllowedEmails(): Set<string> | null {
-  const raw = process.env.NUXT_AUTH_ALLOWED_EMAILS?.trim()
-  if (!raw) return null
-  return new Set(
-    raw
-      .split(',')
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean)
-  )
-}
-
 export const auth = betterAuth({
   baseURL,
   secret: process.env.BETTER_AUTH_SECRET,
@@ -65,8 +55,8 @@ export const auth = betterAuth({
     magicLink({
       expiresIn: 60 * 15,
       async sendMagicLink({ email, url }) {
-        const allowed = parseAllowedEmails()
-        if (allowed && !allowed.has(email.toLowerCase())) {
+        const allowed = parseAllowedEmails(process.env.NUXT_AUTH_ALLOWED_EMAILS)
+        if (!isEmailAllowed(email, allowed)) {
           console.warn('[auth:magic-link] rejected email not in allowlist:', email)
           return
         }

@@ -7,6 +7,7 @@ definePageMeta({
 
 const { t } = useI18n()
 const localePath = useLocalePath()
+const route = useRoute()
 
 useHead(() => ({ title: `${t('auth.title')} · ${t('app.title')}` }))
 
@@ -18,6 +19,12 @@ const message = ref('')
 const errorMsg = ref('')
 
 const showGithub = computed(() => Boolean(config.public.githubAuth))
+
+onMounted(() => {
+  if (route.query.reason === 'unauthorized') {
+    errorMsg.value = t('auth.unauthorized')
+  }
+})
 
 async function signInWithGithub() {
   githubLoading.value = true

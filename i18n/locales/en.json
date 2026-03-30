@@ -406,6 +406,7 @@
         "or": "or",
         "signInGithub": "Continue with GitHub",
         "errorGithub": "GitHub sign-in failed. Check configuration or try again.",
-        "logout": "Log out"
+        "logout": "Log out",
+        "unauthorized": "Your account is not authorized to access the back office."
     }
 }

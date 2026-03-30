@@ -1,5 +1,6 @@
 import { getRequestHeaders } from 'h3'
 import { auth } from '../../lib/auth'
+import { parseAllowedEmails, isEmailAllowed } from '../utils/authAccess'
 
 export default defineEventHandler(async (event) => {
   const path = event.path
@@ -15,5 +16,10 @@ export default defineEventHandler(async (event) => {
   })
   if (!session?.session) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+  }
+
+  const allowed = parseAllowedEmails(process.env.NUXT_AUTH_ALLOWED_EMAILS)
+  if (!isEmailAllowed(session.user?.email, allowed)) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 })

@@ -8,10 +8,29 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (isLoginPath(to.path)) return
 
+  const localePath = useLocalePath()
   const { authClient } = await import('../../lib/auth-client')
   const { data } = await authClient.getSession()
   if (!data?.session) {
-    const localePath = useLocalePath()
-    return navigateTo(localePath('/login'))
+    return navigateTo({
+      path: localePath('/login'),
+      query: { reason: 'unauthorized' }
+    })
+  }
+
+  try {
+    const access = await $fetch<{ authenticated: boolean; allowed: boolean }>('/api/auth/access')
+    if (!access.allowed) {
+      await (authClient as any).signOut?.()
+      return navigateTo({
+        path: localePath('/login'),
+        query: { reason: 'unauthorized' }
+      })
+    }
+  } catch {
+    return navigateTo({
+      path: localePath('/login'),
+      query: { reason: 'unauthorized' }
+    })
   }
 })

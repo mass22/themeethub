@@ -407,6 +407,7 @@
         "or": "ou",
         "signInGithub": "Continuer avec GitHub",
         "errorGithub": "Connexion GitHub impossible. Vérifiez la configuration ou réessayez.",
-        "logout": "Se déconnecter"
+        "logout": "Se déconnecter",
+        "unauthorized": "Votre compte n'est pas autorisé à accéder au back office."
     }
 }
