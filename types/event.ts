@@ -2,6 +2,11 @@ import type { Venue } from './venue'
 
 export type EventLocationMode = 'in_person' | 'online' | 'hybrid'
 
+export interface EventVideoItem {
+  title: string
+  youtube_url: string
+}
+
 export interface Event {
   id: string
   title: string
@@ -19,6 +24,7 @@ export interface Event {
   sponsors: string[] // sponsor ids
   contractors: string[] // contractor ids
   tools: string[] // tool ids
+  videos?: EventVideoItem[]
   venueId?: string
   venue?: Venue | null
 }

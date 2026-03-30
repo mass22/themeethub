@@ -5,10 +5,8 @@ declare global {
   var __prisma: PrismaClient | undefined
 }
 
+/** Singleton par processus (évite d’ouvrir un pool Prisma à chaque requête en prod). */
 export function usePrisma(): PrismaClient {
-  if (process.env.NODE_ENV === 'production') {
-    return new PrismaClient()
-  }
   if (globalThis.__prisma) {
     return globalThis.__prisma
   }

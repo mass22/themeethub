@@ -36,7 +36,7 @@ onMounted(async () => {
             </div>
           </div>
           <div class="flex-1 min-w-0">
-            <h3 class="text-lg font-semibold text-gray-900 truncate">{{ speaker.name }}</h3>
+            <h3 class="text-lg font-semibold truncate">{{ speaker.name }}</h3>
             <p v-if="speaker.role" class="text-sm text-gray-500 truncate">{{ speaker.role }}</p>
           </div>
         </div>

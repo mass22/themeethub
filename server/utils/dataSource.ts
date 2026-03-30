@@ -12,7 +12,7 @@ import socialPosts from '../../mocks/social_posts.json'
 import externalCommunities from '../../mocks/external_communities.json'
 import externalEvents from '../../mocks/external_events.json'
 import participations from '../../mocks/participations.json'
-import type { Event } from '../../types/event'
+import type { Event, EventVideoItem } from '../../types/event'
 import type { Speaker } from '../../types/speaker'
 import type { Sponsor } from '../../types/sponsor'
 import type { Request, RequestStatus } from '../../types/request'
@@ -118,6 +118,7 @@ function createMockDataSource(): DataSource {
         sponsors: payload.sponsors || [],
         contractors: payload.contractors || [],
         tools: payload.tools || [],
+        videos: payload.videos ?? [],
         venueId: payload.venueId
       }
       ;(events as Event[]).push(e)
@@ -138,6 +139,7 @@ function createMockDataSource(): DataSource {
       if (payload.description !== undefined) e.description = payload.description
       if (payload.stats !== undefined) e.stats = payload.stats
       if (payload.bannerImageUrl !== undefined) e.bannerImageUrl = payload.bannerImageUrl
+      if (payload.videos !== undefined) e.videos = payload.videos
       return e
     },
     async listSpeakers(): Promise<Speaker[]> {
@@ -170,6 +172,7 @@ function createMockDataSource(): DataSource {
       const s: Sponsor = {
         id,
         companyName: payload.companyName,
+        type: payload.type ?? 'financial',
         tier: payload.tier,
         contactId: payload.contactId,
         contactName: payload.contactName,
@@ -453,6 +456,7 @@ function createPrismaDataSource(): DataSource {
           sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
           contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
           tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+          videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
           venueId: r.venueId ?? undefined
         }
       })
@@ -477,6 +481,7 @@ function createPrismaDataSource(): DataSource {
         sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
         contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
         tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+        videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
         venueId: r.venueId ?? undefined
       }
     },
@@ -500,10 +505,11 @@ function createPrismaDataSource(): DataSource {
           sponsorsJson: JSON.stringify(payload.sponsors || []),
           contractorsJson: JSON.stringify(payload.contractors || []),
           toolsJson: JSON.stringify(payload.tools || []),
+          videosJson: JSON.stringify(payload.videos ?? []),
           venueId: payload.venueId ?? null
         }
       })
-      const r = row as { sponsorsJson?: string; contractorsJson?: string; toolsJson?: string }
+      const r = row as { sponsorsJson?: string; contractorsJson?: string; toolsJson?: string; videosJson?: string }
       return {
         id: row.id,
         title: row.title,
@@ -520,6 +526,7 @@ function createPrismaDataSource(): DataSource {
         sponsors: JSON.parse(r.sponsorsJson || '[]') as string[],
         contractors: JSON.parse(r.contractorsJson || '[]') as string[],
         tools: JSON.parse(r.toolsJson || '[]') as string[],
+        videos: JSON.parse(r.videosJson || '[]') as EventVideoItem[],
         venueId: (row as { venueId?: string | null }).venueId ?? undefined
       }
     },
@@ -539,6 +546,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.description !== undefined) data.description = payload.description
       if (payload.bannerImageUrl !== undefined) data.bannerImageUrl = payload.bannerImageUrl
       if (payload.stats !== undefined) data.statsJson = JSON.stringify(payload.stats)
+      if (payload.videos !== undefined) data.videosJson = JSON.stringify(payload.videos)
       if (Object.keys(data).length === 0) return this.getEvent(id)
       const row = await prisma.event.update({ where: { id }, data: data as never })
       return this.getEvent(row.id)
@@ -623,6 +631,7 @@ function createPrismaDataSource(): DataSource {
       return rows.map((r) => ({
         id: r.id,
         companyName: r.companyName,
+        type: r.type,
         tier: r.tier ?? undefined,
         contactId: r.contactId ?? undefined,
         contactName: r.contactName ?? undefined,
@@ -640,6 +649,7 @@ function createPrismaDataSource(): DataSource {
       return {
         id: r.id,
         companyName: r.companyName,
+        type: r.type,
         tier: r.tier ?? undefined,
         contactId: r.contactId ?? undefined,
         contactName: r.contactName ?? undefined,
@@ -657,6 +667,7 @@ function createPrismaDataSource(): DataSource {
         data: {
           id,
           companyName: payload.companyName,
+          type: payload.type ?? 'financial',
           tier: payload.tier ?? null,
           contactId: payload.contactId ?? null,
           contactName: payload.contactName ?? null,
@@ -669,6 +680,7 @@ function createPrismaDataSource(): DataSource {
       return {
         id: r.id,
         companyName: r.companyName,
+        type: r.type,
         tier: r.tier ?? undefined,
         contactId: r.contactId ?? undefined,
         contactName: r.contactName ?? undefined,
@@ -688,6 +700,7 @@ function createPrismaDataSource(): DataSource {
       return {
         id: r.id,
         companyName: r.companyName,
+        type: r.type,
         tier: r.tier ?? undefined,
         contactId: r.contactId ?? undefined,
         contactName: r.contactName ?? undefined,
@@ -731,6 +744,7 @@ function createPrismaDataSource(): DataSource {
       if (!existing) return null
       const data: Record<string, unknown> = {}
       if (payload.companyName !== undefined) data.companyName = payload.companyName
+      if (payload.type !== undefined) data.type = payload.type
       if (payload.tier !== undefined) data.tier = payload.tier ?? null
       if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
       if (payload.contactName !== undefined) data.contactName = payload.contactName ?? null

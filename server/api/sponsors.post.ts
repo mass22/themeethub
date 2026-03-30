@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 const schema = z.object({
   companyName: z.string().min(1),
+  type: z.enum(['financial', 'community', 'financial_event']).default('financial'),
   contactName: z.string().min(1).optional(),
   contactEmail: z.string().email().optional(),
   tier: z.string().optional(),

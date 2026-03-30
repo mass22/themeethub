@@ -11,6 +11,9 @@ const schema = z.object({
   sponsors: z.array(z.string()).default([]),
   contractors: z.array(z.string()).default([]),
   tools: z.array(z.string()).default([]),
+  videos: z
+    .array(z.object({ title: z.string(), youtube_url: z.string() }))
+    .optional(),
   venueId: z.string().optional()
 })
 

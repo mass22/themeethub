@@ -286,6 +286,13 @@
             "contractors": "Prestataires",
             "tools": "Outils",
             "social": "Réseaux",
+            "replaysVideos": "Replays / Vidéos",
+            "videoTitle": "Titre",
+            "videoTitlePlaceholder": "Ex. Talk 1 — Scaler sans chaos",
+            "videoYoutubeUrl": "URL YouTube",
+            "addVideo": "Ajouter une vidéo",
+            "removeVideo": "Supprimer cette vidéo",
+            "noVideosHint": "Aucune vidéo pour l’instant. Ajoutez-en avec le bouton ci-dessous.",
             "add": "Ajouter",
             "empty": "Aucun",
             "selectOrCreate": "Sélectionner ou créer",
@@ -326,9 +333,15 @@
         "open": "Ouvrir",
         "back": "Retour aux sponsors",
         "updatedAt": "Modifié le",
+        "types": {
+            "financial": "Financier",
+            "community": "Communautaire",
+            "financial_event": "Financier par event"
+        },
         "form": {
             "companyName": "Entreprise",
             "companyNamePlaceholder": "Nom de l'entreprise",
+            "type": "Type",
             "contactName": "Contact",
             "contactNamePlaceholder": "Nom du contact",
             "contactEmail": "Email du contact",
@@ -393,6 +406,7 @@
         "errorGeneric": "Impossible d’envoyer le lien. Réessayez plus tard.",
         "or": "ou",
         "signInGithub": "Continuer avec GitHub",
-        "errorGithub": "Connexion GitHub impossible. Vérifiez la configuration ou réessayez."
+        "errorGithub": "Connexion GitHub impossible. Vérifiez la configuration ou réessayez.",
+        "logout": "Se déconnecter"
     }
 }

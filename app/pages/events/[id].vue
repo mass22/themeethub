@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Event } from '~~/types/event'
+import type { Contractor } from '~~/types/contractor'
+import type { Event, EventVideoItem } from '~~/types/event'
+import type { LogisticsItem } from '~~/types/logisticsItem'
+import type { PromoItem } from '~~/types/promoItem'
+import type { SocialPost } from '~~/types/socialPost'
 import type { Speaker } from '~~/types/speaker'
 import type { Sponsor } from '~~/types/sponsor'
-import type { Contractor } from '~~/types/contractor'
 import type { Tool } from '~~/types/tool'
 import type { Venue } from '~~/types/venue'
-import type { PromoItem } from '~~/types/promoItem'
-import type { LogisticsItem } from '~~/types/logisticsItem'
-import type { SocialPost } from '~~/types/socialPost'
 
 const route = useRoute()
 const router = useRouter()
@@ -40,6 +40,8 @@ const statsForm = reactive({ registered: 0, attended: 0 })
 const statsSaving = ref(false)
 const bannerForm = reactive({ bannerImageUrl: '' })
 const bannerSaving = ref(false)
+const videosForm = ref<EventVideoItem[]>([])
+const videosSaving = ref(false)
 const descriptionForm = reactive({ description: '' })
 const descriptionSaving = ref(false)
 
@@ -107,6 +109,23 @@ watch(event, (e) => {
   }
 }, { immediate: true })
 
+function normalizeVideosForPersist(list: EventVideoItem[]): EventVideoItem[] {
+  return list
+    .map((v) => ({ title: v.title.trim(), youtube_url: v.youtube_url.trim() }))
+    .filter((v) => v.title !== '' || v.youtube_url !== '')
+}
+
+watch(
+  event,
+  (e) => {
+    const v = e?.videos
+    videosForm.value = v?.length
+      ? v.map((x) => ({ title: x.title ?? '', youtube_url: x.youtube_url ?? '' }))
+      : []
+  },
+  { immediate: true }
+)
+
 const statsChanged = computed(() =>
   event.value
     ? (event.value.stats?.registered ?? 0) !== (Number(statsForm.registered) || 0) ||
@@ -149,6 +168,37 @@ async function saveBanner() {
     addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
   } finally {
     bannerSaving.value = false
+  }
+}
+
+const videosChanged = computed(() => {
+  if (!event.value) return false
+  return (
+    JSON.stringify(normalizeVideosForPersist(videosForm.value)) !==
+    JSON.stringify(normalizeVideosForPersist(event.value.videos ?? []))
+  )
+})
+
+function addVideoRow() {
+  videosForm.value.push({ title: '', youtube_url: '' })
+}
+
+function removeVideoRow(index: number) {
+  videosForm.value.splice(index, 1)
+}
+
+async function saveVideos() {
+  if (!event.value || videosSaving.value) return
+  const payload = normalizeVideosForPersist(videosForm.value)
+  videosSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, { videos: payload })
+    event.value = updated
+    addToast({ title: 'Replays / vidéos enregistrés', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
+  } finally {
+    videosSaving.value = false
   }
 }
 
@@ -267,7 +317,7 @@ const linkedSocial = computed<SocialPost[]>(() =>
 const sponsorOptions = computed(() =>
   sponsorsStore.items
     .filter((s) => !event.value?.sponsors?.includes(s.id))
-    .map((s) => ({ label: s.companyName, value: s.id }))
+    .map((s) => ({ label: `${s.companyName} (${t(`sponsors.types.${s.type ?? 'financial'}`)})`, value: s.id }))
 )
 const contractorOptions = computed(() =>
   contractorsStore.items
@@ -294,6 +344,15 @@ const linkedTools = computed<Tool[]>(() => {
     .map((id) => toolsStore.byId(id))
     .filter((t): t is Tool => t !== undefined)
 })
+const financialLinkedSponsors = computed<Sponsor[]>(() =>
+  linkedSponsors.value.filter((s) => (s.type ?? 'financial') === 'financial')
+)
+const communityLinkedSponsors = computed<Sponsor[]>(() =>
+  linkedSponsors.value.filter((s) => s.type === 'community')
+)
+const eventFinancialLinkedSponsors = computed<Sponsor[]>(() =>
+  linkedSponsors.value.filter((s) => s.type === 'financial_event')
+)
 const linkedVenue = computed<Venue | null>(() =>
   event.value?.venueId ? venuesStore.byId(event.value.venueId) ?? null : null
 )
@@ -643,6 +702,65 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           </div>
         </div>
 
+        <UCard class="mb-6">
+          <template #header>
+            <h3 class="font-semibold">{{ $t('events.hub.replaysVideos') }}</h3>
+          </template>
+          <div class="space-y-4">
+            <p v-if="videosForm.length === 0" class="text-gray-500 italic text-sm">
+              {{ $t('events.hub.noVideosHint') }}
+            </p>
+            <div
+              v-for="(row, idx) in videosForm"
+              :key="idx"
+              class="flex gap-2 items-start flex-wrap border-b border-gray-100 dark:border-gray-800 pb-4 last:border-0 last:pb-0"
+            >
+              <div class="flex-1 min-w-[min(100%,16rem)] space-y-2">
+                <div>
+                  <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">{{ $t('events.hub.videoTitle') }}</label>
+                  <UInput
+                    v-model="row.title"
+                    type="text"
+                    :placeholder="$t('events.hub.videoTitlePlaceholder')"
+                    class="w-full"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm text-gray-600 dark:text-gray-400 mb-1">{{ $t('events.hub.videoYoutubeUrl') }}</label>
+                  <UInput
+                    v-model="row.youtube_url"
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=…"
+                    class="w-full"
+                  />
+                </div>
+              </div>
+              <UButton
+                size="sm"
+                icon="i-heroicons-x-mark"
+                color="neutral"
+                variant="ghost"
+                class="shrink-0 self-start"
+                :aria-label="$t('events.hub.removeVideo')"
+                @click="removeVideoRow(idx)"
+              />
+            </div>
+            <div class="flex flex-wrap gap-2 items-center pt-1">
+              <UButton size="sm" variant="outline" @click="addVideoRow">
+                {{ $t('events.hub.addVideo') }}
+              </UButton>
+              <UButton
+                size="sm"
+                :loading="videosSaving"
+                :disabled="!videosChanged"
+                @click="saveVideos"
+              >
+                {{ $t('common.submit') }}
+              </UButton>
+            </div>
+          </div>
+        </UCard>
+
         <div class="bg-gray-50 rounded-lg p-4">
           <h3 class="text-sm font-medium text-gray-500 mb-3">{{ $t('events.stats') }}</h3>
           <div class="flex gap-6 items-end">
@@ -779,12 +897,41 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
               </UButton>
             </div>
           </div>
-          <ul v-if="linkedSponsors.length > 0" class="space-y-2 mt-3">
-            <li v-for="s in linkedSponsors" :key="s.id" class="flex items-center justify-between gap-2">
-              <NuxtLink :to="`/sponsors/${s.id}`" class="text-primary hover:underline">{{ s.companyName }}</NuxtLink>
-              <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeSponsor(s.id)" />
-            </li>
-          </ul>
+          <div v-if="linkedSponsors.length > 0" class="space-y-3 mt-3">
+            <div v-if="financialLinkedSponsors.length > 0">
+              <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                {{ $t('sponsors.types.financial') }}
+              </p>
+              <ul class="space-y-2">
+                <li v-for="s in financialLinkedSponsors" :key="s.id" class="flex items-center justify-between gap-2">
+                  <NuxtLink :to="`/sponsors/${s.id}`" class="text-primary hover:underline">{{ s.companyName }}</NuxtLink>
+                  <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeSponsor(s.id)" />
+                </li>
+              </ul>
+            </div>
+            <div v-if="communityLinkedSponsors.length > 0">
+              <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                {{ $t('sponsors.types.community') }}
+              </p>
+              <ul class="space-y-2">
+                <li v-for="s in communityLinkedSponsors" :key="s.id" class="flex items-center justify-between gap-2">
+                  <NuxtLink :to="`/sponsors/${s.id}`" class="text-primary hover:underline">{{ s.companyName }}</NuxtLink>
+                  <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeSponsor(s.id)" />
+                </li>
+              </ul>
+            </div>
+            <div v-if="eventFinancialLinkedSponsors.length > 0">
+              <p class="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2">
+                {{ $t('sponsors.types.financial_event') }}
+              </p>
+              <ul class="space-y-2">
+                <li v-for="s in eventFinancialLinkedSponsors" :key="s.id" class="flex items-center justify-between gap-2">
+                  <NuxtLink :to="`/sponsors/${s.id}`" class="text-primary hover:underline">{{ s.companyName }}</NuxtLink>
+                  <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeSponsor(s.id)" />
+                </li>
+              </ul>
+            </div>
+          </div>
           <p v-else class="text-gray-500 italic">{{ $t('events.hub.empty') }}</p>
         </UCard>
 

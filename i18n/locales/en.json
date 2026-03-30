@@ -285,6 +285,13 @@
             "contractors": "Contractors",
             "tools": "Tools",
             "social": "Social",
+            "replaysVideos": "Replays / Videos",
+            "videoTitle": "Title",
+            "videoTitlePlaceholder": "E.g. Talk 1 — Scaling without chaos",
+            "videoYoutubeUrl": "YouTube URL",
+            "addVideo": "Add a video",
+            "removeVideo": "Remove this video",
+            "noVideosHint": "No videos yet. Add one using the button below.",
             "add": "Add",
             "empty": "None",
             "selectOrCreate": "Select or create",
@@ -325,9 +332,15 @@
         "open": "Open",
         "back": "Back to sponsors",
         "updatedAt": "Updated at",
+        "types": {
+            "financial": "Financial",
+            "community": "Community",
+            "financial_event": "Event financial"
+        },
         "form": {
             "companyName": "Company name",
             "companyNamePlaceholder": "Company name",
+            "type": "Type",
             "contactName": "Contact name",
             "contactNamePlaceholder": "Contact person name",
             "contactEmail": "Contact email",
@@ -392,6 +405,7 @@
         "errorGeneric": "Could not send the link. Please try again later.",
         "or": "or",
         "signInGithub": "Continue with GitHub",
-        "errorGithub": "GitHub sign-in failed. Check configuration or try again."
+        "errorGithub": "GitHub sign-in failed. Check configuration or try again.",
+        "logout": "Log out"
     }
 }

@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+const eventVideoSchema = z.object({
+  title: z.string(),
+  youtube_url: z.string()
+})
+
 const schema = z.object({
   title: z.string().min(3).optional(),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/).optional(),
@@ -11,6 +16,7 @@ const schema = z.object({
   sponsors: z.array(z.string()).optional(),
   contractors: z.array(z.string()).optional(),
   tools: z.array(z.string()).optional(),
+  videos: z.array(eventVideoSchema).optional(),
   venueId: z.string().optional(),
   stats: z.object({ registered: z.number().min(0), attended: z.number().min(0) }).optional()
 })

@@ -15,7 +15,12 @@ defineProps<{ sponsor: Sponsor }>()
           class="h-12 w-12 object-contain rounded"
         />
         <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-semibold">{{ sponsor.companyName }}</h3>
+          <div class="flex items-center gap-2">
+            <h3 class="text-lg font-semibold">{{ sponsor.companyName }}</h3>
+            <UBadge size="xs" variant="soft">
+              {{ $t(`sponsors.types.${sponsor.type || 'financial'}`) }}
+            </UBadge>
+          </div>
           <a
             v-if="sponsor.websiteUrl"
             :href="sponsor.websiteUrl"

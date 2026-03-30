@@ -1,4 +1,4 @@
-import { toWebRequest } from 'h3'
+import { getRequestHeaders } from 'h3'
 import { auth } from '../../lib/auth'
 
 export default defineEventHandler(async (event) => {
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (config.public.e2eBypassAuth) return
 
   const session = await auth.api.getSession({
-    headers: toWebRequest(event).headers
+    headers: getRequestHeaders(event)
   })
   if (!session?.session) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })

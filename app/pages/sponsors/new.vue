@@ -5,6 +5,7 @@ definePageMeta({
 
 const state = reactive({
   companyName: '',
+  type: 'financial' as 'financial' | 'community' | 'financial_event',
   contactName: '',
   contactEmail: '',
   logoUrl: '' as string,
@@ -27,6 +28,7 @@ async function onSubmit() {
   try {
     await sponsorsStore.create({
       companyName: state.companyName.trim(),
+      type: state.type,
       contactName: state.contactName.trim(),
       contactEmail: state.contactEmail.trim(),
       logoUrl: state.logoUrl?.trim() || undefined,
@@ -69,6 +71,21 @@ async function onSubmit() {
           v-model="state.contactName"
           required
           :placeholder="$t('sponsors.form.contactNamePlaceholder')"
+        />
+      </div>
+
+      <div>
+        <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.type') }}</label>
+        <USelectMenu
+          id="type"
+          v-model="state.type"
+          :items="[
+            { label: $t('sponsors.types.financial'), value: 'financial' },
+            { label: $t('sponsors.types.community'), value: 'community' },
+            { label: $t('sponsors.types.financial_event'), value: 'financial_event' }
+          ]"
+          value-key="value"
+          class="w-full"
         />
       </div>
 

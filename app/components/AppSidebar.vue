@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import LangSwitcher from './LangSwitcher.vue'
+import { authClient } from '../../lib/auth-client'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 const isOpen = defineModel<boolean>('open', { default: false })
+const logoutLoading = ref(false)
+
+async function onLogout() {
+  logoutLoading.value = true
+  try {
+    // signOut est exposée par Better Auth côté client
+    await (authClient as any).signOut?.()
+  } finally {
+    logoutLoading.value = false
+    // La middleware redirigera aussi vers /login si nécessaire, mais on force ici.
+    await navigateTo(localePath('/login'))
+  }
+}
 
 const mainNav = [
   { label: t('nav.dashboard'), to: localePath('/dashboard'), icon: 'i-heroicons-squares-2x2' },
@@ -95,6 +109,15 @@ const navGroups = [
         </UButton>
       </div>
       <LangSwitcher />
+      <UButton
+        variant="ghost"
+        color="neutral"
+        block
+        :loading="logoutLoading"
+        @click="onLogout"
+      >
+        {{ t('auth.logout') }}
+      </UButton>
     </div>
   </aside>
 </template>

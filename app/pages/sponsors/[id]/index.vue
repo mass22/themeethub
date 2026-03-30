@@ -80,6 +80,9 @@ const formatDate = (dateString: string) =>
           />
           <div>
             <h1 class="text-2xl font-bold text-gray-900">{{ sponsor.companyName }}</h1>
+            <UBadge size="sm" variant="soft" class="mt-2">
+              {{ $t(`sponsors.types.${sponsor.type || 'financial'}`) }}
+            </UBadge>
             <a
               v-if="sponsor.websiteUrl"
               :href="sponsor.websiteUrl"

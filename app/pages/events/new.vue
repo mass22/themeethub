@@ -51,6 +51,37 @@ const pending = ref(false)
 const router = useRouter()
 const { add: addToast } = useToast()
 
+/** USelectMenu (value-key) peut exposer l’item entier { label, value } au lieu du scalaire. */
+function menuPrimitive(v: unknown): string | undefined {
+  if (v == null || v === '') return undefined
+  if (typeof v === 'string') return v
+  if (typeof v === 'object' && v !== null && 'value' in v && typeof (v as { value: unknown }).value === 'string') {
+    return (v as { value: string }).value
+  }
+  return undefined
+}
+
+function menuIdArray(v: unknown): string[] {
+  if (!Array.isArray(v)) return []
+  return v
+    .map((item) =>
+      typeof item === 'string'
+        ? item
+        : item && typeof item === 'object' && typeof (item as { value?: unknown }).value === 'string'
+          ? (item as { value: string }).value
+          : ''
+    )
+    .filter(Boolean)
+}
+
+const LOCATION_ENUM = ['in_person', 'online', 'hybrid'] as const
+
+function normalizedLocation(): '' | (typeof LOCATION_ENUM)[number] | undefined {
+  const raw = menuPrimitive(state.location)
+  if (raw === undefined) return state.location === '' ? '' : undefined
+  return (LOCATION_ENUM as readonly string[]).includes(raw) ? (raw as (typeof LOCATION_ENUM)[number]) : ''
+}
+
 onMounted(async () => {
   await Promise.all([
     speakersStore.fetchAll(),
@@ -65,7 +96,7 @@ const speakerOptions = computed(() =>
   speakersStore.items.map((s) => ({ label: s.role ? `${s.name} (${s.role})` : s.name, value: s.id }))
 )
 const sponsorOptions = computed(() =>
-  sponsorsStore.items.map((s) => ({ label: s.companyName, value: s.id }))
+  sponsorsStore.items.map((s) => ({ label: `${s.companyName} (${$t(`sponsors.types.${s.type ?? 'financial'}`)})`, value: s.id }))
 )
 const contractorOptions = computed(() =>
   contractorsStore.items.map((c) => ({ label: c.role ? `${c.name} (${c.role})` : c.name, value: c.id }))
@@ -94,12 +125,13 @@ function validateField(field: keyof typeof state) {
 function validateForm() {
   const result = schema.safeParse({
     ...state,
+    location: normalizedLocation(),
     bannerImageUrl: state.bannerImageUrl || undefined,
-    speakers: state.speakerIds,
-    sponsors: state.sponsorIds,
-    contractors: state.contractorIds,
-    tools: state.toolIds,
-    venueId: state.venueId || undefined
+    speakers: menuIdArray(state.speakerIds),
+    sponsors: menuIdArray(state.sponsorIds),
+    contractors: menuIdArray(state.contractorIds),
+    tools: menuIdArray(state.toolIds),
+    venueId: menuPrimitive(state.venueId) || undefined
   })
 
   if (!result.success) {
@@ -135,19 +167,20 @@ async function onSubmit () {
 
   pending.value = true
   try {
+    const loc = normalizedLocation()
     const created = await events.create({
       title: state.title,
       date: state.date,
       slug: state.slug,
-      location: state.location || undefined,
+      location: loc === '' ? undefined : loc,
       description: state.description || undefined,
       bannerImageUrl: state.bannerImageUrl?.trim() || undefined,
-    speakers: state.speakerIds,
-    sponsors: state.sponsorIds,
-    contractors: state.contractorIds,
-    tools: state.toolIds,
-    venueId: state.venueId || undefined
-  })
+      speakers: menuIdArray(state.speakerIds),
+      sponsors: menuIdArray(state.sponsorIds),
+      contractors: menuIdArray(state.contractorIds),
+      tools: menuIdArray(state.toolIds),
+      venueId: menuPrimitive(state.venueId)
+    })
     addToast({ title: 'Événement créé avec succès', color: 'success' })
     const returnTo = route.query.returnTo as string
     router.push(returnTo || `/events/${created.id}`)

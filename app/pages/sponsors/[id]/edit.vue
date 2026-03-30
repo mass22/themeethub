@@ -33,6 +33,7 @@ const error = computed(() => {
 
 const state = reactive({
   companyName: '',
+  type: 'financial' as 'financial' | 'community' | 'financial_event',
   contactName: '',
   contactEmail: '',
   logoUrl: '',
@@ -44,6 +45,7 @@ const state = reactive({
 watch(sponsor, (s) => {
   if (s) {
     state.companyName = s.companyName ?? ''
+    state.type = s.type ?? 'financial'
     state.contactName = s.contactName ?? ''
     state.contactEmail = s.contactEmail ?? ''
     state.logoUrl = s.logoUrl ?? ''
@@ -54,6 +56,13 @@ watch(sponsor, (s) => {
 }, { immediate: true })
 
 const pending = ref(false)
+const tierOptions = [
+  { label: 'Bronze', value: 'Bronze' },
+  { label: 'Silver', value: 'Silver' },
+  { label: 'Gold', value: 'Gold' },
+  { label: 'Platinum', value: 'Platinum' },
+  { label: 'Diamond', value: 'Diamond' }
+]
 
 async function onSubmit() {
   if (!state.companyName.trim() || !state.contactName.trim() || !state.contactEmail.trim()) {
@@ -65,6 +74,7 @@ async function onSubmit() {
   try {
     await sponsorsStore.update(sponsorId.value, {
       companyName: state.companyName.trim(),
+      type: state.type,
       contactName: state.contactName.trim(),
       contactEmail: state.contactEmail.trim(),
       logoUrl: state.logoUrl.trim() || undefined,
@@ -124,6 +134,21 @@ async function onSubmit() {
         </div>
 
         <div>
+          <label for="type" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.type') }}</label>
+          <USelectMenu
+            id="type"
+            v-model="state.type"
+            :items="[
+              { label: $t('sponsors.types.financial'), value: 'financial' },
+              { label: $t('sponsors.types.community'), value: 'community' },
+              { label: $t('sponsors.types.financial_event'), value: 'financial_event' }
+            ]"
+            value-key="value"
+            class="w-full"
+          />
+        </div>
+
+        <div>
           <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.contactEmail') }}</label>
           <UInput
             id="contactEmail"
@@ -156,9 +181,12 @@ async function onSubmit() {
 
         <div>
           <label for="tier" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('sponsors.form.tier') }}</label>
-          <UInput
+          <USelectMenu
             id="tier"
             v-model="state.tier"
+            :items="tierOptions"
+            value-key="value"
+            class="w-full"
             :placeholder="$t('sponsors.form.tierPlaceholder')"
           />
         </div>
