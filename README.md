@@ -11,13 +11,15 @@
 ## ✨ Features
 
 - 🗓 **Event Management** — Create, update, and publish meetups (Luma, Zoom, replays). Event descriptions use a **rich text editor** (Nuxt UI `UEditor`, **Markdown** stored in the API).
+- 🎬 **Event Videos** — Attach multiple replay videos to an event (`title` + YouTube URL).
 - 📅 **Calendar** — FullCalendar-based views for events.
 - 🎤 **Speaker Management** — Proposals, bios, profiles.
 - 📣 **Content & Media** — Promo items, social posts, YouTube replays, visuals.
 - 📋 **Logistics** — Tasks and items linked to events.
-- 👥 **Community Tools** — Contacts, sponsors, venues, contractors, tools.
+- 👥 **Community Tools** — Contacts, sponsors (including `financial_event` type), venues, contractors, tools.
 - 🌐 **External Communities** — Other communities, their events, participations.
 - 📊 **Admin Dashboard** — Stats, overdue promo, pending logistics, conversion trends.
+- 🔐 **Back-office Authentication** — Better Auth with magic link and optional GitHub OAuth.
 - 🌍 **i18n** — French (default) and English (`@nuxtjs/i18n`, prefix strategy except default locale).
 - 🧩 **Data Source** — JSON mocks (default, no DB) or Prisma + SQLite / PostgreSQL.
 - ⚡ **Nuxt 4 + Nitro + Vite 8** — Client-side app (`ssr: false`); API on Nitro.
@@ -97,6 +99,20 @@ App: [http://localhost:3000](http://localhost:3000)
 
 ---
 
+## 🆕 Recent Changes (March 2026)
+
+- Better Auth is now integrated for back-office access:
+  - magic-link sign-in,
+  - optional email allowlist (`NUXT_AUTH_ALLOWED_EMAILS`),
+  - optional GitHub OAuth (`NUXT_PUBLIC_GITHUB_AUTH=true` + GitHub credentials),
+  - auth API route at `server/api/auth/[...].ts`.
+- Event model/API now support a `videos` list (`title` + `youtube_url`) for richer replay management.
+- Sponsor management was expanded with new sponsor typing, including `financial_event`.
+- Public read endpoints were improved for events, speakers, and sponsors to support external/public listing pages.
+- CI/E2E setup was refreshed around Node 24 + Playwright, and app/runtime auth guards were tightened.
+
+---
+
 ## 📂 Project Structure
 
 ```
@@ -167,8 +183,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 - [x] External communities & participations
 - [x] Admin dashboard
 - [x] Event detail / hub page (editing, Zoom, replay fields — scope is internal hub, not a separate marketing site)
+- [x] Authentication (magic link, Better Auth)
 - [ ] Dedicated **public** marketing event page (optional split from hub)
-- [ ] Authentication (magic link)
 - [ ] Deployment template (Vercel/Netlify)
 
 ---
