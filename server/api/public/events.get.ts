@@ -6,5 +6,6 @@ export default defineEventHandler(async (event) => {
   const locale = parseLocale(query)
   const ds = useDataSource()
   const events = await ds.listEvents()
-  return events.map((e) => localizeEntity(e, locale, ['title', 'description']))
+  const publishedEvents = events.filter((e) => Boolean(e.publishedAt))
+  return publishedEvents.map((e) => localizeEntity(e, locale, ['title', 'description']))
 })

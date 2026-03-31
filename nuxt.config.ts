@@ -45,7 +45,7 @@ const mainConfig = defineNuxtConfig({
     detectBrowserLanguage: { useCookie: true, cookieKey: 'i18n_redirected', redirectOn: 'root' }
   },
   runtimeConfig: {
-    useMocks: true,
+    useMocks: false,
     luma: { apiKey: '' },
     youtube: { apiKey: '' },
     calSponsorLink: '',

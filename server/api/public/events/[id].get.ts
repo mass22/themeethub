@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
   const ds = useDataSource()
   const e = await ds.getEvent(id)
   if (!e) throw createError({ statusCode: 404, statusMessage: 'Event not found' })
+  if (!e.publishedAt) throw createError({ statusCode: 404, statusMessage: 'Event not published' })
   const venue = e.venueId ? await ds.getVenue(e.venueId) : null
   return localizeEntity({ ...e, venue }, locale, ['title', 'description'])
 })

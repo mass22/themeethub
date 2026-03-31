@@ -5,6 +5,6 @@ export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const locale = parseLocale(query)
   const ds = useDataSource()
-  const sponsors = (await ds.listSponsors()).filter((s) => s.type !== 'financial_event')
+  const sponsors = (await ds.listSponsors()).filter((s) => s.type !== 'financial_event' && Boolean(s.publishedAt))
   return sponsors.map((s) => localizeEntity(s, locale, ['companyName', 'notes']))
 })

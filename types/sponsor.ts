@@ -11,6 +11,7 @@ export interface Sponsor {
   logoUrl?: string | null
   websiteUrl?: string | null
   notes?: string
+  publishedAt?: string | null
   createdAt: string
   updatedAt: string
 }

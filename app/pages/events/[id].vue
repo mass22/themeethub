@@ -47,6 +47,7 @@ const descriptionSaving = ref(false)
 
 const titleForm = reactive({ title: '' })
 const titleSaving = ref(false)
+const publishSaving = ref(false)
 
 const dateForm = reactive({ dateTimeLocal: '' })
 const dateSaving = ref(false)
@@ -226,6 +227,8 @@ const titleChanged = computed(() =>
   event.value && (event.value.title ?? '') !== titleForm.title
 )
 
+const isPublished = computed(() => Boolean(event.value?.publishedAt))
+
 async function saveTitle() {
   if (!event.value || titleSaving.value) return
   titleSaving.value = true
@@ -239,6 +242,23 @@ async function saveTitle() {
     addToast({ title: 'Erreur lors de l\'enregistrement', color: 'error' })
   } finally {
     titleSaving.value = false
+  }
+}
+
+async function togglePublish() {
+  if (!event.value || publishSaving.value) return
+  publishSaving.value = true
+  const willPublish = !isPublished.value
+  try {
+    const updated = await eventsStore.update(eventId, {
+      publishedAt: willPublish ? new Date().toISOString() : null
+    })
+    event.value = updated
+    addToast({ title: willPublish ? 'Événement publié sur la vitrine' : 'Événement retiré de la vitrine', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de la publication', color: 'error' })
+  } finally {
+    publishSaving.value = false
   }
 }
 
@@ -602,15 +622,29 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
           <div class="flex-1">
             <label class="block text-sm font-medium text-gray-500 mb-2">Titre</label>
             <UInput v-model="titleForm.title" class="w-full" />
+            <p class="text-xs mt-2" :class="isPublished ? 'text-green-600' : 'text-amber-600'">
+              {{ isPublished ? 'Publié sur la vitrine' : 'Brouillon (non visible sur la vitrine)' }}
+            </p>
           </div>
-          <UButton
-            size="sm"
-            :loading="titleSaving"
-            :disabled="!titleChanged"
-            @click="saveTitle"
-          >
-            {{ $t('common.submit') }}
-          </UButton>
+          <div class="flex flex-col gap-2">
+            <UButton
+              size="sm"
+              :loading="titleSaving"
+              :disabled="!titleChanged"
+              @click="saveTitle"
+            >
+              {{ $t('common.submit') }}
+            </UButton>
+            <UButton
+              size="sm"
+              :color="isPublished ? 'neutral' : 'primary'"
+              :variant="isPublished ? 'outline' : 'solid'"
+              :loading="publishSaving"
+              @click="togglePublish"
+            >
+              {{ isPublished ? 'Dépublier' : 'Publier' }}
+            </UButton>
+          </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 mb-6">

@@ -113,6 +113,7 @@ function createMockDataSource(): DataSource {
         id,
         stats: { registered: 0, attended: 0 },
         ...payload,
+        publishedAt: payload.publishedAt ?? null,
         bannerImageUrl: payload.bannerImageUrl ?? undefined,
         speakers: payload.speakers || [],
         sponsors: payload.sponsors || [],
@@ -140,6 +141,7 @@ function createMockDataSource(): DataSource {
       if (payload.stats !== undefined) e.stats = payload.stats
       if (payload.bannerImageUrl !== undefined) e.bannerImageUrl = payload.bannerImageUrl
       if (payload.videos !== undefined) e.videos = payload.videos
+      if (payload.publishedAt !== undefined) e.publishedAt = payload.publishedAt
       return e
     },
     async listSpeakers(): Promise<Speaker[]> {
@@ -151,7 +153,7 @@ function createMockDataSource(): DataSource {
     async createSpeaker(payload: Omit<Speaker, 'id' | 'createdAt' | 'updatedAt'>): Promise<Speaker> {
       const id = randomId('spk')
       const now = new Date().toISOString()
-      const s: Speaker = { id, ...payload, createdAt: now, updatedAt: now }
+      const s: Speaker = { id, ...payload, publishedAt: payload.publishedAt ?? null, createdAt: now, updatedAt: now }
       ;(speakers as Speaker[]).push(s)
       return s
     },
@@ -180,6 +182,7 @@ function createMockDataSource(): DataSource {
         logoUrl: payload.logoUrl ?? undefined,
         websiteUrl: payload.websiteUrl ?? undefined,
         notes: payload.notes,
+        publishedAt: payload.publishedAt ?? null,
         createdAt: now,
         updatedAt: now
       }
@@ -445,6 +448,7 @@ function createPrismaDataSource(): DataSource {
           title: row.title,
           slug: row.slug,
           date: row.date.toISOString(),
+          publishedAt: row.publishedAt?.toISOString() ?? null,
           location: row.location ?? undefined,
           description: row.description ?? undefined,
           bannerImageUrl: r.bannerImageUrl ?? null,
@@ -470,6 +474,7 @@ function createPrismaDataSource(): DataSource {
         title: row.title,
         slug: row.slug,
         date: row.date.toISOString(),
+        publishedAt: row.publishedAt?.toISOString() ?? null,
         location: row.location ?? undefined,
         description: row.description ?? undefined,
         bannerImageUrl: r.bannerImageUrl ?? null,
@@ -494,6 +499,7 @@ function createPrismaDataSource(): DataSource {
           title: payload.title,
           slug: payload.slug,
           date: new Date(payload.date),
+          publishedAt: payload.publishedAt ? new Date(payload.publishedAt) : null,
           location: payload.location ?? null,
           description: payload.description ?? null,
           bannerImageUrl: payload.bannerImageUrl ?? null,
@@ -515,6 +521,7 @@ function createPrismaDataSource(): DataSource {
         title: row.title,
         slug: row.slug,
         date: row.date.toISOString(),
+        publishedAt: row.publishedAt?.toISOString() ?? null,
         location: row.location ?? undefined,
         description: row.description ?? undefined,
         bannerImageUrl: (row as { bannerImageUrl?: string | null }).bannerImageUrl ?? null,
@@ -542,6 +549,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.title !== undefined) data.title = payload.title
       if (payload.slug !== undefined) data.slug = payload.slug
       if (payload.date !== undefined) data.date = new Date(payload.date)
+      if (payload.publishedAt !== undefined) data.publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : null
       if (payload.location !== undefined) data.location = payload.location
       if (payload.description !== undefined) data.description = payload.description
       if (payload.bannerImageUrl !== undefined) data.bannerImageUrl = payload.bannerImageUrl
@@ -562,6 +570,7 @@ function createPrismaDataSource(): DataSource {
         contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
+        publishedAt: (row as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString()
       }))
@@ -578,6 +587,7 @@ function createPrismaDataSource(): DataSource {
         contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
+        publishedAt: (row as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString()
       }
@@ -593,7 +603,8 @@ function createPrismaDataSource(): DataSource {
           avatar: payload.avatar ?? null,
           contactId: payload.contactId ?? null,
           socialsJson: payload.socials ? JSON.stringify(payload.socials) : null,
-          topicsJson: payload.topics ? JSON.stringify(payload.topics) : null
+          topicsJson: payload.topics ? JSON.stringify(payload.topics) : null,
+          publishedAt: payload.publishedAt ? new Date(payload.publishedAt) : null
         }
       })
       return {
@@ -605,6 +616,7 @@ function createPrismaDataSource(): DataSource {
         contactId: row.contactId ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
+        publishedAt: (row as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString()
       }
@@ -622,6 +634,7 @@ function createPrismaDataSource(): DataSource {
         contactId: match.contactId ?? undefined,
         socials: match.socialsJson ? (JSON.parse(match.socialsJson) as Speaker['socials']) : undefined,
         topics: match.topicsJson ? (JSON.parse(match.topicsJson) as string[]) : undefined,
+        publishedAt: (match as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: match.createdAt.toISOString(),
         updatedAt: match.updatedAt.toISOString()
       }
@@ -639,6 +652,7 @@ function createPrismaDataSource(): DataSource {
         logoUrl: r.logoUrl ?? null,
         websiteUrl: r.websiteUrl ?? null,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }))
@@ -657,6 +671,7 @@ function createPrismaDataSource(): DataSource {
         logoUrl: r.logoUrl ?? null,
         websiteUrl: r.websiteUrl ?? null,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }
@@ -674,7 +689,8 @@ function createPrismaDataSource(): DataSource {
           contactEmail: payload.contactEmail ?? null,
           logoUrl: payload.logoUrl ?? null,
           websiteUrl: payload.websiteUrl ?? null,
-          notes: payload.notes ?? null
+          notes: payload.notes ?? null,
+          publishedAt: payload.publishedAt ? new Date(payload.publishedAt) : null
         }
       })
       return {
@@ -688,6 +704,7 @@ function createPrismaDataSource(): DataSource {
         logoUrl: r.logoUrl ?? null,
         websiteUrl: r.websiteUrl ?? null,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }
@@ -708,6 +725,7 @@ function createPrismaDataSource(): DataSource {
         logoUrl: r.logoUrl ?? null,
         websiteUrl: r.websiteUrl ?? null,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }
@@ -723,6 +741,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.contactId !== undefined) data.contactId = payload.contactId ?? null
       if (payload.socials !== undefined) data.socialsJson = payload.socials ? JSON.stringify(payload.socials) : null
       if (payload.topics !== undefined) data.topicsJson = payload.topics ? JSON.stringify(payload.topics) : null
+      if (payload.publishedAt !== undefined) data.publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : null
       const row = await prisma.speaker.update({
         where: { id },
         data
@@ -735,6 +754,7 @@ function createPrismaDataSource(): DataSource {
         avatar: row.avatar ?? undefined,
         socials: row.socialsJson ? (JSON.parse(row.socialsJson) as Speaker['socials']) : undefined,
         topics: row.topicsJson ? (JSON.parse(row.topicsJson) as string[]) : undefined,
+        publishedAt: (row as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: row.createdAt.toISOString(),
         updatedAt: row.updatedAt.toISOString()
       }
@@ -752,6 +772,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.logoUrl !== undefined) data.logoUrl = payload.logoUrl ?? null
       if (payload.websiteUrl !== undefined) data.websiteUrl = payload.websiteUrl ?? null
       if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (payload.publishedAt !== undefined) data.publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : null
       if (Object.keys(data).length === 0) return this.getSponsor(id)
       await prisma.sponsor.update({ where: { id }, data: data as never })
       return this.getSponsor(id)
@@ -1501,7 +1522,13 @@ function createPrismaDataSource(): DataSource {
 
 export function useDataSource(): DataSource {
   const config = useRuntimeConfig()
-  const useMocks = process.env.NUXT_USE_MOCKS === 'true' || config.useMocks
+  const envUseMocks = process.env.NUXT_USE_MOCKS
+  const useMocks =
+    envUseMocks === 'true'
+      ? true
+      : envUseMocks === 'false'
+        ? false
+        : Boolean(config.useMocks)
 
   if (useMocks) {
     return createMockDataSource()

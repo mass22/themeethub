@@ -25,6 +25,7 @@ export interface Event {
   contractors: string[] // contractor ids
   tools: string[] // tool ids
   videos?: EventVideoItem[]
+  publishedAt?: string | null
   venueId?: string
   venue?: Venue | null
 }

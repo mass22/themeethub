@@ -1,0 +1,5 @@
+ALTER TABLE "Speaker"
+ADD COLUMN "publishedAt" TIMESTAMP(3);
+
+ALTER TABLE "Sponsor"
+ADD COLUMN "publishedAt" TIMESTAMP(3);

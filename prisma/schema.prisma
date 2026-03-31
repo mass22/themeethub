@@ -19,6 +19,7 @@ model Event {
   title           String
   slug            String   @unique
   date            DateTime
+  publishedAt     DateTime?
   location        String?
   description     String?
   bannerImageUrl  String?
@@ -49,6 +50,7 @@ model Speaker {
   contactId   String?
   socialsJson String?
   topicsJson  String?
+  publishedAt DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -97,6 +99,7 @@ model Sponsor {
   logoUrl      String?
   websiteUrl   String?
   notes        String?
+  publishedAt  DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

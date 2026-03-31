@@ -8,5 +8,6 @@ export default defineEventHandler(async (event) => {
   const ds = useDataSource()
   const s = await ds.getSponsor(id)
   if (!s) throw createError({ statusCode: 404, statusMessage: 'Sponsor not found' })
+  if (!s.publishedAt || s.type === 'financial_event') throw createError({ statusCode: 404, statusMessage: 'Sponsor not published' })
   return localizeEntity(s, locale, ['companyName', 'notes'])
 })

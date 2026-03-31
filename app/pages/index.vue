@@ -15,6 +15,8 @@ const eventsStore = useEventsStore()
 const requestsStore = useRequestsStore()
 const promoStore = usePromoItemsStore()
 const logisticsStore = useLogisticsItemsStore()
+const { add: addToast } = useToast()
+const publishAllPending = ref(false)
 
 const INBOX_STATUSES = ['new', 'exploring_call', 'validated'] as const
 const MODULE_LINKS = [
@@ -91,6 +93,22 @@ const logisticsItems = computed<LogisticsItem[]>(() => {
 })
 
 const requestsLink = (status: string) => localePath(`/requests?status=${status}`)
+
+async function publishAllToPublic() {
+  if (publishAllPending.value) return
+  publishAllPending.value = true
+  try {
+    const result = await $fetch<{ counts: { events: number; speakers: number; sponsors: number } }>('/api/publish-all', { method: 'POST' })
+    addToast({
+      title: `Publication terminée (${result.counts.events} événements, ${result.counts.speakers} intervenants, ${result.counts.sponsors} sponsors)`,
+      color: 'success'
+    })
+  } catch {
+    addToast({ title: 'Erreur lors de la publication globale', color: 'error' })
+  } finally {
+    publishAllPending.value = false
+  }
+}
 </script>
 
 <template>
@@ -119,6 +137,16 @@ const requestsLink = (status: string) => localePath(`/requests?status=${status}`
           </UButton>
           <UButton :to="localePath('/requests')" size="lg" variant="ghost" class="!text-white/90 hover:!bg-white/10">
             {{ t('home.ctaRequests') }}
+          </UButton>
+          <UButton
+            size="lg"
+            color="neutral"
+            variant="soft"
+            :loading="publishAllPending"
+            class="!text-slate-900"
+            @click="publishAllToPublic"
+          >
+            Publier tout vers la vitrine
           </UButton>
         </div>
       </div>
