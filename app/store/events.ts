@@ -31,6 +31,11 @@ export const useEventsStore = defineStore('events', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/events/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((e) => e.id !== id)
+  }
+
   // Getter simple sans fonction
   const byId = (id: string) => items.value.find((e: Event) => e.id === id)
 
@@ -42,6 +47,7 @@ export const useEventsStore = defineStore('events', () => {
     fetchAll,
     create,
     update,
+    remove,
     // Getters
     byId
   }

@@ -29,6 +29,7 @@ const event = ref<Event | null>(null)
 const speakers = ref<Speaker[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 const selectedSpeakerId = ref<string | null>(null)
 const selectedSponsorId = ref<string | null>(null)
@@ -572,6 +573,21 @@ const goBack = () => {
   void router.push('/events')
 }
 
+async function deleteEvent() {
+  if (!event.value || deleting.value) return
+  if (!window.confirm('Supprimer cet événement ? Cette action supprimera aussi les items liés (promo, logistique, social).')) return
+  deleting.value = true
+  try {
+    await eventsStore.remove(eventId)
+    addToast({ title: 'Événement supprimé', color: 'success' })
+    await router.push('/events')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet événement', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
+
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('fr-FR', {
     weekday: 'long',
@@ -595,6 +611,9 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
     <div class="mb-6">
       <UButton @click="goBack" variant="soft" icon="i-heroicons-arrow-left" class="mb-4">
         {{ $t('events.back') }}
+      </UButton>
+      <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteEvent">
+        Supprimer
       </UButton>
     </div>
 

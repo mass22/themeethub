@@ -34,7 +34,12 @@ export const useExternalEventsStore = defineStore('externalEvents', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/external-events/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((e) => e.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((e) => e.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, patch, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, remove, byId }
 })

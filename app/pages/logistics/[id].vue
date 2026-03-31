@@ -4,13 +4,16 @@ import type { LogisticsItem } from '~~/types/logisticsItem'
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const store = useLogisticsItemsStore()
 const eventsStore = useEventsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const item = ref<LogisticsItem | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -25,15 +28,33 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => useRouter().push('/logistics')
+const goBack = () => router.push('/logistics')
 const eventTitle = computed(() => item.value ? (eventsStore.byId(item.value.eventId)?.title ?? item.value.eventId) : '')
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+
+async function deleteLogisticsItem() {
+  if (!item.value || deleting.value) return
+  if (!window.confirm('Supprimer cet item logistique ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Item logistique supprimé', color: 'success' })
+    await router.push('/logistics')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet item logistique', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('logistics.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteLogisticsItem">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

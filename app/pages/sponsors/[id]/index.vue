@@ -8,11 +8,13 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const sponsorsStore = useSponsorsStore()
+const { add: addToast } = useToast()
 
 const sponsorId = route.params.id as string
 const sponsor = ref<Sponsor | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -34,6 +36,21 @@ onMounted(async () => {
 })
 
 const goBack = () => router.push('/sponsors')
+
+async function deleteSponsor() {
+  if (!sponsor.value || deleting.value) return
+  if (!window.confirm('Supprimer ce sponsor ?')) return
+  deleting.value = true
+  try {
+    await sponsorsStore.remove(sponsorId)
+    addToast({ title: 'Sponsor supprimé', color: 'success' })
+    await router.push('/sponsors')
+  } catch {
+    addToast({ title: 'Impossible de supprimer ce sponsor', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('fr-FR', {
@@ -68,6 +85,9 @@ const formatDate = (dateString: string) =>
       <div class="flex justify-end mb-4">
         <UButton :to="`/sponsors/${sponsorId}/edit`" icon="i-heroicons-pencil-square">
           {{ $t('sponsors.edit') }}
+        </UButton>
+        <UButton class="ml-2" color="error" variant="soft" :loading="deleting" @click="deleteSponsor">
+          Supprimer
         </UButton>
       </div>
       <div class="bg-white rounded-lg shadow-sm border p-8">

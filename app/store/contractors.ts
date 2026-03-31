@@ -30,7 +30,12 @@ export const useContractorsStore = defineStore('contractors', () => {
     return created
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/contractors/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((c) => c.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((c) => c.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, remove, byId }
 })

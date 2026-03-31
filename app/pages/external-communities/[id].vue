@@ -4,13 +4,16 @@ import type { ExternalCommunity } from '~~/types/externalCommunity'
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const communitiesStore = useExternalCommunitiesStore()
 const eventsStore = useExternalEventsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const community = ref<ExternalCommunity | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 const communityEvents = computed(() =>
   eventsStore.items.filter((e) => e.communityId === id)
@@ -32,13 +35,31 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => useRouter().push('/external-communities')
+const goBack = () => router.push('/external-communities')
+
+async function deleteCommunity() {
+  if (!community.value || deleting.value) return
+  if (!window.confirm('Supprimer cette communauté et ses événements externes ?')) return
+  deleting.value = true
+  try {
+    await communitiesStore.remove(id)
+    addToast({ title: 'Communauté supprimée', color: 'success' })
+    await router.push('/external-communities')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cette communauté', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('externalCommunities.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteCommunity">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

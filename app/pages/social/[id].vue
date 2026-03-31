@@ -4,6 +4,7 @@ import type { SocialPost, SocialPostStatus } from '~~/types/socialPost'
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const store = useSocialPostsStore()
 const eventsStore = useEventsStore()
 const { add: addToast } = useToast()
@@ -13,6 +14,7 @@ const post = ref<SocialPost | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const statusPatching = ref(false)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -41,18 +43,36 @@ async function changeStatus(newStatus: SocialPostStatus) {
   }
 }
 
-const goBack = () => useRouter().push('/social')
+const goBack = () => router.push('/social')
 const eventTitle = computed(() => {
   if (!post.value?.eventId) return null
   return eventsStore.byId(post.value.eventId)?.title ?? post.value.eventId
 })
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+
+async function deleteSocialPost() {
+  if (!post.value || deleting.value) return
+  if (!window.confirm('Supprimer cette publication ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Publication supprimée', color: 'success' })
+    await router.push('/social')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cette publication', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('social.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteSocialPost">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

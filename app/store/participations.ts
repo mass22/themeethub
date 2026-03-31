@@ -34,7 +34,12 @@ export const useParticipationsStore = defineStore('participations', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/participations/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((p) => p.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((p) => p.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, patch, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, remove, byId }
 })

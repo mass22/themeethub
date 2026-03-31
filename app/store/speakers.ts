@@ -40,6 +40,11 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/speakers/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((s) => s.id !== id)
+  }
+
   // Getter simple sans fonction
   const byId = (id: string) => items.value.find((e: Speaker) => e.id === id)
 
@@ -52,6 +57,7 @@ export const useSpeakersStore = defineStore('Speakers', () => {
     fetchById,
     create,
     update,
+    remove,
     // Getters
     byId
   }

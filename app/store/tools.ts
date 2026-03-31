@@ -30,7 +30,12 @@ export const useToolsStore = defineStore('tools', () => {
     return created
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/tools/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((t) => t.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((t) => t.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, remove, byId }
 })

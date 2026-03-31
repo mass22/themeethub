@@ -34,7 +34,12 @@ export const useExternalCommunitiesStore = defineStore('externalCommunities', ()
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/external-communities/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((c) => c.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((c) => c.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, patch, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, remove, byId }
 })

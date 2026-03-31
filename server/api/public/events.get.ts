@@ -2,6 +2,7 @@ import { parseLocale, localizeEntity } from '../../utils/localize'
 
 /** Liste événements sans auth — pour app vitrine / fetch cross-origin sans cookie. */
 export default defineEventHandler(async (event) => {
+  setHeader(event, 'cache-control', 'no-store, max-age=0')
   const query = getQuery(event)
   const locale = parseLocale(query)
   const ds = useDataSource()

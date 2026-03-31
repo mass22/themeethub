@@ -4,12 +4,15 @@ import type { Contractor } from '~~/types/contractor'
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const store = useContractorsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const contractor = ref<Contractor | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -23,7 +26,21 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => useRouter().push('/contractors')
+const goBack = () => router.push('/contractors')
+async function deleteContractor() {
+  if (!contractor.value || deleting.value) return
+  if (!window.confirm('Supprimer ce prestataire ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Prestataire supprimé', color: 'success' })
+    await router.push('/contractors')
+  } catch {
+    addToast({ title: 'Impossible de supprimer ce prestataire', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
@@ -32,6 +49,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('contractors.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteContractor">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

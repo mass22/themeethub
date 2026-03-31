@@ -34,7 +34,12 @@ export const useSocialPostsStore = defineStore('socialPosts', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/social_posts/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((s) => s.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((s) => s.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, patch, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, remove, byId }
 })

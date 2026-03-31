@@ -6,11 +6,13 @@ definePageMeta({ layout: 'default' })
 const route = useRoute()
 const router = useRouter()
 const store = useVenuesStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const venue = ref<Venue | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -25,6 +27,20 @@ onMounted(async () => {
 })
 
 const goBack = () => router.push('/venues')
+async function deleteVenue() {
+  if (!venue.value || deleting.value) return
+  if (!window.confirm('Supprimer ce lieu ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Lieu supprimé', color: 'success' })
+    await router.push('/venues')
+  } catch {
+    addToast({ title: 'Impossible de supprimer ce lieu', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
@@ -33,6 +49,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('venues.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteVenue">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

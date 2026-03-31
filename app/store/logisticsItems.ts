@@ -38,7 +38,12 @@ export const useLogisticsItemsStore = defineStore('logisticsItems', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/logistics_items/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((l) => l.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((l) => l.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, patch, byId }
+  return { items, loaded, fetchAll, fetchById, create, patch, remove, byId }
 })

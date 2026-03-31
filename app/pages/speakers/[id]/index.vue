@@ -8,11 +8,13 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const speakersStore = useSpeakersStore()
+const { add: addToast } = useToast()
 
 const speakerId = route.params.id as string
 const speaker = ref<Speaker | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -32,6 +34,21 @@ onMounted(async () => {
 })
 
 const goBack = () => router.push('/speakers')
+
+async function deleteSpeaker() {
+  if (!speaker.value || deleting.value) return
+  if (!window.confirm('Supprimer cet intervenant ?')) return
+  deleting.value = true
+  try {
+    await speakersStore.remove(speakerId)
+    addToast({ title: 'Intervenant supprimé', color: 'success' })
+    await router.push('/speakers')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet intervenant', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('fr-FR', {
@@ -64,6 +81,9 @@ const formatDate = (dateString: string) =>
       <div class="flex justify-end mb-4">
         <UButton :to="`/speakers/${speakerId}/edit`" icon="i-heroicons-pencil-square">
           {{ $t('speakers.edit') }}
+        </UButton>
+        <UButton class="ml-2" color="error" variant="soft" :loading="deleting" @click="deleteSpeaker">
+          Supprimer
         </UButton>
       </div>
       <div class="bg-white rounded-lg shadow-sm border p-8">

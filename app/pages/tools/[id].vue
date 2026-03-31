@@ -4,12 +4,15 @@ import type { Tool } from '~~/types/tool'
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const store = useToolsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const tool = ref<Tool | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -23,7 +26,21 @@ onMounted(async () => {
   }
 })
 
-const goBack = () => useRouter().push('/tools')
+const goBack = () => router.push('/tools')
+async function deleteTool() {
+  if (!tool.value || deleting.value) return
+  if (!window.confirm('Supprimer cet outil ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Outil supprimé', color: 'success' })
+    await router.push('/tools')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet outil', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
@@ -32,6 +49,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('tools.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteTool">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

@@ -30,7 +30,12 @@ export const useVenuesStore = defineStore('venues', () => {
     return created
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/venues/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((v) => v.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((v) => v.id === id)
 
-  return { items, loaded, fetchAll, fetchById, create, byId }
+  return { items, loaded, fetchAll, fetchById, create, remove, byId }
 })

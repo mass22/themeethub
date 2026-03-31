@@ -6,11 +6,13 @@ definePageMeta({ layout: 'default' })
 const route = useRoute()
 const router = useRouter()
 const store = useContactsStore()
+const { add: addToast } = useToast()
 
 const id = route.params.id as string
 const contact = ref<Contact | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -26,6 +28,21 @@ onMounted(async () => {
 
 const goBack = () => router.push('/contacts')
 
+async function deleteContact() {
+  if (!contact.value || deleting.value) return
+  if (!window.confirm('Supprimer ce contact ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Contact supprimé', color: 'success' })
+    await router.push('/contacts')
+  } catch {
+    addToast({ title: 'Impossible de supprimer ce contact', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
+
 const formatDate = (d: string) =>
   new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
 </script>
@@ -34,6 +51,9 @@ const formatDate = (d: string) =>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('contacts.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteContact">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

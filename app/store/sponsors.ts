@@ -38,6 +38,11 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
     return updated
   }
 
+  const remove = async (id: string) => {
+    await $fetch(`/api/admin/delete/sponsors/${id}`, { method: 'DELETE' })
+    items.value = items.value.filter((s) => s.id !== id)
+  }
+
   const byId = (id: string) => items.value.find((s) => s.id === id)
 
   return {
@@ -47,6 +52,7 @@ export const useSponsorsStore = defineStore('Sponsors', () => {
     fetchById,
     create,
     update,
+    remove,
     byId
   }
 })

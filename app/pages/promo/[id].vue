@@ -13,6 +13,7 @@ const item = ref<PromoItem | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const statusPatching = ref(false)
+const deleting = ref(false)
 
 onMounted(async () => {
   try {
@@ -47,12 +48,30 @@ const eventTitle = computed(() => {
   return eventsStore.byId(item.value.eventId)?.title ?? item.value.eventId
 })
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+
+async function deletePromoItem() {
+  if (!item.value || deleting.value) return
+  if (!window.confirm('Supprimer cet item promo ?')) return
+  deleting.value = true
+  try {
+    await store.remove(id)
+    addToast({ title: 'Item promo supprimé', color: 'success' })
+    await useRouter().push('/promo')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet item promo', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('promo.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deletePromoItem">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">

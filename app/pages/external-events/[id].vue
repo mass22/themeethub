@@ -5,6 +5,7 @@ import type { Participation, ParticipationIntent, ParticipationStatus } from '~~
 definePageMeta({ layout: 'default' })
 
 const route = useRoute()
+const router = useRouter()
 const eventsStore = useExternalEventsStore()
 const communitiesStore = useExternalCommunitiesStore()
 const participationsStore = useParticipationsStore()
@@ -16,6 +17,7 @@ const participations = ref<Participation[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const statusPatching = ref(false)
+const deleting = ref(false)
 const showPlanForm = ref(false)
 const planForm = reactive({
   intent: 'attend' as ParticipationIntent,
@@ -62,6 +64,16 @@ async function changeParticipationStatus(p: Participation, newStatus: Participat
   }
 }
 
+async function deleteParticipation(participationId: string) {
+  try {
+    await participationsStore.remove(participationId)
+    participations.value = participations.value.filter((p) => p.id !== participationId)
+    addToast({ title: 'Participation supprimée', color: 'success' })
+  } catch {
+    addToast({ title: 'Impossible de supprimer cette participation', color: 'error' })
+  }
+}
+
 async function onSubmitPlan() {
   planPending.value = true
   try {
@@ -85,14 +97,32 @@ async function onSubmitPlan() {
   }
 }
 
-const goBack = () => useRouter().push('/external-events')
+const goBack = () => router.push('/external-events')
 const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+
+async function deleteExternalEvent() {
+  if (!event.value || deleting.value) return
+  if (!window.confirm('Supprimer cet événement externe ?')) return
+  deleting.value = true
+  try {
+    await eventsStore.remove(id)
+    addToast({ title: 'Événement externe supprimé', color: 'success' })
+    await router.push('/external-events')
+  } catch {
+    addToast({ title: 'Impossible de supprimer cet événement externe', color: 'error' })
+  } finally {
+    deleting.value = false
+  }
+}
 </script>
 
 <template>
   <div class="container mx-auto px-4 py-8">
     <UButton variant="soft" icon="i-heroicons-arrow-left" class="mb-4" @click="goBack">
       {{ $t('externalEvents.back') }}
+    </UButton>
+    <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteExternalEvent">
+      Supprimer
     </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">
@@ -191,6 +221,9 @@ const formatDate = (d: string) => new Date(d).toLocaleDateString(undefined, { ye
               size="xs"
               @update:model-value="changeParticipationStatus(p, ($event as { value: ParticipationStatus })?.value ?? p.status)"
             />
+            <UButton size="xs" color="error" variant="ghost" @click="deleteParticipation(p.id)">
+              Supprimer
+            </UButton>
           </li>
         </ul>
       </UCard>
