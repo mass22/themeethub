@@ -10,19 +10,32 @@
 
 ## ✨ Features
 
-- 🗓 **Event Management** — Create, update, and publish meetups (Luma, Zoom, replays). Event descriptions use a **rich text editor** (Nuxt UI `UEditor`, **Markdown** stored in the API).
-- 🎬 **Event Videos** — Attach multiple replay videos to an event (`title` + YouTube URL).
+### Meetup & community operations
+
+- 🗓 **Event management** — Create, update, and publish meetups (optional Luma id, Zoom, replay URLs). Descriptions use **Nuxt UI `UEditor`** with **Markdown** persisted via the API.
+- 🎬 **Event videos** — Multiple replays per event (`title` + YouTube URL).
 - 📅 **Calendar** — FullCalendar-based views for events.
-- 🎤 **Speaker Management** — Proposals, bios, profiles.
-- 📣 **Content & Media** — Promo items, social posts, YouTube replays, visuals.
-- 📋 **Logistics** — Tasks and items linked to events.
-- 👥 **Community Tools** — Contacts, sponsors (including `financial_event` type), venues, contractors, tools.
-- 🌐 **External Communities** — Other communities, their events, participations.
-- 📊 **Admin Dashboard** — Stats, overdue promo, pending logistics, conversion trends.
-- 🔐 **Back-office Authentication** — Better Auth with magic link and optional GitHub OAuth.
-- 🌍 **i18n** — French (default) and English (`@nuxtjs/i18n`, prefix strategy except default locale).
-- 🧩 **Data Source** — JSON mocks (default, no DB) or Prisma + SQLite / PostgreSQL.
-- ⚡ **Nuxt 4 + Nitro + Vite 8** — Client-side app (`ssr: false`); API on Nitro.
+- 🎤 **Speakers** — Directory, bios, public listing; overlap checks on name + role when creating.
+- 📣 **Content & media** — Promo items, social posts, replays, visuals (`@nuxt/image`).
+- 📋 **Logistics** — Items and tasks scoped to events.
+- 👥 **Community data** — Contacts, sponsors (including `financial_event`), venues, contractors, tools.
+- 🌐 **External communities** — Other groups, their events, participations.
+- 📊 **Admin dashboard** — Aggregated stats, overdue promo, pending logistics, trends.
+- 📝 **Inbound requests** — Sponsor / speaker request forms (public POST endpoints with validation).
+
+### Platform & DX
+
+- 🌍 **i18n** — French (default) and English (`@nuxtjs/i18n`, `prefix_except_default`).
+- 🧩 **Data source** — `mocks/*.json` when `NUXT_USE_MOCKS=true` (default, no DB), or **Prisma** with SQLite or PostgreSQL when `NUXT_USE_MOCKS=false`.
+- ⚡ **Nuxt 4 + Nitro + Vite 8** — **SPA** (`ssr: false`); REST-style handlers under `server/api/*`.
+
+### Authentication & access (what this repo actually does)
+
+- 🔐 **Better Auth** — Magic-link sign-in (email via Resend when configured; otherwise link logged in dev). Optional **GitHub OAuth** when env + `NUXT_PUBLIC_GITHUB_AUTH` are set.
+- 🍪 **Session-based hub access** — Back-office routes and `/api/*` (except `/api/auth/*` and `/api/public/*`) require a valid session. This is **not** a separate “JWT API product” layer; it follows Better Auth’s session model.
+- ✉️ **Optional allowlist** — `NUXT_AUTH_ALLOWED_EMAILS` restricts which signed-in users may use the hub. This is **not** a full RBAC matrix (no admin / editor / viewer roles in the schema).
+- 🏢 **Single-tenant by design** — One deployment, one shared dataset for allowed users. There is **no** built-in multi-tenant org model, row-level tenant isolation, or per-customer data silos.
+- 🧪 **Dev with mocks** — With mocks + dev defaults, API auth can be relaxed so the SPA works without logging in (`NUXT_MOCK_DEV_API_BYPASS`; see `.env.example`). Use `false` when you want to test the real login flow against JSON data.
 
 ---
 
@@ -35,6 +48,7 @@
 | State | [Pinia](https://pinia.vuejs.org/) (`app/store/`) |
 | Server | [Nitro](https://nitro.unjs.io/) — `server/api/*`, `server/utils/*` |
 | Data | [Prisma 5](https://www.prisma.io/) — SQLite or PostgreSQL; optional JSON mocks |
+| Auth | [Better Auth](https://www.better-auth.com/) — magic link, optional GitHub OAuth, cookie sessions; optional `NUXT_AUTH_ALLOWED_EMAILS` |
 | Validation | Zod 4 |
 | Content / media | `@nuxt/content`, `@nuxt/image` |
 | Tests | Vitest, Playwright (E2E with `nuxt.config.e2e.ts`) |
@@ -73,6 +87,8 @@ cp .env.example .env
 - `NUXT_USE_MOCKS=true` (default) — JSON files under `mocks/`, no database.
 - `NUXT_USE_MOCKS=false` — Prisma with `DATABASE_URL` (SQLite or PostgreSQL).
 
+**Auth while using mocks (local dev):** by default the dev app can skip the login wall for the SPA and relax `/api/*` auth when mocks are on. Set `NUXT_MOCK_DEV_API_BYPASS=false` in `.env` to force real sessions against mock JSON (see `.env.example`).
+
 **With Prisma (SQLite):** set `NUXT_USE_MOCKS=false`, then:
 
 ```bash
@@ -101,15 +117,13 @@ App: [http://localhost:3000](http://localhost:3000)
 
 ## 🆕 Recent Changes (March 2026)
 
-- Better Auth is now integrated for back-office access:
-  - magic-link sign-in,
-  - optional email allowlist (`NUXT_AUTH_ALLOWED_EMAILS`),
-  - optional GitHub OAuth (`NUXT_PUBLIC_GITHUB_AUTH=true` + GitHub credentials),
-  - auth API route at `server/api/auth/[...].ts`.
-- Event model/API now support a `videos` list (`title` + `youtube_url`) for richer replay management.
-- Sponsor management was expanded with new sponsor typing, including `financial_event`.
-- Public read endpoints were improved for events, speakers, and sponsors to support external/public listing pages.
-- CI/E2E setup was refreshed around Node 24 + Playwright, and app/runtime auth guards were tightened.
+- **Better Auth** for the back office: magic link, optional `NUXT_AUTH_ALLOWED_EMAILS`, optional GitHub OAuth (`NUXT_PUBLIC_GITHUB_AUTH` + GitHub app credentials), catch-all at `server/api/auth/[...].ts`.
+- **Data mode resolution** — `NUXT_USE_MOCKS` overrides `runtimeConfig.useMocks`; shared helper `server/utils/resolveUseMocks.ts`.
+- **Dev + mocks** — Optional API auth bypass when mocks are active (`NUXT_MOCK_DEV_API_BYPASS`); SPA hint via `server/api/public/dev-session-hint.get.ts` so contributors can work without logging in unless disabled.
+- Event model/API support a **`videos`** list (`title` + `youtube_url`).
+- Sponsor typing includes **`financial_event`**.
+- Public read endpoints for events, speakers, and sponsors for listing pages.
+- **CI / E2E** — Node 24, Playwright, `nuxt.config.e2e.ts` with `e2eBypassAuth` for automated runs.
 
 ---
 
@@ -199,6 +213,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 | **Structure `app/`** | Générique | **`srcDir: 'app'`** — pages, composants, stores sous `app/`. |
 | **Versions** | « Nuxt 4 » sans précision | **Nuxt ~4.4**, **Vite 8**, **Vue ~3.5**, **@nuxt/ui ~4.4**, etc. (voir `package.json`). |
 | **i18n, Calendar, Editor** | Non décrits | **@nuxtjs/i18n** (FR/EN), **FullCalendar**, **UEditor** pour la description d’événement (Markdown). |
+| **Multi-tenant / JWT / RBAC** | Parfois annoncé sur des landings génériques | **Non** — hub **mono-locataire**, **sessions** Better Auth, **allowlist d’e-mails** optionnelle (pas de rôles utilisateur dans Prisma). |
 | **Postinstall** | Non mentionné | **`patch-vue-plugin.js`** + `prisma generate`. |
 | **E2E** | Non mentionné | **Playwright** + **`nuxt.config.e2e.ts`**. |
 

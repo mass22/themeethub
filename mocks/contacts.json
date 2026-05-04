@@ -1,4 +1,42 @@
 [
-  {"id":"ctc_001","name":"Jean Tremblay","email":"jean@vuedev.ca","phone":"+1 514 555 0100","tags":["organizer"],"notes":"","createdAt":"2025-02-01T10:00:00.000Z","updatedAt":"2025-02-01T10:00:00.000Z"},
-  {"id":"ctc_002","name":"Sophie Martin","email":"sophie@meetup.com","phone":"+1 514 555 0101","tags":["logistics"],"notes":"","createdAt":"2025-02-05T14:00:00.000Z","updatedAt":"2025-02-05T14:00:00.000Z"}
+  {
+    "id": "ctc_001",
+    "name": "Jean Tremblay",
+    "email": "jean@vuedev.ca",
+    "phone": "+1 514 555 0100",
+    "tags": ["organizer", "venue"],
+    "notes": "Point de contact principal lieux et sponsors.",
+    "createdAt": "2025-02-01T10:00:00.000Z",
+    "updatedAt": "2025-06-01T09:00:00.000Z"
+  },
+  {
+    "id": "ctc_002",
+    "name": "Sophie Martin",
+    "email": "sophie@meetup.com",
+    "phone": "+1 514 555 0101",
+    "tags": ["logistics", "promo"],
+    "notes": "",
+    "createdAt": "2025-02-05T14:00:00.000Z",
+    "updatedAt": "2025-02-05T14:00:00.000Z"
+  },
+  {
+    "id": "ctc_003",
+    "name": "Amir Hassan",
+    "email": "amir@external.example",
+    "phone": null,
+    "tags": ["external", "participation"],
+    "notes": "Suivi participations événements externes.",
+    "createdAt": "2025-02-18T16:00:00.000Z",
+    "updatedAt": "2025-02-18T16:00:00.000Z"
+  },
+  {
+    "id": "ctc_004",
+    "name": "Camille Roy",
+    "email": "camille.roy@example.com",
+    "phone": "+1 438 555 0199",
+    "tags": [],
+    "notes": "Aucun tag — fiche minimale.",
+    "createdAt": "2026-01-12T12:00:00.000Z",
+    "updatedAt": "2026-01-12T12:00:00.000Z"
+  }
 ]

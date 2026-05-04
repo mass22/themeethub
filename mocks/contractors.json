@@ -1,5 +1,42 @@
 [
-  {"id":"cns_001","name":"Vidéo Pro MTL","role":"Vidéaste","contactId":"ctc_002","rate":150,"notes":"Enregistrement et montage","createdAt":"2025-02-10T08:00:00.000Z","updatedAt":"2025-02-10T08:00:00.000Z"},
-  {"id":"cns_002","name":"Catering Express","role":"Traiteur","rate":25,"notes":"Par personne, cocktail inclus","createdAt":"2025-02-12T10:00:00.000Z","updatedAt":"2025-02-12T10:00:00.000Z"},
-  {"id":"cns_003","name":"DesignLab","role":"Graphiste","rate":80,"notes":"Affiches et visuels promo","createdAt":"2025-02-15T14:00:00.000Z","updatedAt":"2025-02-15T14:00:00.000Z"}
+  {
+    "id": "cns_001",
+    "name": "Vidéo Pro MTL",
+    "role": "Vidéaste",
+    "contactId": "ctc_002",
+    "rate": 150,
+    "notes": "Enregistrement et montage — tarif horaire.",
+    "createdAt": "2025-02-10T08:00:00.000Z",
+    "updatedAt": "2025-03-01T09:00:00.000Z"
+  },
+  {
+    "id": "cns_002",
+    "name": "Catering Express",
+    "role": "Traiteur",
+    "contactId": null,
+    "rate": 25,
+    "notes": "Par personne, cocktail inclus.",
+    "createdAt": "2025-02-12T10:00:00.000Z",
+    "updatedAt": "2025-02-12T10:00:00.000Z"
+  },
+  {
+    "id": "cns_003",
+    "name": "DesignLab",
+    "role": "Graphiste",
+    "contactId": "ctc_001",
+    "rate": 80,
+    "notes": "Affiches et visuels promo.",
+    "createdAt": "2025-02-15T14:00:00.000Z",
+    "updatedAt": "2025-02-15T14:00:00.000Z"
+  },
+  {
+    "id": "cns_004",
+    "name": "Photo Collective",
+    "role": "Photographe",
+    "contactId": "ctc_003",
+    "rate": null,
+    "notes": "Forfait séance — tarif à négocier.",
+    "createdAt": "2026-01-08T08:00:00.000Z",
+    "updatedAt": "2026-01-08T08:00:00.000Z"
+  }
 ]

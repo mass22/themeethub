@@ -1,1 +1,26 @@
-[{"id":"ext_001","name":"Montreal.js","url":"https://montrealjs.com","notes":"JS meetup - good for Vue promo","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},{"id":"ext_002","name":"Québec Tech Meetups","url":"https://quebectech.com","notes":"","createdAt":"2025-02-21T09:00:00.000Z","updatedAt":"2025-02-21T09:00:00.000Z"}]
+[
+  {
+    "id": "ext_001",
+    "name": "Montreal.js",
+    "url": "https://montrealjs.com",
+    "notes": "JS meetup — bon relais pour promo Vue.",
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-03-01T10:00:00.000Z"
+  },
+  {
+    "id": "ext_002",
+    "name": "Québec Tech Meetups",
+    "url": "https://quebectech.example",
+    "notes": "Réseau provincial — co-organisation ponctuelle.",
+    "createdAt": "2025-02-21T09:00:00.000Z",
+    "updatedAt": "2025-02-21T09:00:00.000Z"
+  },
+  {
+    "id": "ext_003",
+    "name": "Women Who Code Montréal",
+    "url": null,
+    "notes": "URL optionnelle vide — focus inclusivité.",
+    "createdAt": "2026-01-05T14:00:00.000Z",
+    "updatedAt": "2026-01-05T14:00:00.000Z"
+  }
+]

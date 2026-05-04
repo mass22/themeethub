@@ -3,10 +3,68 @@
     "id": "spk_001",
     "name": "Alex Lichter",
     "role": "Core Team Nuxt",
-    "bio": "Nuxt expert, speaker",
-    "socials": { "linkedin": "https://www.linkedin.com/in/alexlichter" },
-    "topics": ["Nuxt", "Performance"],
+    "bio": "Nuxt expert, speaker international.",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=256",
+    "contactId": "ctc_001",
+    "socials": { "linkedin": "https://www.linkedin.com/in/alexlichter", "x": "https://x.com/alexanderlichter", "website": "https://www.lichter.io" },
+    "topics": ["Nuxt", "Performance", "DX"],
+    "publishedAt": "2025-01-01T12:00:00.000Z",
     "createdAt": "2025-01-01T00:00:00.000Z",
-    "updatedAt": "2025-01-01T00:00:00.000Z"
+    "updatedAt": "2025-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "spk_002",
+    "name": "Eduardo San Martin Morote",
+    "role": "Vue.js / Vite",
+    "bio": "Membre de l’équipe core Vue et Vite.",
+    "contactId": null,
+    "socials": { "linkedin": "https://www.linkedin.com/in/posva", "website": "https://esm.dev" },
+    "topics": ["Vue", "Vite", "Router"],
+    "publishedAt": "2025-02-01T12:00:00.000Z",
+    "createdAt": "2025-02-01T09:00:00.000Z",
+    "updatedAt": "2025-02-15T14:00:00.000Z"
+  },
+  {
+    "id": "spk_003",
+    "name": "Daniel Roe",
+    "role": "Nuxt Lead",
+    "bio": "Architecture SSR et modules Nuxt.",
+    "avatar": null,
+    "contactId": "ctc_002",
+    "socials": { "x": "https://x.com/danielcroe" },
+    "topics": ["Nuxt", "TypeScript"],
+    "publishedAt": "2025-02-10T10:00:00.000Z",
+    "createdAt": "2025-02-10T08:00:00.000Z",
+    "updatedAt": "2025-02-10T08:00:00.000Z"
+  },
+  {
+    "id": "spk_004",
+    "name": "Atelier — format court",
+    "role": "Format lightning talk",
+    "bio": null,
+    "contactId": null,
+    "socials": {},
+    "topics": ["Accessibilité"],
+    "publishedAt": "2026-01-05T15:00:00.000Z",
+    "createdAt": "2026-01-05T15:00:00.000Z",
+    "updatedAt": "2026-01-05T15:00:00.000Z"
+  },
+  {
+    "id": "spk_005",
+    "name": "Intervenante non publiée (hub seulement)",
+    "role": "Draft speaker",
+    "bio": "Cette fiche n’a pas de publishedAt — visible dans le hub, absente de la vitrine publique.",
+    "publishedAt": null,
+    "createdAt": "2026-01-08T11:00:00.000Z",
+    "updatedAt": "2026-01-08T11:00:00.000Z"
+  },
+  {
+    "id": "spk_006",
+    "name": "Community speaker",
+    "role": "Organisation locale",
+    "bio": "Bénévole et modération.",
+    "publishedAt": "2030-01-20T09:00:00.000Z",
+    "createdAt": "2030-01-20T09:00:00.000Z",
+    "updatedAt": "2030-01-20T09:00:00.000Z"
   }
 ]

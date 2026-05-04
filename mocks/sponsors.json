@@ -1,4 +1,70 @@
 [
-  {"id":"spo_001","companyName":"Tech Corp","type":"financial","contactName":"Jane Doe","contactEmail":"jane@example.com","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
-  {"id":"spo_002","companyName":"Startup.io","type":"community","contactName":"Marie Dupont","contactEmail":"marie@startup.io","createdAt":"2025-02-18T09:15:00.000Z","updatedAt":"2025-02-18T09:15:00.000Z"}
+  {
+    "id": "spo_001",
+    "companyName": "Tech Corp",
+    "type": "financial",
+    "tier": "Platine",
+    "contactId": "ctc_001",
+    "contactName": "Jane Doe",
+    "contactEmail": "jane@techcorp.example",
+    "logoUrl": "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=400",
+    "websiteUrl": "https://example.com/techcorp",
+    "notes": "Sponsor principal — contrat annuel.",
+    "publishedAt": "2025-02-01T10:00:00.000Z",
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-05-01T12:00:00.000Z"
+  },
+  {
+    "id": "spo_002",
+    "companyName": "Startup.io",
+    "type": "community",
+    "tier": null,
+    "contactId": null,
+    "contactName": "Marie Dupont",
+    "contactEmail": "marie@startup.io",
+    "logoUrl": null,
+    "websiteUrl": "https://startup.io",
+    "notes": "Soutien communautaire — stand petit format.",
+    "publishedAt": "2025-02-15T09:00:00.000Z",
+    "createdAt": "2025-02-18T09:15:00.000Z",
+    "updatedAt": "2025-02-18T09:15:00.000Z"
+  },
+  {
+    "id": "spo_003",
+    "companyName": "MegaConf (sponsor événement ponctuel)",
+    "type": "financial_event",
+    "tier": "Or",
+    "contactName": "Paul Event",
+    "contactEmail": "paul@megaconf.example",
+    "logoUrl": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400",
+    "websiteUrl": null,
+    "notes": "Type financial_event — listé dans le hub ; exclu de la route publique /api/public/sponsors.",
+    "publishedAt": "2025-08-20T08:00:00.000Z",
+    "createdAt": "2025-08-20T08:00:00.000Z",
+    "updatedAt": "2025-08-20T08:00:00.000Z"
+  },
+  {
+    "id": "spo_004",
+    "companyName": "Prospect non publié",
+    "type": "financial",
+    "tier": "Argent",
+    "contactEmail": "contact@prospect.example",
+    "notes": "publishedAt null — vitrine sans ce logo.",
+    "publishedAt": null,
+    "createdAt": "2026-01-10T10:00:00.000Z",
+    "updatedAt": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "spo_005",
+    "companyName": "CloudNative MTL",
+    "type": "financial",
+    "tier": "Bronze",
+    "contactId": "ctc_002",
+    "contactName": "Sophie Martin",
+    "contactEmail": "sophie@cloudnative.example",
+    "websiteUrl": "https://cloudnative.example",
+    "publishedAt": "2030-02-01T12:00:00.000Z",
+    "createdAt": "2030-02-01T12:00:00.000Z",
+    "updatedAt": "2030-02-01T12:00:00.000Z"
+  }
 ]

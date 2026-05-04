@@ -1,6 +1,7 @@
 import { getRequestHeaders } from 'h3'
 import { auth } from '../../lib/auth'
 import { parseAllowedEmails, isEmailAllowed } from '../utils/authAccess'
+import { mockDevApiAuthBypassEnabled, resolveUseMocks } from '../utils/resolveUseMocks'
 
 export default defineEventHandler(async (event) => {
   const path = event.path
@@ -10,6 +11,8 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig(event)
   if (config.public.e2eBypassAuth) return
+  /** Hub sans session en dev quand les données viennent des JSON mocks (désactiver : NUXT_MOCK_DEV_API_BYPASS=false). */
+  if (resolveUseMocks(config) && mockDevApiAuthBypassEnabled()) return
 
   const session = await auth.api.getSession({
     headers: getRequestHeaders(event)

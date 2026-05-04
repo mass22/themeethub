@@ -1,1 +1,68 @@
-[{"id":"par_001","externalEventId":"exe_001","intent":"ask_promo","ownerContactId":null,"status":"planned","followUpDueAt":"2025-03-10T12:00:00.000Z","notes":"Ask for 2 min promo slot","createdAt":"2025-02-22T08:00:00.000Z","updatedAt":"2025-02-22T08:00:00.000Z"},{"id":"par_002","externalEventId":"exe_004","intent":"attend","ownerContactId":null,"status":"planned","followUpDueAt":"2026-02-25T12:00:00.000Z","notes":"Confirmer présence Montreal.js Feb 2026","createdAt":"2026-01-18T09:00:00.000Z","updatedAt":"2026-01-18T09:00:00.000Z"}]
+[
+  {
+    "id": "par_001",
+    "externalEventId": "exe_001",
+    "intent": "ask_promo",
+    "ownerContactId": null,
+    "status": "planned",
+    "followUpDueAt": "2025-03-10T12:00:00.000Z",
+    "notes": "Demander un slot promo 2 min.",
+    "createdAt": "2025-02-22T08:00:00.000Z",
+    "updatedAt": "2025-02-22T08:00:00.000Z"
+  },
+  {
+    "id": "par_002",
+    "externalEventId": "exe_004",
+    "intent": "attend",
+    "ownerContactId": null,
+    "status": "planned",
+    "followUpDueAt": "2026-02-25T12:00:00.000Z",
+    "notes": "Confirmer présence Montreal.js Feb 2026.",
+    "createdAt": "2026-01-18T09:00:00.000Z",
+    "updatedAt": "2026-01-18T09:00:00.000Z"
+  },
+  {
+    "id": "par_003",
+    "externalEventId": "exe_005",
+    "intent": "network",
+    "ownerContactId": "ctc_003",
+    "status": "done",
+    "followUpDueAt": null,
+    "notes": "Networking complété — statut done.",
+    "createdAt": "2026-02-10T11:00:00.000Z",
+    "updatedAt": "2026-03-01T09:00:00.000Z"
+  },
+  {
+    "id": "par_004",
+    "externalEventId": "exe_002",
+    "intent": "propose_talk",
+    "ownerContactId": "ctc_001",
+    "status": "planned",
+    "followUpDueAt": "2025-04-01T12:00:00.000Z",
+    "notes": "Proposition de sujet Vue + Vite.",
+    "createdAt": "2025-02-25T10:00:00.000Z",
+    "updatedAt": "2025-02-25T10:00:00.000Z"
+  },
+  {
+    "id": "par_005",
+    "externalEventId": "exe_006",
+    "intent": "sponsor",
+    "ownerContactId": "ctc_002",
+    "status": "planned",
+    "followUpDueAt": "2030-04-10T12:00:00.000Z",
+    "notes": "Discuter package sponsor léger.",
+    "createdAt": "2030-01-12T14:00:00.000Z",
+    "updatedAt": "2030-01-12T14:00:00.000Z"
+  },
+  {
+    "id": "par_006",
+    "externalEventId": "exe_003",
+    "intent": "attend",
+    "ownerContactId": "ctc_004",
+    "status": "done",
+    "followUpDueAt": "2025-02-20T18:00:00.000Z",
+    "notes": "Participation passée — suivi clos.",
+    "createdAt": "2025-02-10T08:00:00.000Z",
+    "updatedAt": "2025-02-26T20:00:00.000Z"
+  }
+]

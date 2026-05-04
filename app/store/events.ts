@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { fetchWithRetry } from '../utils/fetchWithRetry'
 import type { Event } from '~~/types/event'
 
 export const useEventsStore = defineStore('events', () => {

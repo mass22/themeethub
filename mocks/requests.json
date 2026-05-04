@@ -5,17 +5,21 @@
     "email": "jane@example.com",
     "type": "sponsor",
     "companyName": "Tech Corp",
+    "role": null,
     "status": "new",
-    "createdAt": "2025-02-20T10:00:00.000Z"
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "exploringCallEmailSentAt": null
   },
   {
     "id": "req_002",
     "name": "John Smith",
     "email": "john@example.com",
     "type": "speaker",
+    "companyName": null,
     "role": "Tech Lead",
     "status": "exploring_call",
-    "createdAt": "2025-02-19T14:30:00.000Z"
+    "createdAt": "2025-02-19T14:30:00.000Z",
+    "exploringCallEmailSentAt": "2025-02-20T09:00:00.000Z"
   },
   {
     "id": "req_003",
@@ -23,7 +27,42 @@
     "email": "marie@startup.io",
     "type": "sponsor",
     "companyName": "Startup.io",
+    "role": null,
     "status": "validated",
-    "createdAt": "2025-02-18T09:15:00.000Z"
+    "createdAt": "2025-02-18T09:15:00.000Z",
+    "exploringCallEmailSentAt": "2025-02-18T11:00:00.000Z"
+  },
+  {
+    "id": "req_004",
+    "name": "Lucas Bernard",
+    "email": "lucas@corp.example",
+    "type": "sponsor",
+    "companyName": "Corp SAS",
+    "role": "Partnerships",
+    "status": "in_progress",
+    "createdAt": "2025-02-17T08:00:00.000Z",
+    "exploringCallEmailSentAt": "2025-02-17T10:00:00.000Z"
+  },
+  {
+    "id": "req_005",
+    "name": "Nadia Chen",
+    "email": "nadia@oldco.example",
+    "type": "speaker",
+    "companyName": null,
+    "role": "Developer Advocate",
+    "status": "closed",
+    "createdAt": "2025-01-10T12:00:00.000Z",
+    "exploringCallEmailSentAt": "2025-01-11T09:00:00.000Z"
+  },
+  {
+    "id": "req_006",
+    "name": "Spam Bot",
+    "email": "spam@invalid.example",
+    "type": "sponsor",
+    "companyName": "Fake LLC",
+    "role": null,
+    "status": "rejected",
+    "createdAt": "2025-02-01T07:00:00.000Z",
+    "exploringCallEmailSentAt": null
   }
 ]

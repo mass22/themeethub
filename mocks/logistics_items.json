@@ -1,6 +1,86 @@
 [
-  {"id":"lgs_001","eventId":"evt_001","name":"Projecteur HD","category":"Équipement","ownerContactId":"ctc_002","status":"ready","notes":"Prévoir câble HDMI","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},
-  {"id":"lgs_002","eventId":"evt_001","name":"Pizza et boissons","category":"Restauration","ownerContactId":"ctc_001","status":"todo","notes":"80 personnes estimées","createdAt":"2025-02-21T11:00:00.000Z","updatedAt":"2025-02-21T11:00:00.000Z"},
-  {"id":"lgs_003","eventId":"evt_001","name":"Badges participants","category":"Fournitures","status":"done","notes":"","createdAt":"2025-02-15T09:00:00.000Z","updatedAt":"2025-02-22T14:00:00.000Z"},
-  {"id":"lgs_004","eventId":"evt_003","name":"Projecteur pour Vue Montréal Fév","category":"Équipement","status":"todo","notes":"","dueAt":"2026-02-21T14:00:00.000Z","createdAt":"2026-01-15T10:00:00.000Z","updatedAt":"2026-01-15T10:00:00.000Z"}
+  {
+    "id": "lgs_001",
+    "eventId": "evt_001",
+    "name": "Projecteur HD",
+    "category": "Équipement",
+    "ownerContactId": "ctc_002",
+    "status": "ready",
+    "dueAt": "2025-09-09T18:00:00.000Z",
+    "notes": "Prévoir câble HDMI",
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-02-20T10:00:00.000Z"
+  },
+  {
+    "id": "lgs_002",
+    "eventId": "evt_001",
+    "name": "Pizza et boissons",
+    "category": "Restauration",
+    "ownerContactId": "ctc_001",
+    "status": "todo",
+    "dueAt": "2025-09-10T16:00:00.000Z",
+    "notes": "80 personnes estimées",
+    "createdAt": "2025-02-21T11:00:00.000Z",
+    "updatedAt": "2025-02-21T11:00:00.000Z"
+  },
+  {
+    "id": "lgs_003",
+    "eventId": "evt_001",
+    "name": "Badges participants",
+    "category": "Fournitures",
+    "ownerContactId": null,
+    "status": "done",
+    "dueAt": null,
+    "notes": "",
+    "createdAt": "2025-02-15T09:00:00.000Z",
+    "updatedAt": "2025-02-22T14:00:00.000Z"
+  },
+  {
+    "id": "lgs_004",
+    "eventId": "evt_003",
+    "name": "Projecteur pour Vue Montréal Fév",
+    "category": "Équipement",
+    "ownerContactId": "ctc_002",
+    "status": "todo",
+    "dueAt": "2026-02-21T14:00:00.000Z",
+    "notes": "",
+    "createdAt": "2026-01-15T10:00:00.000Z",
+    "updatedAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "lgs_005",
+    "eventId": "evt_006",
+    "name": "Signalétique entrée",
+    "category": "Logistique salle",
+    "ownerContactId": "ctc_001",
+    "status": "todo",
+    "dueAt": "2030-06-10T12:00:00.000Z",
+    "notes": "À traiter — statut todo pour insight logistique.",
+    "createdAt": "2030-02-01T10:00:00.000Z",
+    "updatedAt": "2030-02-01T10:00:00.000Z"
+  },
+  {
+    "id": "lgs_006",
+    "eventId": "evt_006",
+    "name": "Check-in bénévoles",
+    "category": "Équipe",
+    "ownerContactId": null,
+    "status": "ready",
+    "dueAt": "2030-06-14T09:00:00.000Z",
+    "notes": "Prêt mais pas encore coché done.",
+    "createdAt": "2030-02-05T11:00:00.000Z",
+    "updatedAt": "2030-02-05T11:00:00.000Z"
+  },
+  {
+    "id": "lgs_007",
+    "eventId": "evt_007",
+    "name": "Chaises supplémentaires",
+    "category": "Mobilier",
+    "ownerContactId": "ctc_003",
+    "status": "todo",
+    "dueAt": "2030-07-18T10:00:00.000Z",
+    "notes": "Événement sans speakers — logistique quand même.",
+    "createdAt": "2030-02-12T08:00:00.000Z",
+    "updatedAt": "2030-02-12T08:00:00.000Z"
+  }
 ]

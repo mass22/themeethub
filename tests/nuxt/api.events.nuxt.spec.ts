@@ -4,8 +4,13 @@ import { describe, expect, it } from 'vitest'
 // @vitest-environment node
 describe('Nuxt server API /api/events', async () => {
   await setup({
-    server: true, // démarre un instance Nuxt complète
-    // tu peux ajouter ici un nuxt.config override si besoin
+    server: true,
+    nuxtConfig: {
+      runtimeConfig: {
+        useMocks: true,
+        public: { e2eBypassAuth: true }
+      }
+    }
   })
 
   it('GET /api/events retourne un tableau', async () => {

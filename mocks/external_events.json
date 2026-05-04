@@ -1,1 +1,68 @@
-[{"id":"exe_001","communityId":"ext_001","title":"Montreal.js March Meetup","startAt":"2025-03-15T18:00:00.000Z","location":"Montreal","url":"https://montrealjs.com/events/2025-03","notes":"","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},{"id":"exe_002","communityId":"ext_001","title":"Montreal.js April Meetup","startAt":"2025-04-12T18:00:00.000Z","location":"TBD","notes":"","createdAt":"2025-02-21T09:00:00.000Z","updatedAt":"2025-02-21T09:00:00.000Z"},{"id":"exe_003","communityId":"ext_001","title":"Montreal.js Late Feb Meetup","startAt":"2025-02-26T18:00:00.000Z","location":"Montreal","url":"https://montrealjs.com/events/2025-02","notes":"","createdAt":"2025-02-20T10:00:00.000Z","updatedAt":"2025-02-20T10:00:00.000Z"},{"id":"exe_004","communityId":"ext_001","title":"Montreal.js Feb 2026 Meetup","startAt":"2026-02-28T18:00:00.000Z","location":"Montreal","url":"https://montrealjs.com/events/2026-02","notes":"","createdAt":"2026-01-10T10:00:00.000Z","updatedAt":"2026-01-10T10:00:00.000Z"}]
+[
+  {
+    "id": "exe_001",
+    "communityId": "ext_001",
+    "title": "Montreal.js March Meetup",
+    "startAt": "2025-03-15T18:00:00.000Z",
+    "location": "Montréal",
+    "url": "https://montrealjs.com/events/2025-03",
+    "notes": "",
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-02-20T10:00:00.000Z"
+  },
+  {
+    "id": "exe_002",
+    "communityId": "ext_001",
+    "title": "Montreal.js April Meetup",
+    "startAt": "2025-04-12T18:00:00.000Z",
+    "location": "TBD",
+    "url": "https://montrealjs.com/events/2025-04",
+    "notes": "Lieu à confirmer.",
+    "createdAt": "2025-02-21T09:00:00.000Z",
+    "updatedAt": "2025-02-21T09:00:00.000Z"
+  },
+  {
+    "id": "exe_003",
+    "communityId": "ext_001",
+    "title": "Montreal.js Late Feb Meetup",
+    "startAt": "2025-02-26T18:00:00.000Z",
+    "location": "Montréal",
+    "url": "https://montrealjs.com/events/2025-02",
+    "notes": "",
+    "createdAt": "2025-02-20T10:00:00.000Z",
+    "updatedAt": "2025-02-20T10:00:00.000Z"
+  },
+  {
+    "id": "exe_004",
+    "communityId": "ext_001",
+    "title": "Montreal.js Feb 2026 Meetup",
+    "startAt": "2026-02-28T18:00:00.000Z",
+    "location": "Montréal",
+    "url": "https://montrealjs.com/events/2026-02",
+    "notes": "",
+    "createdAt": "2026-01-10T10:00:00.000Z",
+    "updatedAt": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "exe_005",
+    "communityId": "ext_002",
+    "title": "Québec Tech — printemps partagé",
+    "startAt": "2026-05-05T17:00:00.000Z",
+    "location": "Québec",
+    "url": null,
+    "notes": "Événement rattaché à la 2e communauté.",
+    "createdAt": "2026-02-01T10:00:00.000Z",
+    "updatedAt": "2026-02-01T10:00:00.000Z"
+  },
+  {
+    "id": "exe_006",
+    "communityId": "ext_003",
+    "title": "WWCode — atelier carrière 2030",
+    "startAt": "2030-04-18T16:00:00.000Z",
+    "location": "En ligne",
+    "url": "https://example.com/wwcode-2030",
+    "notes": "Futur — calendrier et participations.",
+    "createdAt": "2030-01-08T12:00:00.000Z",
+    "updatedAt": "2030-01-08T12:00:00.000Z"
+  }
+]

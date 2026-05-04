@@ -12,6 +12,7 @@ import socialPosts from '../../mocks/social_posts.json'
 import externalCommunities from '../../mocks/external_communities.json'
 import externalEvents from '../../mocks/external_events.json'
 import participations from '../../mocks/participations.json'
+import { resolveUseMocks } from './resolveUseMocks'
 import type { Event, EventVideoItem } from '../../types/event'
 import type { Speaker } from '../../types/speaker'
 import type { Sponsor } from '../../types/sponsor'
@@ -1522,13 +1523,7 @@ function createPrismaDataSource(): DataSource {
 
 export function useDataSource(): DataSource {
   const config = useRuntimeConfig()
-  const envUseMocks = process.env.NUXT_USE_MOCKS
-  const useMocks =
-    envUseMocks === 'true'
-      ? true
-      : envUseMocks === 'false'
-        ? false
-        : Boolean(config.useMocks)
+  const useMocks = resolveUseMocks(config)
 
   if (useMocks) {
     return createMockDataSource()

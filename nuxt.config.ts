@@ -45,7 +45,8 @@ const mainConfig = defineNuxtConfig({
     detectBrowserLanguage: { useCookie: true, cookieKey: 'i18n_redirected', redirectOn: 'root' }
   },
   runtimeConfig: {
-    useMocks: false,
+    /** Données : `mocks/*.json` si true, Prisma si false. Écrasé par NUXT_USE_MOCKS (true|false) dans .env. */
+    useMocks: true,
     luma: { apiKey: '' },
     youtube: { apiKey: '' },
     calSponsorLink: '',
