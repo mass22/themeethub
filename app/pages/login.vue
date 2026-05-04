@@ -73,17 +73,27 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="mx-auto flex min-h-[60vh] max-w-md flex-col justify-center gap-6 px-4 py-12">
-    <div>
+  <div class="flex w-full flex-col gap-6">
+    <div class="flex flex-col items-center gap-3 text-center">
+      <NuxtLink :to="localePath('/')" class="flex items-center flex-col gap-2 font-semibold text-slate-900 dark:text-white">
+      <span class="text-5xl font-semibold text-highlighted">TheMeetHub</span>
+      <img
+        src="/logo.svg"
+        alt=""
+        width="128"
+        height="128"
+        class="h-64 w-64 shrink-0"
+      >
+      </NuxtLink>
       <h1 class="text-2xl font-semibold text-highlighted">
         {{ t('auth.title') }}
       </h1>
-      <p class="mt-1 text-muted text-sm">
+      <p class="text-muted max-w-sm text-sm">
         {{ t('auth.subtitle') }}
       </p>
     </div>
 
-    <form class="space-y-4" @submit.prevent="onSubmit">
+    <form class="w-full space-y-4 text-left" @submit.prevent="onSubmit">
       <div>
         <label class="mb-1 block text-sm font-medium">{{ t('auth.email') }}</label>
         <UInput

@@ -61,9 +61,13 @@ const navGroups = [
     <!-- Logo -->
     <div class="flex items-center justify-between h-14 px-4 border-b border-slate-200/80 dark:border-slate-700/80 shrink-0">
       <NuxtLink :to="localePath('/')" class="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
-        <span class="flex w-8 h-8 items-center justify-center rounded-lg bg-primary-500/15 text-primary-600 dark:text-primary-400">
-          <UIcon name="i-heroicons-user-group" class="w-5 h-5" />
-        </span>
+        <img
+          src="/logo.svg"
+          alt=""
+          width="32"
+          height="32"
+          class="w-8 h-8 shrink-0"
+        >
         {{ t('app.title') }}
       </NuxtLink>
       <UButton
