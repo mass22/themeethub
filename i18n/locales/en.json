@@ -295,7 +295,8 @@
             "add": "Add",
             "empty": "None",
             "selectOrCreate": "Select or create",
-            "createNew": "Create new"
+            "createNew": "Create new",
+            "externalCommunities": "External Communities"
         }
     },
     "speakers": {

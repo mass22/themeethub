@@ -32,6 +32,7 @@ model Event {
   contractorsJson String   @default("[]")
   toolsJson       String   @default("[]")
   videosJson      String   @default("[]")
+  externalCommunitiesJson String @default("[]")
   venueId         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -193,6 +194,7 @@ model ExternalCommunity {
   name      String
   url       String?
   notes     String?
+  publishedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

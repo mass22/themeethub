@@ -11,7 +11,8 @@ const schema = z.object({
     linkedin: z.string().optional(),
     website: z.string().optional()
   }).optional(),
-  topics: z.array(z.string()).optional()
+  topics: z.array(z.string()).optional(),
+  isPublished: z.boolean().optional()
 })
 
 export default defineEventHandler(async (event) => {
@@ -24,6 +25,11 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' })
   }
-  const updated = await ds.updateSpeaker(id, parsed.data)
+  const { isPublished, ...rest } = parsed.data
+  const patchData: any = { ...rest }
+  if (isPublished !== undefined) {
+    patchData.publishedAt = isPublished ? new Date().toISOString() : null
+  }
+  const updated = await ds.updateSpeaker(id, patchData)
   return updated
 })

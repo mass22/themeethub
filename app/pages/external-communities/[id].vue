@@ -14,6 +14,26 @@ const community = ref<ExternalCommunity | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
 const deleting = ref(false)
+const publishSaving = ref(false)
+
+const isPublished = computed(() => Boolean(community.value?.publishedAt))
+
+async function togglePublish() {
+  if (!community.value || publishSaving.value) return
+  publishSaving.value = true
+  const willPublish = !isPublished.value
+  try {
+    const updated = await communitiesStore.patch(id, {
+      publishedAt: willPublish ? new Date().toISOString() : null
+    })
+    community.value = updated
+    addToast({ title: willPublish ? 'Communauté publiée' : 'Communauté dépubliée', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de la publication', color: 'error' })
+  } finally {
+    publishSaving.value = false
+  }
+}
 
 const communityEvents = computed(() =>
   eventsStore.items.filter((e) => e.communityId === id)
@@ -61,6 +81,15 @@ async function deleteCommunity() {
     <UButton color="error" variant="soft" class="mb-4 ml-2" :loading="deleting" @click="deleteCommunity">
       Supprimer
     </UButton>
+    <UButton
+      class="mb-4 ml-2"
+      :color="isPublished ? 'neutral' : 'primary'"
+      :variant="isPublished ? 'outline' : 'solid'"
+      :loading="publishSaving"
+      @click="togglePublish"
+    >
+      {{ isPublished ? 'Dépublier' : 'Publier' }}
+    </UButton>
 
     <div v-if="loading" class="flex justify-center py-12">
       <UIcon name="i-heroicons-arrow-path" class="animate-spin h-8 w-8" />
@@ -83,6 +112,14 @@ async function deleteCommunity() {
           <div v-if="community.notes">
             <dt class="text-sm text-gray-500">{{ $t('externalCommunities.form.notes') }}</dt>
             <dd class="whitespace-pre-wrap">{{ community.notes }}</dd>
+          </div>
+          <div>
+            <dt class="text-sm text-gray-500">Statut</dt>
+            <dd class="mt-1">
+              <span :class="isPublished ? 'text-green-600' : 'text-amber-600'" class="text-sm font-medium">
+                {{ isPublished ? 'Publiée' : 'Non publiée (brouillon)' }}
+              </span>
+            </dd>
           </div>
         </dl>
       </UCard>

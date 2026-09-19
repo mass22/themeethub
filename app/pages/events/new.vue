@@ -27,7 +27,8 @@ const state = reactive({
   sponsorIds: [] as string[],
   contractorIds: [] as string[],
   toolIds: [] as string[],
-  venueId: '' as string
+  venueId: '' as string,
+  externalCommunityIds: [] as string[],
 })
 
 const events = useEventsStore()
@@ -36,6 +37,7 @@ const sponsorsStore = useSponsorsStore()
 const contractorsStore = useContractorsStore()
 const toolsStore = useToolsStore()
 const venuesStore = useVenuesStore()
+const externalCommunitiesStore = useExternalCommunitiesStore()
 
 const errors = reactive({
   title: '',
@@ -43,7 +45,8 @@ const errors = reactive({
   slug: '',
   location: '',
   description: '',
-  bannerImageUrl: ''
+  bannerImageUrl: '',
+  externalCommunityIds: [] as string[],
 })
 
 const route = useRoute()
@@ -88,7 +91,8 @@ onMounted(async () => {
     sponsorsStore.fetchAll(),
     contractorsStore.fetchAll(),
     toolsStore.fetchAll(),
-    venuesStore.fetchAll()
+    venuesStore.fetchAll(),
+    externalCommunitiesStore.fetchAll()
   ])
 })
 
@@ -106,6 +110,10 @@ const toolOptions = computed(() =>
 )
 const venueOptions = computed(() =>
   venuesStore.items.map((v) => ({ label: v.name, value: v.id }))
+)
+
+const externalCommunityOptions = computed(() =>
+  externalCommunitiesStore.items.map((c) => ({ label: c.name, value: c.id }))
 )
 
 // Fonction pour valider un champ spécifique
@@ -131,7 +139,8 @@ function validateForm() {
     sponsors: menuIdArray(state.sponsorIds),
     contractors: menuIdArray(state.contractorIds),
     tools: menuIdArray(state.toolIds),
-    venueId: menuPrimitive(state.venueId) || undefined
+    venueId: menuPrimitive(state.venueId) || undefined,
+    externalCommunities: menuIdArray(state.externalCommunityIds)
   })
 
   if (!result.success) {
@@ -179,7 +188,8 @@ async function onSubmit () {
       sponsors: menuIdArray(state.sponsorIds),
       contractors: menuIdArray(state.contractorIds),
       tools: menuIdArray(state.toolIds),
-      venueId: menuPrimitive(state.venueId)
+      venueId: menuPrimitive(state.venueId),
+      externalCommunities: menuIdArray(state.externalCommunityIds)
     })
     addToast({ title: 'Événement créé avec succès', color: 'success' })
     const returnTo = route.query.returnTo as string
@@ -343,6 +353,23 @@ async function onSubmit () {
             class="flex-1"
           />
           <UButton variant="outline" size="sm" :to="{ path: '/venues/new', query: { returnTo: '/events/new' } }">
+            {{ $t('events.hub.createNew') }}
+          </UButton>
+        </div>
+      </div>
+
+      <div>
+        <label for="externalCommunityIds" class="block text-sm font-medium text-gray-700 mb-1">{{ $t('events.hub.externalCommunities') }}</label>
+        <div class="flex gap-2 items-start">
+          <USelectMenu
+            v-model="state.externalCommunityIds"
+            :items="externalCommunityOptions"
+            multiple
+            value-key="value"
+            :placeholder="$t('events.hub.selectOrCreate')"
+            class="flex-1"
+          />
+          <UButton variant="outline" size="sm" :to="{ path: '/external-communities/new', query: { returnTo: '/events/new' } }">
             {{ $t('events.hub.createNew') }}
           </UButton>
         </div>

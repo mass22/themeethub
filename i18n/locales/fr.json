@@ -296,7 +296,8 @@
             "add": "Ajouter",
             "empty": "Aucun",
             "selectOrCreate": "Sélectionner ou créer",
-            "createNew": "Créer un nouveau"
+            "createNew": "Créer un nouveau",
+            "externalCommunities": "Communautés externes"
         }
     },
     "speakers": {

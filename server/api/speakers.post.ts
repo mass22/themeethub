@@ -11,7 +11,8 @@ const schema = z.object({
     linkedin: z.string().optional(),
     website: z.string().optional()
   }).optional(),
-  topics: z.array(z.string()).optional()
+  topics: z.array(z.string()).optional(),
+  isPublished: z.boolean().optional()
 })
 
 export default defineEventHandler(async (event) => {
@@ -21,10 +22,15 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' })
   }
-  const { name, role } = parsed.data
+  const { name, role, isPublished, ...rest } = parsed.data
   const existing = await ds.findSpeakerByNameAndRole(name, role)
   if (existing) {
     throw createError({ statusCode: 409, statusMessage: 'Speaker already exists with this name and role', data: { speakerId: existing.id } })
   }
-  return ds.createSpeaker(parsed.data)
+  return ds.createSpeaker({
+    name,
+    role,
+    ...rest,
+    publishedAt: isPublished ? new Date().toISOString() : null
+  })
 })

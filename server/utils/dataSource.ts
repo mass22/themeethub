@@ -120,6 +120,7 @@ function createMockDataSource(): DataSource {
         sponsors: payload.sponsors || [],
         contractors: payload.contractors || [],
         tools: payload.tools || [],
+        externalCommunities: payload.externalCommunities || [],
         videos: payload.videos ?? [],
         venueId: payload.venueId
       }
@@ -133,6 +134,7 @@ function createMockDataSource(): DataSource {
       if (payload.sponsors !== undefined) e.sponsors = payload.sponsors
       if (payload.contractors !== undefined) e.contractors = payload.contractors
       if (payload.tools !== undefined) e.tools = payload.tools
+      if (payload.externalCommunities !== undefined) e.externalCommunities = payload.externalCommunities
       if (payload.venueId !== undefined) e.venueId = payload.venueId
       if (payload.title !== undefined) e.title = payload.title
       if (payload.slug !== undefined) e.slug = payload.slug
@@ -384,7 +386,7 @@ function createMockDataSource(): DataSource {
     async createExternalCommunity(payload: Omit<ExternalCommunity, 'id' | 'createdAt' | 'updatedAt'>): Promise<ExternalCommunity> {
       const id = randomId('ext')
       const now = new Date().toISOString()
-      const c: ExternalCommunity = { id, ...payload, createdAt: now, updatedAt: now }
+      const c: ExternalCommunity = { id, ...payload, publishedAt: payload.publishedAt ?? null, createdAt: now, updatedAt: now }
       ;(externalCommunities as ExternalCommunity[]).push(c)
       return c
     },
@@ -461,6 +463,7 @@ function createPrismaDataSource(): DataSource {
           sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
           contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
           tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+          externalCommunities: (JSON.parse((row as { externalCommunitiesJson?: string }).externalCommunitiesJson || '[]') as string[]),
           videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
           venueId: r.venueId ?? undefined
         }
@@ -487,6 +490,7 @@ function createPrismaDataSource(): DataSource {
         sponsors: (JSON.parse(r.sponsorsJson || '[]') as string[]),
         contractors: (JSON.parse(r.contractorsJson || '[]') as string[]),
         tools: (JSON.parse(r.toolsJson || '[]') as string[]),
+        externalCommunities: (JSON.parse((row as { externalCommunitiesJson?: string }).externalCommunitiesJson || '[]') as string[]),
         videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
         venueId: r.venueId ?? undefined
       }
@@ -512,6 +516,7 @@ function createPrismaDataSource(): DataSource {
           sponsorsJson: JSON.stringify(payload.sponsors || []),
           contractorsJson: JSON.stringify(payload.contractors || []),
           toolsJson: JSON.stringify(payload.tools || []),
+          externalCommunitiesJson: JSON.stringify(payload.externalCommunities || []),
           videosJson: JSON.stringify(payload.videos ?? []),
           venueId: payload.venueId ?? null
         }
@@ -546,6 +551,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.sponsors !== undefined) data.sponsorsJson = JSON.stringify(payload.sponsors)
       if (payload.contractors !== undefined) data.contractorsJson = JSON.stringify(payload.contractors)
       if (payload.tools !== undefined) data.toolsJson = JSON.stringify(payload.tools)
+      if (payload.externalCommunities !== undefined) data.externalCommunitiesJson = JSON.stringify(payload.externalCommunities)
       if (payload.venueId !== undefined) data.venueId = payload.venueId
       if (payload.title !== undefined) data.title = payload.title
       if (payload.slug !== undefined) data.slug = payload.slug
@@ -1251,6 +1257,7 @@ function createPrismaDataSource(): DataSource {
         name: r.name,
         url: r.url ?? undefined,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }))
@@ -1263,6 +1270,7 @@ function createPrismaDataSource(): DataSource {
         name: r.name,
         url: r.url ?? undefined,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }
@@ -1274,7 +1282,8 @@ function createPrismaDataSource(): DataSource {
           id,
           name: payload.name,
           url: payload.url ?? null,
-          notes: payload.notes ?? null
+          notes: payload.notes ?? null,
+          publishedAt: payload.publishedAt ? new Date(payload.publishedAt) : null
         }
       })
       return {
@@ -1282,6 +1291,7 @@ function createPrismaDataSource(): DataSource {
         name: r.name,
         url: r.url ?? undefined,
         notes: r.notes ?? undefined,
+        publishedAt: (r as { publishedAt?: Date | null }).publishedAt?.toISOString() ?? null,
         createdAt: r.createdAt.toISOString(),
         updatedAt: r.updatedAt.toISOString()
       }
@@ -1293,6 +1303,7 @@ function createPrismaDataSource(): DataSource {
       if (payload.name !== undefined) data.name = payload.name
       if (payload.url !== undefined) data.url = payload.url ?? null
       if (payload.notes !== undefined) data.notes = payload.notes ?? null
+      if (payload.publishedAt !== undefined) data.publishedAt = payload.publishedAt ? new Date(payload.publishedAt) : null
       if (Object.keys(data).length === 0) return this.getExternalCommunity(id)
       await prisma.externalCommunity.update({ where: { id }, data: data as never })
       return this.getExternalCommunity(id)

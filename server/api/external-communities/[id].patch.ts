@@ -3,7 +3,8 @@ import { z } from 'zod'
 const schema = z.object({
   name: z.string().min(1).optional(),
   url: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  isPublished: z.boolean().optional()
 })
 
 export default defineEventHandler(async (event) => {
@@ -16,5 +17,10 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throw createError({ statusCode: 400, statusMessage: 'Invalid payload' })
   }
-  return ds.updateExternalCommunity(id, parsed.data)
+  const { isPublished, ...rest } = parsed.data
+  const patchData: any = { ...rest }
+  if (isPublished !== undefined) {
+    patchData.publishedAt = isPublished ? new Date().toISOString() : null
+  }
+  return ds.updateExternalCommunity(id, patchData)
 })

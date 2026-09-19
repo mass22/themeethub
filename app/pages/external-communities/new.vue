@@ -6,10 +6,11 @@ definePageMeta({ layout: 'default' })
 const schema = z.object({
   name: z.string().min(1, 'Name required'),
   url: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  isPublished: z.boolean().default(false)
 })
 
-const state = reactive({ name: '', url: '', notes: '' })
+const state = reactive({ name: '', url: '', notes: '', isPublished: false })
 const errors = reactive<Record<string, string>>({})
 const pending = ref(false)
 const router = useRouter()
@@ -39,7 +40,8 @@ async function onSubmit() {
     const created = await store.create({
       name: state.name.trim(),
       url: state.url.trim() || undefined,
-      notes: state.notes.trim() || undefined
+      notes: state.notes.trim() || undefined,
+      isPublished: state.isPublished
     })
     addToast({ title: 'External community created', color: 'success' })
     router.push(`/external-communities/${created.id}`)
@@ -67,6 +69,10 @@ async function onSubmit() {
       <div>
         <label class="block text-sm font-medium mb-1">{{ $t('externalCommunities.form.notes') }} <span class="text-gray-400">({{ $t('common.optional') }})</span></label>
         <UTextarea v-model="state.notes" :rows="3" />
+      </div>
+      <div class="flex items-center gap-2">
+        <USwitch id="isPublished" v-model="state.isPublished" />
+        <label for="isPublished" class="text-sm font-medium">Publié</label>
       </div>
       <div class="flex gap-2">
         <UButton :loading="pending" type="submit">{{ $t('common.submit') }}</UButton>

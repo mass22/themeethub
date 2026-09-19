@@ -24,6 +24,7 @@ export interface Event {
   sponsors: string[] // sponsor ids
   contractors: string[] // contractor ids
   tools: string[] // tool ids
+  externalCommunities: string[] // external community ids
   videos?: EventVideoItem[]
   publishedAt?: string | null
   venueId?: string

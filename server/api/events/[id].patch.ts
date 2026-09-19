@@ -17,6 +17,7 @@ const schema = z.object({
   sponsors: z.array(z.string()).optional(),
   contractors: z.array(z.string()).optional(),
   tools: z.array(z.string()).optional(),
+  externalCommunities: z.array(z.string()).optional(),
   videos: z.array(eventVideoSchema).optional(),
   venueId: z.string().optional(),
   stats: z.object({ registered: z.number().min(0), attended: z.number().min(0) }).optional()

@@ -56,7 +56,8 @@ const state = reactive({
   socialsLinkedin: '',
   socialsX: '',
   socialsWebsite: '',
-  topicsStr: ''
+  topicsStr: '',
+  isPublished: false
 })
 
 // Synchroniser state avec speaker quand chargé
@@ -70,6 +71,7 @@ watch(speaker, (s) => {
     state.socialsX = s.socials?.x ?? ''
     state.socialsWebsite = s.socials?.website ?? ''
     state.topicsStr = s.topics?.join(', ') ?? ''
+    state.isPublished = Boolean(s.publishedAt)
   }
 }, { immediate: true })
 
@@ -124,7 +126,8 @@ async function onSubmit() {
       bio: state.bio.trim() || undefined,
       avatar: state.avatar.trim() || undefined,
       socials,
-      topics
+      topics,
+      isPublished: state.isPublished
     })
     addToast({ title: 'Intervenant mis à jour', color: 'success' })
     router.push(`/speakers/${speakerId.value}`)
@@ -223,6 +226,11 @@ async function onSubmit() {
             v-model="state.topicsStr"
             :placeholder="$t('speakers.form.topicsPlaceholder')"
           />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <USwitch id="isPublished" v-model="state.isPublished" />
+          <label for="isPublished" class="text-sm font-medium text-gray-700">Publié</label>
         </div>
 
         <div class="flex gap-2">

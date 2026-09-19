@@ -24,6 +24,7 @@ const logisticsStore = useLogisticsItemsStore()
 const contractorsStore = useContractorsStore()
 const toolsStore = useToolsStore()
 const socialStore = useSocialPostsStore()
+const externalCommunitiesStore = useExternalCommunitiesStore()
 
 const event = ref<Event | null>(null)
 const speakers = ref<Speaker[]>([])
@@ -36,6 +37,7 @@ const selectedSponsorId = ref<string | null>(null)
 const selectedContractorId = ref<string | null>(null)
 const selectedToolId = ref<string | null>(null)
 const selectedVenueId = ref<string | null>(null)
+const selectedExternalCommunityId = ref<string | null>(null)
 
 const statsForm = reactive({ registered: 0, attended: 0 })
 const statsSaving = ref(false)
@@ -358,6 +360,11 @@ const toolOptions = computed(() =>
 const venueOptions = computed(() =>
   venuesStore.items.map((v) => ({ label: v.name, value: v.id }))
 )
+const externalCommunityOptions = computed(() =>
+  externalCommunitiesStore.items
+    .filter((c) => !event.value?.externalCommunities?.includes(c.id))
+    .map((c) => ({ label: c.name, value: c.id }))
+)
 
 const linkedTools = computed<Tool[]>(() => {
   if (!event.value?.tools) return []
@@ -377,6 +384,14 @@ const eventFinancialLinkedSponsors = computed<Sponsor[]>(() =>
 const linkedVenue = computed<Venue | null>(() =>
   event.value?.venueId ? venuesStore.byId(event.value.venueId) ?? null : null
 )
+
+import type { ExternalCommunity } from '~~/types/externalCommunity'
+const linkedExternalCommunities = computed<ExternalCommunity[]>(() => {
+  if (!event.value?.externalCommunities) return []
+  return event.value.externalCommunities
+    .map((id) => externalCommunitiesStore.byId(id))
+    .filter((c): c is ExternalCommunity => c !== undefined)
+})
 
 async function addSponsor(sponsorId: string) {
   if (!event.value) return
@@ -547,7 +562,8 @@ onMounted(async () => {
       logisticsStore.fetchAll(),
       contractorsStore.fetchAll(),
       toolsStore.fetchAll(),
-      socialStore.fetchAll()
+      socialStore.fetchAll(),
+      externalCommunitiesStore.fetchAll()
     ])
 
     const foundEvent = eventsStore.byId(eventId)
@@ -604,6 +620,31 @@ const addSocialLink = computed(() => ({ path: '/social/new', query: { eventId } 
 const addSponsorLink = computed(() => ({ path: '/sponsors/new', query: { eventId, returnTo: `/events/${eventId}` } }))
 const addContractorLink = computed(() => ({ path: '/contractors/new', query: { eventId, returnTo: `/events/${eventId}` } }))
 const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnTo: `/events/${eventId}` } }))
+
+async function addExternalCommunity(communityId: string) {
+  if (!event.value) return
+  const next = [...(event.value.externalCommunities || []), communityId]
+  await eventsStore.update(eventId, { externalCommunities: next })
+  event.value = { ...event.value, externalCommunities: next }
+}
+
+async function removeExternalCommunity(communityId: string) {
+  if (!event.value) return
+  const next = (event.value.externalCommunities || []).filter((id) => id !== communityId)
+  await eventsStore.update(eventId, { externalCommunities: next })
+  event.value = { ...event.value, externalCommunities: next }
+}
+
+async function confirmAddExternalCommunity() {
+  if (!selectedExternalCommunityId.value) return
+  try {
+    await addExternalCommunity(selectedExternalCommunityId.value)
+    selectedExternalCommunityId.value = null
+    addToast({ title: 'Communauté externe ajoutée', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'ajout', color: 'error' })
+  }
+}
 </script>
 
 <template>
@@ -1103,6 +1144,42 @@ const addSpeakerLink = computed(() => ({ path: '/speakers/new', query: { returnT
             <li v-for="t in linkedTools" :key="t.id" class="flex items-center justify-between gap-2">
               <NuxtLink :to="`/tools/${t.id}`" class="text-primary hover:underline">{{ t.name }}</NuxtLink>
               <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeTool(t.id)" />
+            </li>
+          </ul>
+          <p v-else class="text-gray-500 italic mt-3">{{ $t('events.hub.empty') }}</p>
+        </UCard>
+
+        <!-- Communautés externes (meetups croisés) -->
+        <UCard>
+          <template #header>
+            <h3 class="font-semibold">Communautés externes</h3>
+          </template>
+          <div class="space-y-3">
+            <div class="flex gap-2 items-center flex-wrap">
+              <USelectMenu
+                :model-value="selectedExternalCommunityId ?? undefined"
+                :items="externalCommunityOptions"
+                value-key="value"
+                :placeholder="$t('events.hub.selectOrCreate')"
+                class="min-w-48"
+                @update:model-value="selectedExternalCommunityId = typeof $event === 'string' ? $event : ($event as { value?: string } | null)?.value ?? null"
+              />
+              <UButton
+                size="sm"
+                :disabled="!selectedExternalCommunityId"
+                @click="confirmAddExternalCommunity"
+              >
+                {{ $t('events.hub.add') }}
+              </UButton>
+              <UButton size="sm" variant="outline" :to="{ path: '/external-communities/new', query: { returnTo: `/events/${eventId}` } }">
+                {{ $t('events.hub.createNew') }}
+              </UButton>
+            </div>
+          </div>
+          <ul v-if="linkedExternalCommunities.length > 0" class="space-y-2 mt-3">
+            <li v-for="c in linkedExternalCommunities" :key="c.id" class="flex items-center justify-between gap-2">
+              <NuxtLink :to="`/external-communities/${c.id}`" class="text-primary hover:underline">{{ c.name }}</NuxtLink>
+              <UButton size="xs" icon="i-heroicons-x-mark" color="neutral" variant="ghost" @click="removeExternalCommunity(c.id)" />
             </li>
           </ul>
           <p v-else class="text-gray-500 italic mt-3">{{ $t('events.hub.empty') }}</p>

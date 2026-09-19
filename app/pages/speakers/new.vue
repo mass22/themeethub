@@ -10,7 +10,8 @@ const schema = z.object({
   role: z.string().optional(),
   bio: z.string().optional(),
   avatar: z.string().optional(),
-  socialsWebsite: z.string().optional()
+  socialsWebsite: z.string().optional(),
+  isPublished: z.boolean().default(false)
 })
 
 const state = reactive({
@@ -18,7 +19,8 @@ const state = reactive({
   role: '',
   bio: '',
   avatar: '',
-  socialsWebsite: ''
+  socialsWebsite: '',
+  isPublished: false
 })
 
 const errors = reactive({
@@ -66,7 +68,8 @@ async function onSubmit() {
       role: state.role.trim() || undefined,
       bio: state.bio.trim() || undefined,
       avatar: state.avatar.trim() || undefined,
-      socials
+      socials,
+      isPublished: state.isPublished
     })
     addToast({ title: 'Intervenant créé avec succès', color: 'success' })
     const returnTo = route.query.returnTo as string
@@ -131,6 +134,11 @@ async function onSubmit() {
           type="url"
           :placeholder="$t('speakers.form.websitePlaceholder')"
         />
+      </div>
+
+      <div class="flex items-center gap-2">
+        <USwitch id="isPublished" v-model="state.isPublished" />
+        <label for="isPublished" class="text-sm font-medium text-gray-700">Publié</label>
       </div>
 
       <div class="flex gap-2">
