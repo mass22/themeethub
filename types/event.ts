@@ -7,6 +7,34 @@ export interface EventVideoItem {
   youtube_url: string
 }
 
+export interface EventTalkSlide {
+  type: 'file' | 'link'
+  fileUrl?: string | null
+  fileName?: string | null
+  fileSize?: number | null
+  linkUrl?: string | null
+}
+
+export interface EventTalk {
+  id: string
+  title: string
+  slug?: string
+  speakerId?: string | null
+  description?: string | null
+  slides?: EventTalkSlide
+}
+
+export interface EventPhoto {
+  id: string
+  eventId?: string
+  thumbUrl: string
+  fullUrl: string
+  caption?: string | null
+  order: number
+  isCover: boolean
+  createdAt?: string
+}
+
 export interface Event {
   id: string
   title: string
@@ -26,6 +54,8 @@ export interface Event {
   tools: string[] // tool ids
   externalCommunities: string[] // external community ids
   videos?: EventVideoItem[]
+  talks?: EventTalk[]
+  photos?: EventPhoto[]
   publishedAt?: string | null
   venueId?: string
   venue?: Venue | null

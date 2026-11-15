@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Contractor } from '~~/types/contractor'
-import type { Event, EventVideoItem } from '~~/types/event'
+import type { Event, EventVideoItem, EventTalk, EventPhoto } from '~~/types/event'
 import type { LogisticsItem } from '~~/types/logisticsItem'
 import type { PromoItem } from '~~/types/promoItem'
 import type { SocialPost } from '~~/types/socialPost'
@@ -45,6 +45,10 @@ const bannerForm = reactive({ bannerImageUrl: '' })
 const bannerSaving = ref(false)
 const videosForm = ref<EventVideoItem[]>([])
 const videosSaving = ref(false)
+const talksForm = ref<EventTalk[]>([])
+const talksSaving = ref(false)
+const photosForm = ref<EventPhoto[]>([])
+const photosSaving = ref(false)
 const descriptionForm = reactive({ description: '' })
 const descriptionSaving = ref(false)
 
@@ -126,9 +130,65 @@ watch(
     videosForm.value = v?.length
       ? v.map((x) => ({ title: x.title ?? '', youtube_url: x.youtube_url ?? '' }))
       : []
+    talksForm.value = e?.talks ? JSON.parse(JSON.stringify(e.talks)) : []
+    photosForm.value = e?.photos ? JSON.parse(JSON.stringify(e.photos)) : []
   },
   { immediate: true }
 )
+
+const talksChanged = computed(() => {
+  if (!event.value) return false
+  return JSON.stringify(talksForm.value) !== JSON.stringify(event.value.talks ?? [])
+})
+
+async function saveTalks() {
+  if (!event.value || talksSaving.value) return
+  talksSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, {
+      talks: talksForm.value
+    })
+    event.value = updated
+    addToast({ title: 'Talks et supports enregistrés', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement des talks', color: 'error' })
+  } finally {
+    talksSaving.value = false
+  }
+}
+
+const photosChanged = computed(() => {
+  if (!event.value) return false
+  return JSON.stringify(photosForm.value) !== JSON.stringify(event.value.photos ?? [])
+})
+
+async function savePhotos() {
+  if (!event.value || photosSaving.value) return
+  photosSaving.value = true
+  try {
+    const updated = await eventsStore.update(eventId, {
+      photos: photosForm.value
+    })
+    event.value = updated
+    addToast({ title: 'Galerie photos enregistrée', color: 'success' })
+  } catch {
+    addToast({ title: 'Erreur lors de l\'enregistrement des photos', color: 'error' })
+  } finally {
+    photosSaving.value = false
+  }
+}
+
+function onGalleryChange(newPhotos: EventPhoto[]) {
+  photosForm.value = newPhotos
+  if (event.value) {
+    event.value.photos = newPhotos
+  }
+}
+
+function handleCoverChange(url: string) {
+  bannerForm.bannerImageUrl = url
+  void saveBanner()
+}
 
 const statsChanged = computed(() =>
   event.value
@@ -352,6 +412,9 @@ const speakerOptions = computed(() =>
     .filter((s) => !event.value?.speakers?.includes(s.id))
     .map((s) => ({ label: s.role ? `${s.name} (${s.role})` : s.name, value: s.id }))
 )
+const allSpeakerOptions = computed(() =>
+  speakersStore.items.map((s) => ({ label: s.role ? `${s.name} (${s.role})` : s.name, value: s.id }))
+)
 const toolOptions = computed(() =>
   toolsStore.items
     .filter((t) => !event.value?.tools?.includes(t.id))
@@ -566,7 +629,7 @@ onMounted(async () => {
       externalCommunitiesStore.fetchAll()
     ])
 
-    const foundEvent = eventsStore.byId(eventId)
+    const foundEvent = (await eventsStore.fetchById(eventId)) || eventsStore.byId(eventId)
     if (!foundEvent) {
       error.value = 'Événement non trouvé'
       event.value = null
@@ -795,6 +858,31 @@ async function confirmAddExternalCommunity() {
             </UButton>
           </div>
         </div>
+
+        <!-- Talks & Présentations -->
+        <UCard class="mb-6">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="font-semibold flex items-center gap-2">
+                <span>🎤</span> Talks & Présentations
+              </h3>
+              <UButton
+                size="sm"
+                :loading="talksSaving"
+                :disabled="!talksChanged"
+                @click="saveTalks"
+              >
+                {{ $t('common.submit') }}
+              </UButton>
+            </div>
+          </template>
+          <EventTalksManager
+            v-model="talksForm"
+            :event-id="eventId"
+            :speaker-options="allSpeakerOptions"
+            @change="saveTalks"
+          />
+        </UCard>
 
         <UCard class="mb-6">
           <template #header>
@@ -1211,6 +1299,15 @@ async function confirmAddExternalCommunity() {
           <p v-else class="text-gray-500 italic mt-3">{{ $t('events.hub.empty') }}</p>
         </UCard>
       </div>
+
+      <!-- Section dédiée "Galerie Photos" en bas de la fiche -->
+      <EventPhotoGallery
+        v-model="photosForm"
+        :event-id="eventId"
+        :initial-photos="event.photos"
+        @cover-change="handleCoverChange"
+        @change="onGalleryChange"
+      />
     </div>
   </div>
 </template>

@@ -33,6 +33,8 @@ model Event {
   toolsJson       String   @default("[]")
   videosJson      String   @default("[]")
   externalCommunitiesJson String @default("[]")
+  assetsJson      String?  @default("[]")
+  talksJson       String   @default("[]")
   venueId         String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -40,6 +42,24 @@ model Event {
   promoItems     PromoItem[]
   logisticsItems LogisticsItem[]
   socialPosts    SocialPost[]
+  photos         EventPhoto[]
+}
+
+model EventPhoto {
+  id        String   @id
+  eventId   String
+  thumbUrl  String
+  fullUrl   String
+  caption   String?
+  order     Int      @default(0)
+  isCover   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@map("event_photos")
 }
 
 model Speaker {

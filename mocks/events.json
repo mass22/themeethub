@@ -19,6 +19,21 @@
     "videos": [
       { "title": "Keynote", "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ" }
     ],
+    "talks": [
+      {
+        "id": "talk_001",
+        "title": "Architecture Vue 3 moderne",
+        "slug": "architecture-vue",
+        "speakerId": "spk_001",
+        "description": "Retours d'expérience sur l'architecture de micro-frontends et Composition API.",
+        "slides": {
+          "type": "file",
+          "fileUrl": "/uploads/events/evt_001/slides/architecture-vue.pdf",
+          "fileName": "architecture-vue.pdf",
+          "fileSize": 4404019
+        }
+      }
+    ],
     "venueId": "ven_001"
   },
   {

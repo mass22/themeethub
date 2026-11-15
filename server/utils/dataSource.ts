@@ -13,7 +13,7 @@ import externalCommunities from '../../mocks/external_communities.json'
 import externalEvents from '../../mocks/external_events.json'
 import participations from '../../mocks/participations.json'
 import { resolveUseMocks } from './resolveUseMocks'
-import type { Event, EventVideoItem } from '../../types/event'
+import type { Event, EventVideoItem, EventTalk, EventPhoto } from '../../types/event'
 import type { Speaker } from '../../types/speaker'
 import type { Sponsor } from '../../types/sponsor'
 import type { Request, RequestStatus } from '../../types/request'
@@ -43,6 +43,11 @@ export interface DataSource {
   getEvent(id: string): Promise<Event | null>
   createEvent(payload: Omit<Event, 'id'>): Promise<Event>
   updateEvent(id: string, payload: Partial<Omit<Event, 'id'>>): Promise<Event | null>
+  getEventPhotos(eventId: string): Promise<EventPhoto[]>
+  addEventPhoto(eventId: string, photo: Omit<EventPhoto, 'id' | 'createdAt'>): Promise<EventPhoto>
+  deleteEventPhoto(eventId: string, photoId: string): Promise<boolean>
+  reorderEventPhotos(eventId: string, photoIds: string[]): Promise<EventPhoto[]>
+  setEventCoverPhoto(eventId: string, photoId: string): Promise<EventPhoto | null>
   listSpeakers(): Promise<Speaker[]>
   getSpeaker(id: string): Promise<Speaker | null>
   createSpeaker(payload: Omit<Speaker, 'id' | 'createdAt' | 'updatedAt'>): Promise<Speaker>
@@ -99,14 +104,45 @@ export interface DataSource {
   updateParticipation(id: string, payload: Partial<Omit<Participation, 'id'>>): Promise<Participation | null>
 }
 
+const mockEventPhotos: EventPhoto[] = [
+  {
+    id: 'pho_demo_1',
+    eventId: 'evt_001',
+    thumbUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80',
+    fullUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1920&auto=format&fit=crop&q=80',
+    caption: 'Salle comble pour Vue Montréal #1',
+    order: 0,
+    isCover: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'pho_demo_2',
+    eventId: 'evt_001',
+    thumbUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format&fit=crop&q=80',
+    fullUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1920&auto=format&fit=crop&q=80',
+    caption: 'Session Q&A et réseautage',
+    order: 1,
+    isCover: false,
+    createdAt: new Date().toISOString()
+  }
+]
+
 function createMockDataSource(): DataSource {
   return {
     useMocks: true,
     async listEvents(): Promise<Event[]> {
-      return events as Event[]
+      return (events as Event[]).map((e) => ({
+        ...e,
+        photos: mockEventPhotos.filter((p) => p.eventId === e.id).sort((a, b) => a.order - b.order)
+      }))
     },
     async getEvent(id: string): Promise<Event | null> {
-      return (events as Event[]).find((e: Event) => e.id === id) ?? null
+      const found = (events as Event[]).find((e: Event) => e.id === id)
+      if (!found) return null
+      return {
+        ...found,
+        photos: mockEventPhotos.filter((p) => p.eventId === id).sort((a, b) => a.order - b.order)
+      }
     },
     async createEvent(payload: Omit<Event, 'id'>): Promise<Event> {
       const id = randomId('evt')
@@ -122,6 +158,8 @@ function createMockDataSource(): DataSource {
         tools: payload.tools || [],
         externalCommunities: payload.externalCommunities || [],
         videos: payload.videos ?? [],
+        talks: payload.talks ?? [],
+        photos: [],
         venueId: payload.venueId
       }
       ;(events as Event[]).push(e)
@@ -144,8 +182,82 @@ function createMockDataSource(): DataSource {
       if (payload.stats !== undefined) e.stats = payload.stats
       if (payload.bannerImageUrl !== undefined) e.bannerImageUrl = payload.bannerImageUrl
       if (payload.videos !== undefined) e.videos = payload.videos
+      if (payload.talks !== undefined) e.talks = payload.talks
+      if (payload.photos !== undefined) {
+        for (let i = mockEventPhotos.length - 1; i >= 0; i--) {
+          if (mockEventPhotos[i].eventId === id) {
+            mockEventPhotos.splice(i, 1)
+          }
+        }
+        payload.photos.forEach((p, idx) => {
+          mockEventPhotos.push({
+            id: p.id,
+            eventId: id,
+            thumbUrl: p.thumbUrl,
+            fullUrl: p.fullUrl,
+            caption: p.caption ?? null,
+            order: p.order ?? idx,
+            isCover: Boolean(p.isCover),
+            createdAt: p.createdAt || new Date().toISOString()
+          })
+        })
+        e.photos = payload.photos
+      }
       if (payload.publishedAt !== undefined) e.publishedAt = payload.publishedAt
-      return e
+      return {
+        ...e,
+        photos: mockEventPhotos.filter((p) => p.eventId === id).sort((a, b) => a.order - b.order)
+      }
+    },
+    async getEventPhotos(eventId: string): Promise<EventPhoto[]> {
+      return mockEventPhotos.filter((p) => p.eventId === eventId).sort((a, b) => a.order - b.order)
+    },
+    async addEventPhoto(eventId: string, photo: Omit<EventPhoto, 'id' | 'createdAt'>): Promise<EventPhoto> {
+      const existing = mockEventPhotos.filter((p) => p.eventId === eventId)
+      const isFirst = existing.length === 0
+      const isCover = photo.isCover ?? isFirst
+      if (isCover) {
+        existing.forEach((p) => {
+          p.isCover = false
+        })
+      }
+      const newPhoto: EventPhoto = {
+        id: randomId('pho'),
+        eventId,
+        thumbUrl: photo.thumbUrl,
+        fullUrl: photo.fullUrl,
+        caption: photo.caption ?? null,
+        order: photo.order ?? existing.length,
+        isCover: Boolean(isCover),
+        createdAt: new Date().toISOString()
+      }
+      mockEventPhotos.push(newPhoto)
+      return newPhoto
+    },
+    async deleteEventPhoto(eventId: string, photoId: string): Promise<boolean> {
+      const idx = mockEventPhotos.findIndex((p) => p.id === photoId && p.eventId === eventId)
+      if (idx === -1) return false
+      mockEventPhotos.splice(idx, 1)
+      return true
+    },
+    async reorderEventPhotos(eventId: string, photoIds: string[]): Promise<EventPhoto[]> {
+      photoIds.forEach((id, index) => {
+        const p = mockEventPhotos.find((item) => item.id === id && item.eventId === eventId)
+        if (p) p.order = index
+      })
+      return mockEventPhotos.filter((p) => p.eventId === eventId).sort((a, b) => a.order - b.order)
+    },
+    async setEventCoverPhoto(eventId: string, photoId: string): Promise<EventPhoto | null> {
+      let target: EventPhoto | null = null
+      mockEventPhotos.filter((p) => p.eventId === eventId).forEach((p) => {
+        if (p.id === photoId) {
+          p.isCover = true
+          target = p
+        } else {
+          p.isCover = false
+        }
+      })
+      return target
     },
     async listSpeakers(): Promise<Speaker[]> {
       return speakers as Speaker[]
@@ -443,7 +555,10 @@ function createPrismaDataSource(): DataSource {
   return {
     useMocks: false,
     async listEvents(): Promise<Event[]> {
-      const rows = await prisma.event.findMany({ orderBy: { date: 'desc' } })
+      const rows = await prisma.event.findMany({
+        orderBy: { date: 'desc' },
+        include: { photos: { orderBy: { order: 'asc' } } }
+      })
       return rows.map((row) => {
         const r = row as { sponsorsJson?: string | null; contractorsJson?: string | null; toolsJson?: string | null; venueId?: string | null; bannerImageUrl?: string | null }
         return {
@@ -465,12 +580,31 @@ function createPrismaDataSource(): DataSource {
           tools: (JSON.parse(r.toolsJson || '[]') as string[]),
           externalCommunities: (JSON.parse((row as { externalCommunitiesJson?: string }).externalCommunitiesJson || '[]') as string[]),
           videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
+          talks: JSON.parse((row as { talksJson?: string }).talksJson || '[]') as EventTalk[],
+          photos: ((row as any).photos || []).map((p: any) => ({
+            id: p.id,
+            eventId: p.eventId,
+            thumbUrl: p.thumbUrl,
+            fullUrl: p.fullUrl,
+            caption: p.caption ?? null,
+            order: p.order,
+            isCover: p.isCover,
+            createdAt: p.createdAt?.toISOString?.() ?? p.createdAt
+          })),
           venueId: r.venueId ?? undefined
         }
       })
     },
     async getEvent(id: string): Promise<Event | null> {
-      const row = await prisma.event.findUnique({ where: { id } })
+      let row: any = null
+      try {
+        row = await (prisma as any).event.findUnique({
+          where: { id },
+          include: { photos: { orderBy: { order: 'asc' } } }
+        })
+      } catch {
+        row = await prisma.event.findUnique({ where: { id } })
+      }
       if (!row) return null
       const r = row as { sponsorsJson?: string | null; contractorsJson?: string | null; toolsJson?: string | null; venueId?: string | null; bannerImageUrl?: string | null }
       return {
@@ -492,6 +626,17 @@ function createPrismaDataSource(): DataSource {
         tools: (JSON.parse(r.toolsJson || '[]') as string[]),
         externalCommunities: (JSON.parse((row as { externalCommunitiesJson?: string }).externalCommunitiesJson || '[]') as string[]),
         videos: JSON.parse((row as { videosJson?: string }).videosJson || '[]') as EventVideoItem[],
+        talks: JSON.parse((row as { talksJson?: string }).talksJson || '[]') as EventTalk[],
+        photos: ((row as any).photos || []).map((p: any) => ({
+          id: p.id,
+          eventId: p.eventId,
+          thumbUrl: p.thumbUrl,
+          fullUrl: p.fullUrl,
+          caption: p.caption ?? null,
+          order: p.order,
+          isCover: p.isCover,
+          createdAt: p.createdAt?.toISOString?.() ?? p.createdAt
+        })),
         venueId: r.venueId ?? undefined
       }
     },
@@ -562,9 +707,183 @@ function createPrismaDataSource(): DataSource {
       if (payload.bannerImageUrl !== undefined) data.bannerImageUrl = payload.bannerImageUrl
       if (payload.stats !== undefined) data.statsJson = JSON.stringify(payload.stats)
       if (payload.videos !== undefined) data.videosJson = JSON.stringify(payload.videos)
-      if (Object.keys(data).length === 0) return this.getEvent(id)
-      const row = await prisma.event.update({ where: { id }, data: data as never })
-      return this.getEvent(row.id)
+      if (payload.talks !== undefined) data.talksJson = JSON.stringify(payload.talks)
+      if (Object.keys(data).length > 0) {
+        await prisma.event.update({ where: { id }, data: data as never })
+      }
+      if (payload.photos !== undefined) {
+        try {
+          const incomingIds = payload.photos.map((p) => p.id)
+          await prisma.eventPhoto.deleteMany({
+            where: {
+              eventId: id,
+              id: { notIn: incomingIds }
+            }
+          })
+          for (const p of payload.photos) {
+            await prisma.eventPhoto.upsert({
+              where: { id: p.id },
+              create: {
+                id: p.id,
+                eventId: id,
+                thumbUrl: p.thumbUrl,
+                fullUrl: p.fullUrl,
+                caption: p.caption ?? null,
+                order: p.order,
+                isCover: Boolean(p.isCover)
+              },
+              update: {
+                thumbUrl: p.thumbUrl,
+                fullUrl: p.fullUrl,
+                caption: p.caption ?? null,
+                order: p.order,
+                isCover: Boolean(p.isCover)
+              }
+            })
+          }
+        } catch (err) {
+          console.warn('[Prisma] Erreur lors de la synchronisation des photos:', err)
+        }
+      }
+      return this.getEvent(id)
+    },
+    async getEventPhotos(eventId: string): Promise<EventPhoto[]> {
+      try {
+        const rows = await (prisma as any).eventPhoto.findMany({
+          where: { eventId },
+          orderBy: { order: 'asc' }
+        })
+        return rows.map((r: any) => ({
+          id: r.id,
+          eventId: r.eventId,
+          thumbUrl: r.thumbUrl,
+          fullUrl: r.fullUrl,
+          caption: r.caption ?? null,
+          order: r.order,
+          isCover: r.isCover,
+          createdAt: r.createdAt?.toISOString?.() ?? r.createdAt
+        }))
+      } catch {
+        return mockEventPhotos.filter((p) => p.eventId === eventId).sort((a, b) => a.order - b.order)
+      }
+    },
+    async addEventPhoto(eventId: string, photo: Omit<EventPhoto, 'id' | 'createdAt'>): Promise<EventPhoto> {
+      try {
+        if (photo.isCover) {
+          await (prisma as any).eventPhoto.updateMany({
+            where: { eventId },
+            data: { isCover: false }
+          })
+        }
+        const count = await (prisma as any).eventPhoto.count({ where: { eventId } })
+        const row = await (prisma as any).eventPhoto.create({
+          data: {
+            id: randomId('pho'),
+            eventId,
+            thumbUrl: photo.thumbUrl,
+            fullUrl: photo.fullUrl,
+            caption: photo.caption ?? null,
+            order: photo.order ?? count,
+            isCover: Boolean(photo.isCover)
+          }
+        })
+        return {
+          id: row.id,
+          eventId: row.eventId,
+          thumbUrl: row.thumbUrl,
+          fullUrl: row.fullUrl,
+          caption: row.caption ?? null,
+          order: row.order,
+          isCover: row.isCover,
+          createdAt: row.createdAt?.toISOString?.() ?? row.createdAt
+        }
+      } catch {
+        // Fallback to mockEventPhotos if table does not exist yet
+        const existing = mockEventPhotos.filter((p) => p.eventId === eventId)
+        const isCover = photo.isCover ?? existing.length === 0
+        if (isCover) {
+          existing.forEach((p) => { p.isCover = false })
+        }
+        const newPhoto: EventPhoto = {
+          id: randomId('pho'),
+          eventId,
+          thumbUrl: photo.thumbUrl,
+          fullUrl: photo.fullUrl,
+          caption: photo.caption ?? null,
+          order: photo.order ?? existing.length,
+          isCover: Boolean(isCover),
+          createdAt: new Date().toISOString()
+        }
+        mockEventPhotos.push(newPhoto)
+        return newPhoto
+      }
+    },
+    async deleteEventPhoto(eventId: string, photoId: string): Promise<boolean> {
+      try {
+        await (prisma as any).eventPhoto.delete({
+          where: { id: photoId }
+        })
+        return true
+      } catch {
+        const idx = mockEventPhotos.findIndex((p) => p.id === photoId)
+        if (idx >= 0) {
+          mockEventPhotos.splice(idx, 1)
+          return true
+        }
+        return false
+      }
+    },
+    async reorderEventPhotos(eventId: string, photoIds: string[]): Promise<EventPhoto[]> {
+      try {
+        await Promise.all(
+          photoIds.map((id, index) =>
+            (prisma as any).eventPhoto.update({
+              where: { id },
+              data: { order: index }
+            })
+          )
+        )
+        return this.getEventPhotos(eventId)
+      } catch {
+        photoIds.forEach((id, index) => {
+          const p = mockEventPhotos.find((item) => item.id === id)
+          if (p) p.order = index
+        })
+        return mockEventPhotos.filter((p) => p.eventId === eventId).sort((a, b) => a.order - b.order)
+      }
+    },
+    async setEventCoverPhoto(eventId: string, photoId: string): Promise<EventPhoto | null> {
+      try {
+        await (prisma as any).eventPhoto.updateMany({
+          where: { eventId },
+          data: { isCover: false }
+        })
+        const row = await (prisma as any).eventPhoto.update({
+          where: { id: photoId },
+          data: { isCover: true }
+        })
+        return {
+          id: row.id,
+          eventId: row.eventId,
+          thumbUrl: row.thumbUrl,
+          fullUrl: row.fullUrl,
+          caption: row.caption ?? null,
+          order: row.order,
+          isCover: row.isCover,
+          createdAt: row.createdAt?.toISOString?.() ?? row.createdAt
+        }
+      } catch {
+        let target: EventPhoto | null = null
+        mockEventPhotos.filter((p) => p.eventId === eventId).forEach((p) => {
+          if (p.id === photoId) {
+            p.isCover = true
+            target = p
+          } else {
+            p.isCover = false
+          }
+        })
+        return target
+      }
     },
     async listSpeakers(): Promise<Speaker[]> {
       const rows = await prisma.speaker.findMany()

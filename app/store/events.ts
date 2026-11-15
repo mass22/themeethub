@@ -19,6 +19,19 @@ export const useEventsStore = defineStore('events', () => {
     loaded.value = true
   }
 
+  const fetchById = async (id: string) => {
+    try {
+      const e = await fetchWithRetry(() => $fetch<Event>(`/api/events/${id}`))
+      const idx = items.value.findIndex((item) => item.id === id)
+      if (idx >= 0) items.value[idx] = e
+      else items.value.push(e)
+      return e
+    } catch (err) {
+      console.error('[events store] fetchById failed:', err)
+      return null
+    }
+  }
+
   const create = async (payload: Partial<Event>) => {
     const created = await $fetch<Event>('/api/events', { method: 'POST', body: payload })
     items.value.push(created)
@@ -46,6 +59,7 @@ export const useEventsStore = defineStore('events', () => {
     loaded,
     // Actions
     fetchAll,
+    fetchById,
     create,
     update,
     remove,

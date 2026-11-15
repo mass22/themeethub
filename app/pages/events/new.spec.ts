@@ -39,8 +39,17 @@ vi.mock('~/store/speakers', () => ({
 
 const mockSponsorsStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
 const mockContractorsStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
+const mockToolsStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
+const mockVenuesStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
+const mockExternalCommunitiesStore = { items: [], fetchAll: vi.fn(), byId: vi.fn() }
 vi.mock('~/store/sponsors', () => ({ useSponsorsStore: () => mockSponsorsStore }))
 vi.mock('~/store/contractors', () => ({ useContractorsStore: () => mockContractorsStore }))
+vi.mock('~/store/tools', () => ({ useToolsStore: () => mockToolsStore }))
+vi.mock('~/store/venues', () => ({ useVenuesStore: () => mockVenuesStore }))
+vi.mock('~/store/externalCommunities', () => ({ useExternalCommunitiesStore: () => mockExternalCommunitiesStore }))
+vi.stubGlobal('useExternalCommunitiesStore', () => mockExternalCommunitiesStore)
+vi.stubGlobal('useToolsStore', () => mockToolsStore)
+vi.stubGlobal('useVenuesStore', () => mockVenuesStore)
 
 describe('NewEvent page', () => {
   let wrapper: VueWrapper
